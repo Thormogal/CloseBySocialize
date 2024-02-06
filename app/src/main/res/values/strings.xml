@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">CloseBySocialize</string>
+
+    // bottom nav
+    <string name="events">Events</string>
+    <string name="message">Message</string>
+    <string name="map">Map</string>
+    <string name="profile">Profile</string>
+
+    <string name="events_fragment">Events</string>
+    <string name="message_fragment">Message</string>
+    <string name="map_fragment">Map</string>
+    <string name="profile_fragment">Profile</string>
+
+
 </resources>
