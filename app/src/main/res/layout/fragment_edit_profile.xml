@@ -9,87 +9,79 @@
         android:id="@+id/profileSaveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="84dp"
+        android:layout_marginBottom="44dp"
         android:backgroundTint="@color/primary_blue"
+        android:fontFamily="@font/poppins_medium"
         android:text="Save all"
         android:textColor="#000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.509"
+        app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/profileInterestTextView"
+        android:id="@+id/editProfileInterestText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="44dp"
+        android:fontFamily="@font/poppins_medium"
         android:text="Interests"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/editImage" />
 
     <ImageView
-        android:id="@+id/dogImageView"
+        android:id="@+id/dogImage"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toTopOf="@+id/sportImageView"
+        app:layout_constraintBottom_toTopOf="@+id/sportImage"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/interests_dogwalk" />
 
     <ImageView
-        android:id="@+id/gardenImageView"
+        android:id="@+id/gardenImage"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="40dp"
         android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toTopOf="@+id/restaurantImageView"
-        app:layout_constraintStart_toEndOf="@+id/dogImageView"
+        app:layout_constraintBottom_toTopOf="@+id/restaurantImage"
+        app:layout_constraintStart_toEndOf="@+id/dogImage"
         app:srcCompat="@drawable/intrerests_garden" />
 
     <ImageView
-        android:id="@+id/coffeeImageView"
+        android:id="@+id/coffeeImage"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="40dp"
         android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toTopOf="@+id/gameImageView"
-        app:layout_constraintStart_toEndOf="@+id/gardenImageView"
+        app:layout_constraintBottom_toTopOf="@+id/gameImage"
+        app:layout_constraintStart_toEndOf="@+id/gardenImage"
         app:srcCompat="@drawable/interests_coffeemug" />
 
     <ImageView
-        android:id="@+id/planeImageView"
+        android:id="@+id/airPlaneImage"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginBottom="36dp"
-        app:layout_constraintBottom_toTopOf="@+id/cinemaImageView"
-        app:layout_constraintStart_toEndOf="@+id/bookImageView"
-        app:srcCompat="@drawable/interests_airplane_takeoff" />
-
-    <ImageView
-        android:id="@+id/bookImageView"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="40dp"
         android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toTopOf="@+id/cookingImageView"
-        app:layout_constraintStart_toEndOf="@+id/coffeeImageView"
-        app:srcCompat="@drawable/interests_book" />
+        app:layout_constraintBottom_toTopOf="@+id/cinemaImage"
+        app:srcCompat="@drawable/interests_airplane_takeoff"
+        tools:layout_editor_absoluteX="301dp" />
 
     <ImageView
-        android:id="@+id/cookingImageView"
+        android:id="@+id/cookingImage"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="40dp"
         android:layout_marginBottom="352dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/gameImageView"
+        app:layout_constraintStart_toEndOf="@+id/gameImage"
         app:srcCompat="@drawable/interests_cooking" />
 
     <ImageView
-        android:id="@+id/sportImageView"
+        android:id="@+id/sportImage"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="20dp"
@@ -99,37 +91,37 @@
         app:srcCompat="@drawable/interests_football" />
 
     <ImageView
-        android:id="@+id/gameImageView"
+        android:id="@+id/gameImage"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="40dp"
         android:layout_marginBottom="352dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/restaurantImageView"
+        app:layout_constraintStart_toEndOf="@+id/restaurantImage"
         app:srcCompat="@drawable/interests_gamingcontroller" />
 
     <ImageView
-        android:id="@+id/cinemaImageView"
+        android:id="@+id/cinemaImage"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="40dp"
         android:layout_marginBottom="352dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/cookingImageView"
+        app:layout_constraintStart_toEndOf="@+id/cookingImage"
         app:srcCompat="@drawable/interests_movie" />
 
     <ImageView
-        android:id="@+id/restaurantImageView"
+        android:id="@+id/restaurantImage"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="40dp"
         android:layout_marginTop="348dp"
-        app:layout_constraintStart_toEndOf="@+id/sportImageView"
+        app:layout_constraintStart_toEndOf="@+id/sportImage"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/interests_restaurant" />
 
     <ImageView
-        android:id="@+id/theatreImageView"
+        android:id="@+id/theatreImage"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginEnd="20dp"
@@ -137,23 +129,24 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/cinemaImageView"
+        app:layout_constraintStart_toEndOf="@+id/cinemaImage"
         app:srcCompat="@drawable/interests_theatermask" />
 
     <ImageView
-        android:id="@+id/strollerImageView"
+        android:id="@+id/strollerImage"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="36dp"
-        app:layout_constraintBottom_toTopOf="@+id/theatreImageView"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/theatreImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/interests_stroller" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_width="429dp"
-        android:layout_height="125dp"
+        android:layout_width="431dp"
+        android:layout_height="81dp"
+        android:layout_marginStart="20dp"
         android:background="@color/primary_blue"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
@@ -162,7 +155,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/editImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="76dp"
@@ -173,7 +166,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/editProfileBackButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/primary_blue"
@@ -182,13 +175,59 @@
         tools:layout_editor_absoluteY="28dp" />
 
     <EditText
-        android:id="@+id/editTextText"
+        android:id="@+id/editName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="text"
         android:text="Name"
+        android:textAlignment="center"
         tools:layout_editor_absoluteX="105dp"
         tools:layout_editor_absoluteY="32dp" />
+
+    <TextView
+        android:id="@+id/editProfileAboutText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="288dp"
+        android:fontFamily="@font/poppins_medium"
+        android:text="About me"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/editBirthYear"
+        android:layout_width="50dp"
+        android:layout_height="34dp"
+        android:ems="10"
+        android:inputType="number"
+        tools:layout_editor_absoluteX="180dp"
+        tools:layout_editor_absoluteY="204dp" />
+
+    <EditText
+        android:id="@+id/editTextTextMultiLine"
+        android:layout_width="222dp"
+        android:layout_height="131dp"
+        android:layout_marginBottom="148dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/bookImage"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/cookingImage"
+        app:layout_constraintEnd_toStartOf="@+id/airPlaneImage"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/coffeeImage"
+        app:srcCompat="@drawable/interests_book" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
