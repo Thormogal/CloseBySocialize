@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "413888895821",
+    "project_id": "closebysocialize",
+    "storage_bucket": "closebysocialize.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413888895821:android:a794c431d5343e82493504",
+        "android_client_info": {
+          "package_name": "com.example.closebysocialize"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNzVjNbkJPwFWl1ERm4XhprcwFdzWKzNU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
