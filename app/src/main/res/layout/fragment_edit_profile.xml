@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/profileSaveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="84dp"
+        android:backgroundTint="@color/primary_blue"
+        android:text="Save all"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.509"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/profileInterestTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="Interests"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <ImageView
+        android:id="@+id/dogImageView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/sportImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/interests_dogwalk" />
+
+    <ImageView
+        android:id="@+id/gardenImageView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/restaurantImageView"
+        app:layout_constraintStart_toEndOf="@+id/dogImageView"
+        app:srcCompat="@drawable/intrerests_garden" />
+
+    <ImageView
+        android:id="@+id/coffeeImageView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/gameImageView"
+        app:layout_constraintStart_toEndOf="@+id/gardenImageView"
+        app:srcCompat="@drawable/interests_coffeemug" />
+
+    <ImageView
+        android:id="@+id/planeImageView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="36dp"
+        app:layout_constraintBottom_toTopOf="@+id/cinemaImageView"
+        app:layout_constraintStart_toEndOf="@+id/bookImageView"
+        app:srcCompat="@drawable/interests_airplane_takeoff" />
+
+    <ImageView
+        android:id="@+id/bookImageView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/cookingImageView"
+        app:layout_constraintStart_toEndOf="@+id/coffeeImageView"
+        app:srcCompat="@drawable/interests_book" />
+
+    <ImageView
+        android:id="@+id/cookingImageView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="352dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/gameImageView"
+        app:srcCompat="@drawable/interests_cooking" />
+
+    <ImageView
+        android:id="@+id/sportImageView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="352dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/interests_football" />
+
+    <ImageView
+        android:id="@+id/gameImageView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="352dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/restaurantImageView"
+        app:srcCompat="@drawable/interests_gamingcontroller" />
+
+    <ImageView
+        android:id="@+id/cinemaImageView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="352dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cookingImageView"
+        app:srcCompat="@drawable/interests_movie" />
+
+    <ImageView
+        android:id="@+id/restaurantImageView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="348dp"
+        app:layout_constraintStart_toEndOf="@+id/sportImageView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/interests_restaurant" />
+
+    <ImageView
+        android:id="@+id/theatreImageView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="352dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/cinemaImageView"
+        app:srcCompat="@drawable/interests_theatermask" />
+
+    <ImageView
+        android:id="@+id/strollerImageView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="36dp"
+        app:layout_constraintBottom_toTopOf="@+id/theatreImageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/interests_stroller" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="429dp"
+        android:layout_height="125dp"
+        android:background="@color/primary_blue"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="76dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/primary_blue"
+        app:srcCompat="@drawable/go_back_button"
+        tools:layout_editor_absoluteX="30dp"
+        tools:layout_editor_absoluteY="28dp" />
+
+    <EditText
+        android:id="@+id/editTextText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name"
+        tools:layout_editor_absoluteX="105dp"
+        tools:layout_editor_absoluteY="32dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
