@@ -59,7 +59,7 @@ class ContainerActivity : AppCompatActivity() {
                     true
                 }
                 R.id.menu_edit_profile -> {
-                  //  FragmentUtils.switchFragment(this, R.id.fragment_container, EditProfileFragment::class.java)
+                  // FragmentUtils.switchFragment(this, R.id.fragment_container, EditProfileFragment::class.java)
                     true
                 }
                 R.id.menu_logout -> {
