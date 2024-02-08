@@ -84,13 +84,39 @@ class EventsFragment : Fragment() {
 
     private fun fetchDataFromFirestore() {
         val db = FirebaseFirestore.getInstance()
-        db.collection("events").get().addOnSuccessListener { result ->
-            val eventsList = result.toObjects(Event::class.java)
-            eventsAdapter.updateData(eventsList)
+        val eventsList = mutableListOf<Event>()
+        val usersRef = db.collection("users")
+        usersRef.get().addOnSuccessListener { usersSnapshot ->
+            if (usersSnapshot.documents.isEmpty()) {
+                updateRecyclerView(eventsList)
+            }
+            for (userDocument in usersSnapshot) {
+                userDocument.reference.collection("Event")
+                    .get()
+                    .addOnSuccessListener { eventsSnapshot ->
+                        for (eventDocument in eventsSnapshot) {
+                            val event = eventDocument.toObject(Event::class.java)
+                            eventsList.add(event)
+                        }
+                        updateRecyclerView(eventsList)
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.d("EventsFragment", "Error getting events for user ${userDocument.id}: ", exception)
+                    }
+            }
         }.addOnFailureListener { exception ->
-            Log.d("EventsFragment", "Error getting documents: ", exception)
+            Log.d("EventsFragment", "Error getting users: ", exception)
         }
     }
+
+    private fun updateRecyclerView(eventsList: List<Event>) {
+        eventsAdapter.updateData(eventsList)
+    }
+
+
+
+
+
 
     private fun setFilterTextViewsListeners() {
         val defaultTextSize = 14f
