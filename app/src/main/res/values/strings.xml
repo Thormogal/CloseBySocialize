@@ -50,9 +50,8 @@
     <string name="login_buttonText_email">Sign in with Email</string>
     <string name="login_buttonText_google">Sign in with Google</string>
 
-    <string name="option_1">Option 1</string>
-    <string name="option_2">Option 2</string>
-    <string name="option_3">Option 3</string>
+    // Google Client ID
+    <string name="default_web_client_id">413888895821-11vgur7plqpme9pjk09hce41r6k28jm3.apps.googleusercontent.com</string>
 
 
 </resources>
