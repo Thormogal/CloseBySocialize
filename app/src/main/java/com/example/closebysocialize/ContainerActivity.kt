@@ -22,8 +22,8 @@ class ContainerActivity : AppCompatActivity() {
         navView.setOnNavigationItemSelectedListener { item ->
             val fragmentClass = when (item.itemId) {
                 R.id.navigation_events -> EventsFragment::class.java
-                R.id.navigation_message -> MessageFragment::class.java
                 R.id.navigation_map -> MapFragment::class.java
+                R.id.navigation_message -> MessageFragment::class.java
                 else -> null
             }
             fragmentClass?.let {
@@ -63,7 +63,7 @@ class ContainerActivity : AppCompatActivity() {
                     true
                 }
                 R.id.menu_logout -> {
-                    // Handle "Log Out" action
+                    // Handle "Log Out"
                     true
                 }
                 else -> false

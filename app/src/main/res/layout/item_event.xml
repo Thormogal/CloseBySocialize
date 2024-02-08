@@ -147,10 +147,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
+            android:layout_marginTop="-4dp"
             android:fontFamily="@font/poppins_font_family"
             android:text="@string/event_location"
+            android:textColor="@color/primary_text"
             android:textSize="16sp"
-            android:layout_marginTop="-4dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/eventNameTextView" />
 
@@ -161,6 +162,7 @@
             android:layout_marginTop="20dp"
             android:fontFamily="@font/poppins_font_family"
             android:text="@string/event_day"
+            android:textColor="@color/primary_text"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="@+id/timeTextView"
             app:layout_constraintTop_toTopOf="parent" />
@@ -169,10 +171,11 @@
             android:id="@+id/timeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="-6dp"
             android:fontFamily="@font/poppins_font_family"
             android:text="@string/event_time"
+            android:textColor="@color/primary_text"
             android:textSize="16sp"
-            android:layout_marginTop="-6dp"
             app:layout_constraintStart_toStartOf="@+id/dateTextView"
             app:layout_constraintTop_toBottomOf="@+id/dayTextView" />
 
@@ -180,11 +183,12 @@
             android:id="@+id/dateTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="-4dp"
             android:layout_marginEnd="20dp"
             android:fontFamily="@font/poppins_font_family"
             android:text="@string/event_date"
+            android:textColor="@color/primary_text"
             android:textSize="16sp"
-            android:layout_marginTop="-4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/timeTextView" />
 
@@ -195,6 +199,7 @@
             android:layout_marginTop="10dp"
             android:fontFamily="@font/poppins_font_family"
             android:text="@string/event_name_age"
+            android:textColor="@color/primary_text"
             android:textSize="15sp"
             app:layout_constraintStart_toStartOf="@+id/descriptionTextView"
             app:layout_constraintTop_toBottomOf="@+id/dateTextView" />
@@ -244,6 +249,7 @@
             android:paddingEnd="8dp"
             android:paddingBottom="8dp"
             android:text="@string/event_description"
+            android:textColor="@color/primary_text"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.503"
@@ -259,6 +265,7 @@
             android:layout_marginBottom="20dp"
             android:fontFamily="@font/poppins_font_family"
             android:text="@string/event_attend_spots"
+            android:textColor="@color/primary_text"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
