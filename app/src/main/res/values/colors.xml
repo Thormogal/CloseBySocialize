@@ -4,5 +4,9 @@
     <color name="primary_blue">#C3EDFF</color>
     <color name="primary_text">#000000</color>
     <color name="primary_background">#FFFFFF</color>
+    <color name="primary_text_background_transparent_30">#4DFFFFFF</color>
+    <color name="primary_text_background_transparent_50">#80FFFFFF</color>
+    <color name="primary_text_background_transparent_70">#B3FFFFFF</color>
+    <color name="primary_text_background_transparent_85">#D9FFFFFF</color>
 
 </resources>

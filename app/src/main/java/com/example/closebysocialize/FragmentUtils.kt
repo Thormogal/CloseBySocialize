@@ -1,12 +1,23 @@
 package com.example.closebysocialize.util
 
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 
 object FragmentUtils {
-    fun switchFragment(activity: AppCompatActivity, containerId: Int, fragmentClass: Class<out Fragment>) {
+    fun switchFragment(
+        activity: AppCompatActivity,
+        containerId: Int,
+        fragmentClass: Class<out Fragment>,
+        args: Bundle? = null
+    ) {
         val fragmentManager = activity.supportFragmentManager
-        val fragment = fragmentClass.newInstance()
-        fragmentManager.beginTransaction().replace(containerId, fragment).commit()
+        val fragment = fragmentClass.newInstance().apply {
+            args?.let { arguments = it }
+        }
+        fragmentManager.beginTransaction()
+            .replace(containerId, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 }
