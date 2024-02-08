@@ -1,4 +1,8 @@
 package com.example.closebysocialize
 
-class EditProfileFragment {
+import androidx.fragment.app.Fragment
+
+
+class EditProfileFragment : Fragment() {
+    // Implementation
 }

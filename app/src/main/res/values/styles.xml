@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:textViewStyle">@style/PoppinsTextStyle</item>
     </style>
 
     <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
         <item name="android:textColorPrimary">@color/primary_text</item>
+    </style>
+    <style name="PoppinsTextStyle">
+        <item name="android:fontFamily">@font/poppins_font_family</item>
     </style>
 </resources>

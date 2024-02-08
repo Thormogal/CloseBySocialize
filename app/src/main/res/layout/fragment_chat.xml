@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/primary_background"
-    >
+    android:background="@color/primary_background">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/commentRecyclerView"
@@ -23,15 +23,21 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Write a comment..."
+            android:hint="@string/write_a_comment"
             android:textColor="@color/primary_text"
             android:textColorHint="@color/primary_text" />
-
         <Button
             android:id="@+id/postCommentButton"
+            style="@style/Widget.Material3.Button.ElevatedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/primary_blue"
-            android:text="Post" />
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/poppins_font_family"
+            android:text="@string/post"
+            android:textColor="@color/primary_text"
+            app:backgroundTint="@color/primary_blue"
+            app:backgroundTintMode="src_in"
+             />
+
     </LinearLayout>
 </LinearLayout>

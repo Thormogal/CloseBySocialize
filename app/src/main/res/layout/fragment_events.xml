@@ -11,8 +11,9 @@
         android:id="@+id/textViewsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:background="@color/primary_text_background_transparent_50"
         android:gravity="center"
+        android:orientation="horizontal"
         android:padding="16dp">
 
         <LinearLayout
@@ -26,6 +27,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:fontFamily="@font/poppins_medium"
                 android:gravity="center"
                 android:text="@string/saved" />
 
@@ -34,6 +36,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:fontFamily="@font/poppins_medium"
                 android:gravity="center"
                 android:text="@string/all" />
 
@@ -42,8 +45,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:fontFamily="@font/poppins_medium"
                 android:gravity="center"
-                android:text="@string/attended" />
+                android:text="@string/attending" />
         </LinearLayout>
 
         <ImageView
