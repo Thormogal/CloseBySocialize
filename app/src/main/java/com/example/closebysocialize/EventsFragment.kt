@@ -63,11 +63,11 @@ class EventsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initializeDefaultSelection()
         recyclerView = view.findViewById(R.id.eventsRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
         eventsAdapter = EventsAdapter(listOf())
         recyclerView.adapter = eventsAdapter
-
         eventsAdapter.chatImageViewClickListener = { eventName ->
             val args = Bundle().apply {
                 putString("eventName", eventName)
@@ -116,7 +116,13 @@ class EventsFragment : Fragment() {
 
 
 
-
+    private fun initializeDefaultSelection() {
+        val defaultTextSize = 14f
+        val selectedTextSize = 18f
+        resetTextViewsSize(defaultTextSize)
+        allTextView.textSize = selectedTextSize
+        filterData("all")
+    }
 
     private fun setFilterTextViewsListeners() {
         val defaultTextSize = 14f

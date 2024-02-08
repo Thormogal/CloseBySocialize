@@ -21,7 +21,7 @@
     // events
     <string name="saved">Saved</string>
     <string name="all">All</string>
-    <string name="attended">Attended</string>
+    <string name="attending">Attending</string>
     <string name="city">Helsingborg</string>
     <string name="event_type">Coffee</string>
     <string name="event_name">Vallmanscafé</string>
@@ -30,13 +30,17 @@
     <string name="event_time">2 PM</string>
     <string name="event_date">2024-03-22</string>
     <string name="event_name_age">Fredrik,21</string>
-    <string name="event_description">Söker någon att ta en kaffe
-    med i Helsingborg city!</string>
+    <string name="event_description">Lorem ipsum dolor sit amet consectetur. Elit eget pulvinar aenean ac. Risus imperdiet arcu tortor facilisi cras vitae feugiat cursus enim pellentesque.</string>
     <string name="event_attend">Attend</string>
+    <string name="event_withdraw">Withdraw</string>
     <string name="event_attend_spots">2/4 spots</string>
 
     // chat
     <string name="author_comment">Detta är en kommentar</string>
+    <string name="write_a_comment">Write a comment...</string>
+    <string name="post">Post</string>
+
+
 
     // login screen
     <string name="log_in">Log in</string>

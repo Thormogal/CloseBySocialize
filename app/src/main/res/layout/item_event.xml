@@ -9,9 +9,10 @@
 
     <ImageView
         android:id="@+id/backgroundImageView"
-        android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="@+id/squareContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,23 +21,27 @@
 
     <View
         android:id="@+id/faderView"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_width="0sp"
+        android:layout_height="60dp"
         android:background="@drawable/gradient_overlay"
-        app:layout_constraintBottom_toBottomOf="@+id/backgroundImageView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
+        android:layout_marginBottom="10dp"
+        android:paddingTop="10dp"
         app:cardBackgroundColor="@color/primary_text_background_transparent_85"
         app:cardCornerRadius="5dp"
         app:cardElevation="4dp"
         app:layout_constraintBottom_toTopOf="@+id/squareContainer"
         app:layout_constraintStart_toStartOf="@+id/squareContainer"
-        app:layout_constraintTop_toTopOf="@+id/backgroundImageView">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -46,6 +51,7 @@
 
             <ImageView
                 android:id="@+id/authorProfilePictureImageView"
+                android:layout_marginTop="4dp"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:scaleType="centerCrop"
@@ -61,13 +67,21 @@
                     android:id="@+id/cityTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_font_family"
+                    android:paddingEnd="8dp"
+                    android:paddingStart="4dp"
                     android:text="@string/city"
-                    android:textColor="@color/primary_text" />
+                    android:textColor="@color/primary_text"
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/eventTypeTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_font_family"
+                    android:layout_marginTop="-9dp"
+                    android:paddingEnd="8dp"
+                    android:paddingStart="5dp"
                     android:text="@string/event_type"
                     android:textColor="@color/primary_text" />
             </LinearLayout>
@@ -80,17 +94,17 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/squareContainer"
         android:layout_width="360dp"
-        android:layout_height="399dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="100dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
         android:background="@color/primary_text_background_transparent_85"
         app:cardCornerRadius="5dp"
-        app:layout_constraintBottom_toBottomOf="@+id/backgroundImageView"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.545"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintHorizontal_bias="0.428"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <LinearLayout
@@ -98,11 +112,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="120dp"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/editImageView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/attendElevatedButton">
 
             <ImageView
                 android:id="@+id/attendedPeopleImageView"
@@ -120,7 +135,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
+            android:fontFamily="@font/poppins_font_family"
             android:text="@string/event_name"
+            android:textColor="@color/primary_text"
+            android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -129,8 +147,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="5dp"
+            android:fontFamily="@font/poppins_font_family"
             android:text="@string/event_location"
+            android:textSize="16sp"
+            android:layout_marginTop="-4dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/eventNameTextView" />
 
@@ -139,7 +159,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:fontFamily="@font/poppins_font_family"
             android:text="@string/event_day"
+            android:textSize="20sp"
             app:layout_constraintStart_toStartOf="@+id/timeTextView"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -147,8 +169,10 @@
             android:id="@+id/timeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:fontFamily="@font/poppins_font_family"
             android:text="@string/event_time"
+            android:textSize="16sp"
+            android:layout_marginTop="-6dp"
             app:layout_constraintStart_toStartOf="@+id/dateTextView"
             app:layout_constraintTop_toBottomOf="@+id/dayTextView" />
 
@@ -156,9 +180,11 @@
             android:id="@+id/dateTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:layout_marginEnd="20dp"
+            android:fontFamily="@font/poppins_font_family"
             android:text="@string/event_date"
+            android:textSize="16sp"
+            android:layout_marginTop="-4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/timeTextView" />
 
@@ -166,12 +192,10 @@
             android:id="@+id/authorUserNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/poppins_font_family"
             android:text="@string/event_name_age"
-            android:shadowColor="#808080"
-            android:shadowDx="0"
-            android:shadowDy="2"
-            android:shadowRadius="4"
+            android:textSize="15sp"
             app:layout_constraintStart_toStartOf="@+id/descriptionTextView"
             app:layout_constraintTop_toBottomOf="@+id/dateTextView" />
 
@@ -179,10 +203,10 @@
             android:id="@+id/deleteImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="5dp"
             android:layout_marginBottom="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/editImageView"
             app:srcCompat="@drawable/icon_bin" />
 
         <ImageView
@@ -192,81 +216,69 @@
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="18dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/deleteImageView"
+            app:layout_constraintEnd_toStartOf="@+id/chatImageView"
             app:srcCompat="@drawable/icon_edit" />
 
         <ImageView
             android:id="@+id/chatImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="20dp"
 
+            android:layout_marginBottom="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/editImageView"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/icon_message" />
 
         <TextView
             android:id="@+id/descriptionTextView"
-            android:layout_width="217dp"
-            android:layout_height="64dp"
-            android:layout_marginTop="2dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:background="@drawable/rounded_background"
             android:elevation="12dp"
+            android:fontFamily="@font/poppins_font_family"
             android:paddingStart="8dp"
             android:paddingTop="8dp"
             android:paddingEnd="8dp"
             android:paddingBottom="8dp"
-            android:shadowColor="#808080"
-            android:shadowDx="0"
-            android:shadowDy="2"
-            android:shadowRadius="4"
             android:text="@string/event_description"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.503"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/authorUserNameTextView" />
 
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginBottom="36dp"
-            android:backgroundTint="@color/primary_blue"
-            android:elevation="12dp"
-            android:text="@string/event_attend"
-            android:textColor="@color/primary_text"
-            app:layout_constraintBottom_toTopOf="@+id/attendedPeopleLinearLayout"
-            app:layout_constraintStart_toStartOf="parent" />
-
         <TextView
             android:id="@+id/openSpotsTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="5dp"
             android:layout_marginBottom="20dp"
+            android:fontFamily="@font/poppins_font_family"
             android:text="@string/event_attend_spots"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/attendedPeopleLinearLayout" />
 
-        <TextView
-            android:id="@+id/attendButtonTextView"
-            android:layout_width="100dp"
-            android:layout_height="31dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/rounded_background_button"
-            android:elevation="12dp"
-            android:gravity="center"
-            android:shadowColor="#808080"
-            android:shadowDx="0"
-            android:shadowDy="2"
-            android:shadowRadius="4"
+        <Button
+            android:id="@+id/attendElevatedButton"
+            style="@style/Widget.Material3.Button.ElevatedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/poppins_font_family"
             android:text="@string/event_attend"
             android:textColor="@color/primary_text"
-            app:layout_constraintBottom_toTopOf="@+id/attendedPeopleLinearLayout"
+            app:backgroundTint="@color/primary_blue"
+            app:backgroundTintMode="src_in"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="0.501"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/descriptionTextView" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

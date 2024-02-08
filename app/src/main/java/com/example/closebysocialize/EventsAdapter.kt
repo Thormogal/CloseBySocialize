@@ -3,6 +3,7 @@ package com.example.closebysocialize
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -24,7 +25,7 @@ class EventsAdapter(private var eventsList: List<Event>) : RecyclerView.Adapter<
         val dateTextView: TextView = view.findViewById(R.id.dateTextView)
         val usernameTextView: TextView = view.findViewById(R.id.authorUserNameTextView)
         val descriptionTextView: TextView = view.findViewById(R.id.descriptionTextView)
-        val attendButtonTextView: TextView = view.findViewById(R.id.attendButtonTextView)
+        val attendButtonTextView: Button = view.findViewById(R.id.attendElevatedButton)
         val openSpotsTextView: TextView = view.findViewById(R.id.openSpotsTextView)
         val chatImageView: ImageView = view.findViewById(R.id.chatImageView)
         val editImageView: ImageView = view.findViewById(R.id.editImageView)
@@ -52,12 +53,19 @@ class EventsAdapter(private var eventsList: List<Event>) : RecyclerView.Adapter<
         holder.dateTextView.text = event.date
         holder.usernameTextView.text = event.author
         holder.descriptionTextView.text = event.description
-        holder.attendButtonTextView.text = event.attended
         holder.openSpotsTextView.text = event.spots
-
         holder.chatImageView.setOnClickListener {
             chatImageViewClickListener?.invoke(event.id)
         }
+        holder.attendButtonTextView.setOnClickListener {
+            val attendText = holder.itemView.context.getString(R.string.event_attend)
+            if (holder.attendButtonTextView.text.toString().equals(attendText, ignoreCase = true)) {
+                holder.attendButtonTextView.text = holder.itemView.context.getString(R.string.event_withdraw)
+            } else {
+                holder.attendButtonTextView.text = attendText
+            }
+        }
+
 
         val currentUserId = getCurrentUserId()
         if (event.authorId == currentUserId && currentUserId != null) {
@@ -69,13 +77,14 @@ class EventsAdapter(private var eventsList: List<Event>) : RecyclerView.Adapter<
         }
 
 
+
         val attendedPeopleLinearLayout = holder.itemView.findViewById<LinearLayout>(R.id.attendedPeopleLinearLayout)
         attendedPeopleLinearLayout.removeAllViews()
         event.attendedPeopleProfilePictureUrls.forEach { url ->
             val imageView = ImageView(holder.itemView.context).apply {
                 layoutParams = LinearLayout.LayoutParams(
-                    holder.itemView.dpToPx(50),
-                    holder.itemView.dpToPx(50)
+                    holder.itemView.dpToPx(40),
+                    holder.itemView.dpToPx(40)
                 ).apply {
                     marginEnd = holder.itemView.dpToPx(8)
                 }
@@ -90,7 +99,6 @@ class EventsAdapter(private var eventsList: List<Event>) : RecyclerView.Adapter<
             }
             attendedPeopleLinearLayout.addView(imageView)
         }
-
     }
 
     override fun getItemCount() = eventsList.size
