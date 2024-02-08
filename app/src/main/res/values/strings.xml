@@ -34,6 +34,7 @@
     <string name="event_attend">Attend</string>
     <string name="event_withdraw">Withdraw</string>
     <string name="event_attend_spots">2/4 spots</string>
+    <string name="signed_up">You signed up to the event!</string>
 
     // chat
     <string name="author_comment">Detta är en kommentar</string>
@@ -51,7 +52,6 @@
 
     // Google Client ID
     <string name="default_web_client_id">413888895821-11vgur7plqpme9pjk09hce41r6k28jm3.apps.googleusercontent.com</string>
-
 
 
 </resources>

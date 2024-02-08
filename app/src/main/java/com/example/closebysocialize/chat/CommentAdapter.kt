@@ -1,4 +1,4 @@
-package com.example.golfcherries.comments
+package com.example.closebysocialize.chat
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,8 +7,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.closebysocialize.ChatFragment
-import com.example.closebysocialize.Comment
 import com.example.closebysocialize.R
 
 class CommentAdapter(val comments: MutableList<Comment>, val fragment: ChatFragment) : RecyclerView.Adapter<CommentAdapter.ViewHolder>() {

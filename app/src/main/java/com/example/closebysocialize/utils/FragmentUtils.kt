@@ -1,4 +1,4 @@
-package com.example.closebysocialize.util
+package com.example.closebysocialize.utils
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
