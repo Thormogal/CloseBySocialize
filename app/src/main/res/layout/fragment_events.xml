@@ -1,4 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+
+    <TextView
+        android:id="@+id/text_add_event"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Event"
+        android:textColor="#4285F4"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Event category"/>
+
+        <Spinner
+            android:id="@+id/spinner_event_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"/>
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/edit_event_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background=""
+        android:hint="Event Name"
+        android:padding="8dp"
+        android:textColor="#333"/>
+
+    <EditText
+        android:id="@+id/edit_event_place"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background=""
+        android:hint="Place"
+        android:padding="8dp"
+        android:textColor="#333"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date:"
+            android:textColor="#777"/>
+
+        <EditText
+            android:id="@+id/edit_event_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background=""
+            android:hint="Date"
+            android:padding="8dp"
+            android:textColor="#333"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tag Friends:"
+            android:textColor="#777"/>
+
+        <MultiAutoCompleteTextView
+            android:id="@+id/edit_event_friends"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background=""
+            android:hint="Alex"
+            android:padding="8dp"
+            android:textColor="#333"/>
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/edit_event_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background=""
+        android:hint="Description (0/150)"
+        android:padding="8dp"
+        android:textColor="#333"/>
+
+    <Button
+        android:id="@+id/button_add_event"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="#4285F4"
+        android:padding="16dp"
+        android:text="Add Event"
+        android:textColor="#FFF"
+        android:textSize="18sp" />
+
+</LinearLayout>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"

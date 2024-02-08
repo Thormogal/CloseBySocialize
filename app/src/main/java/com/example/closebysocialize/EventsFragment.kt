@@ -60,6 +60,7 @@ class EventsFragment : Fragment() {
         return view
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = view.findViewById(R.id.eventsRecyclerView)
