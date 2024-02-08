@@ -7,10 +7,44 @@
     <string name="map">Map</string>
     <string name="profile">Profile</string>
 
+
     <string name="events_fragment">Events</string>
     <string name="message_fragment">Message</string>
     <string name="map_fragment">Map</string>
     <string name="profile_fragment">Profile</string>
+
+
+    // profile menu
+    <string name="edit_profile">Edit profile</string>
+    <string name="log_out">Log out</string>
+
+    // events
+    <string name="saved">Saved</string>
+    <string name="all">All</string>
+    <string name="attended">Attended</string>
+    <string name="city">Helsingborg</string>
+    <string name="event_type">Coffee</string>
+    <string name="event_name">Vallmanscafé</string>
+    <string name="event_location">Kullagatan</string>
+    <string name="event_day">Friday</string>
+    <string name="event_time">2 PM</string>
+    <string name="event_date">2024-03-22</string>
+    <string name="event_name_age">Fredrik,21</string>
+    <string name="event_description">Söker någon att ta en kaffe
+    med i Helsingborg city!</string>
+    <string name="event_attend">Attend</string>
+    <string name="event_attend_spots">2/4 spots</string>
+
+    // chat
+    <string name="author_comment">Detta är en kommentar</string>
+
+    // login screen
+    <string name="log_in">Log in</string>
+    <string name="email_address">Email address</string>
+    <string name="password">Password</string>
+    <string name="login_buttonText_email">Sign in with Email</string>
+    <string name="login_buttonText_google">Sign in with Google</string>
+
 
 
 </resources>
