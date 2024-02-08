@@ -12,8 +12,4 @@
         android:id="@+id/navigation_map"
         android:icon="@drawable/bottom_nav_map"
         android:title="@string/map" />
-    <item
-        android:id="@+id/navigation_profile"
-        android:icon="@drawable/bottom_nav_profile"
-        android:title="@string/profile" />
 </menu>
