@@ -1,4 +1,4 @@
-package com.example.closebysocialize
+package com.example.closebysocialize.dataClass
 
 data class Event(
     val id: String = "",

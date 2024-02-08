@@ -1,4 +1,4 @@
-package com.example.closebysocialize
+package com.example.closebysocialize.events
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,8 +7,12 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.closebysocialize.R
+import com.example.closebysocialize.dataClass.Event
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 
 class EventsAdapter(private var eventsList: List<Event>) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
@@ -57,6 +61,7 @@ class EventsAdapter(private var eventsList: List<Event>) : RecyclerView.Adapter<
         holder.chatImageView.setOnClickListener {
             chatImageViewClickListener?.invoke(event.id)
         }
+
         holder.attendButtonTextView.setOnClickListener {
             val attendText = holder.itemView.context.getString(R.string.event_attend)
             if (holder.attendButtonTextView.text.toString().equals(attendText, ignoreCase = true)) {
@@ -65,6 +70,7 @@ class EventsAdapter(private var eventsList: List<Event>) : RecyclerView.Adapter<
                 holder.attendButtonTextView.text = attendText
             }
         }
+
 
 
         val currentUserId = getCurrentUserId()

@@ -34,6 +34,7 @@
     <string name="event_attend">Attend</string>
     <string name="event_withdraw">Withdraw</string>
     <string name="event_attend_spots">2/4 spots</string>
+    <string name="signed_up">You signed up to the event!</string>
 
     // chat
     <string name="author_comment">Detta är en kommentar</string>
@@ -49,6 +50,9 @@
     <string name="login_buttonText_email">Sign in with Email</string>
     <string name="login_buttonText_google">Sign in with Google</string>
 
+    <string name="option_1">Option 1</string>
+    <string name="option_2">Option 2</string>
+    <string name="option_3">Option 3</string>
 
 
 </resources>

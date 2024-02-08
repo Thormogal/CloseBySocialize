@@ -7,8 +7,12 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import com.example.closebysocialize.chat.MessageFragment
+import com.example.closebysocialize.events.EventsFragment
+import com.example.closebysocialize.map.MapFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.example.closebysocialize.util.FragmentUtils
+import com.example.closebysocialize.utils.FragmentUtils
 
 class ContainerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +35,14 @@ class ContainerActivity : AppCompatActivity() {
                 true
             } ?: false
         }
+        val menuItemId = R.id.navigation_message
+        val badge = navView.getOrCreateBadge(menuItemId)
+        badge.isVisible = true
+        badge.number = 5 //TODO for test, add dynamic later
+        /* badge.backgroundColor = ContextCompat.getColor(this, R.color.primary_background)
+        badge.badgeTextColor = ContextCompat.getColor(this, R.color.primary_text)
+        TODO change to the colors we want
+         */
         navView.selectedItemId = R.id.navigation_events
     }
 
