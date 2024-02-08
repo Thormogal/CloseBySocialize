@@ -1,4 +1,4 @@
-package com.example.closebysocialize
+package com.example.closebysocialize.events
 
 import android.os.Bundle
 import android.util.Log
@@ -10,9 +10,14 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.closebysocialize.util.FragmentUtils
+import com.example.closebysocialize.R
+import com.example.closebysocialize.chat.ChatFragment
+import com.example.closebysocialize.dataClass.Event
+import com.example.closebysocialize.utils.FragmentUtils
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+
 
 class EventsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
@@ -20,7 +25,6 @@ class EventsFragment : Fragment() {
     private lateinit var savedTextView: TextView
     private lateinit var allTextView: TextView
     private lateinit var attendedTextView: TextView
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -32,6 +36,7 @@ class EventsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_events, container, false)
+
         savedTextView = view.findViewById(R.id.savedTextView)
         allTextView = view.findViewById(R.id.allTextView)
         attendedTextView = view.findViewById(R.id.attendedTextView)
@@ -53,6 +58,21 @@ class EventsFragment : Fragment() {
             activity?.let {
                 if (it is AppCompatActivity) {
                     FragmentUtils.switchFragment(it, containerId, ChatFragment::class.java, args)
+                }
+            }
+        }
+        val floatingActionButton: FloatingActionButton = view.findViewById(R.id.floatingActionButton)
+        floatingActionButton.setOnClickListener {
+            floatingActionButton.animate().scaleX(0.7f).scaleY(0.7f).setDuration(200).withEndAction {
+                floatingActionButton.animate().scaleX(1f).scaleY(1f).setDuration(200).withEndAction {
+/*  TODO
+                    FragmentUtils.switchFragment(
+                        activity = activity as AppCompatActivity,
+                        containerId = R.id.fragment_container,
+                        fragmentClass = AddEventFragment::class.java
+                    )
+                    */
+
                 }
             }
         }
