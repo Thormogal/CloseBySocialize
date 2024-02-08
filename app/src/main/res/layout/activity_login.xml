@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary_background">
+
+    <Button
+        android:id="@+id/button_signInEmail"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="5dp"
+        android:backgroundTint="@color/primary_background"
+        android:fontFamily="@font/poppins_medium"
+        android:includeFontPadding="false"
+        android:text="@string/login_buttonText_email"
+        android:textColor="@color/primary_text"
+        app:cornerRadius="7dp"
+        app:icon="@drawable/email_icon"
+        app:iconGravity="textStart"
+        app:iconPadding="10dp"
+        app:iconTint="@color/primary_text"
+        app:layout_constraintBottom_toTopOf="@id/button_signInGoogle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_logIn"
+        app:strokeColor="@color/primary_text"
+        app:strokeWidth="0.1dp" />
+
+    <Button
+        android:id="@+id/button_signInGoogle"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="100dp"
+        android:backgroundTint="@color/primary_background"
+        android:fontFamily="@font/poppins_medium"
+        android:includeFontPadding="false"
+        android:text="@string/login_buttonText_google"
+        android:textColor="@color/primary_text"
+        app:cornerRadius="7dp"
+        app:icon="@drawable/googleg_standard_color_18"
+        app:iconGravity="textStart"
+        app:iconPadding="10dp"
+        app:iconTint="@color/primary_background"
+        app:iconTintMode="multiply"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_signInEmail"
+        app:strokeColor="@color/primary_text"
+        app:strokeWidth="0.1dp" />
+
+    <TextView
+        android:id="@+id/textView_logIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="100dp"
+        android:fontFamily="@font/poppins_medium"
+        android:text="@string/log_in"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
