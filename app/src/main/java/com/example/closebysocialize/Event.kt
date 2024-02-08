@@ -16,7 +16,4 @@ data class Event(
     val profileImageUrl: String = "",
     val authorId: String = "",
     val attendedPeopleProfilePictureUrls: List<String> = listOf()
-
-
-
 )
