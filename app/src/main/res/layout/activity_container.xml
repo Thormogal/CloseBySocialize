@@ -18,7 +18,7 @@
                     android:id="@+id/topAppBar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:background="@color/primary_green"
+                    android:background="@color/primary_blue"
                     app:layout_constraintTop_toTopOf="parent"
                     app:theme="@style/ToolbarTheme"
                     app:title="@string/events" />
@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="@color/primary_green"
+            android:background="@color/primary_blue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
