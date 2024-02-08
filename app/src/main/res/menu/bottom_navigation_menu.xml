@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/navigation_events"
-        android:icon="@drawable/bottom_nav_events"
-        android:title="@string/events" />
-    <item
         android:id="@+id/navigation_message"
         android:icon="@drawable/bottom_nav_message"
         android:title="@string/message" />
     <item
+        android:id="@+id/navigation_events"
+        android:icon="@drawable/bottom_nav_events"
+        android:title="@string/events" />
+    <item
         android:id="@+id/navigation_map"
         android:icon="@drawable/bottom_nav_map"
         android:title="@string/map" />
+
 </menu>
