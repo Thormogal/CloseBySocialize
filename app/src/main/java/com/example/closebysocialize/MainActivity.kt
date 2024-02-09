@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         navButton = findViewById(R.id.navEventsButton)
         navButton.setOnClickListener {
-            val intent = Intent(this, ContainerActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
 

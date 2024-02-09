@@ -7,8 +7,12 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import com.example.closebysocialize.chat.MessageFragment
+import com.example.closebysocialize.events.EventsFragment
+import com.example.closebysocialize.map.MapFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.example.closebysocialize.util.FragmentUtils
+import com.example.closebysocialize.utils.FragmentUtils
 
 class ContainerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,8 +26,8 @@ class ContainerActivity : AppCompatActivity() {
         navView.setOnNavigationItemSelectedListener { item ->
             val fragmentClass = when (item.itemId) {
                 R.id.navigation_events -> EventsFragment::class.java
-                R.id.navigation_message -> MessageFragment::class.java
                 R.id.navigation_map -> MapFragment::class.java
+                R.id.navigation_message -> MessageFragment::class.java
                 else -> null
             }
             fragmentClass?.let {
@@ -31,6 +35,14 @@ class ContainerActivity : AppCompatActivity() {
                 true
             } ?: false
         }
+        val menuItemId = R.id.navigation_message
+        val badge = navView.getOrCreateBadge(menuItemId)
+        badge.isVisible = true
+        badge.number = 5 //TODO for test, add dynamic later
+        /* badge.backgroundColor = ContextCompat.getColor(this, R.color.primary_background)
+        badge.badgeTextColor = ContextCompat.getColor(this, R.color.primary_text)
+        TODO change to the colors we want
+         */
         navView.selectedItemId = R.id.navigation_events
     }
 
@@ -54,16 +66,23 @@ class ContainerActivity : AppCompatActivity() {
         popup.menuInflater.inflate(R.menu.profile_menu, popup.menu)
         popup.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
+                R.id.menu_my_events -> {
+                    val args = Bundle().apply {
+                        putBoolean("showOnlyMyEvents", true)
+                    }
+                    FragmentUtils.switchFragment(this, R.id.fragment_container, EventsFragment::class.java, args)
+                    true
+                }
                 R.id.menu_profile -> {
                     FragmentUtils.switchFragment(this, R.id.fragment_container, ProfileFragment::class.java)
                     true
                 }
                 R.id.menu_edit_profile -> {
-                  //  FragmentUtils.switchFragment(this, R.id.fragment_container, EditProfileFragment::class.java)
+                    FragmentUtils.switchFragment(this, R.id.fragment_container, EditProfileFragment::class.java)
                     true
                 }
                 R.id.menu_logout -> {
-                    // Handle "Log Out" action
+                    // Handle "Log Out"
                     true
                 }
                 else -> false

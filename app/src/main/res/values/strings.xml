@@ -17,11 +17,13 @@
     // profile menu
     <string name="edit_profile">Edit profile</string>
     <string name="log_out">Log out</string>
+    <string name="my_events">My events</string>
+
 
     // events
     <string name="saved">Saved</string>
     <string name="all">All</string>
-    <string name="attended">Attended</string>
+    <string name="attending">Attending</string>
     <string name="city">Helsingborg</string>
     <string name="event_type">Coffee</string>
     <string name="event_name">Vallmanscafé</string>
@@ -30,13 +32,23 @@
     <string name="event_time">2 PM</string>
     <string name="event_date">2024-03-22</string>
     <string name="event_name_age">Fredrik,21</string>
-    <string name="event_description">Söker någon att ta en kaffe
-    med i Helsingborg city!</string>
+    <string name="event_description">Lorem ipsum dolor sit amet consectetur. Elit eget pulvinar aenean ac. Risus imperdiet arcu tortor facilisi cras vitae feugiat cursus enim pellentesque.</string>
     <string name="event_attend">Attend</string>
+    <string name="event_withdraw">Withdraw</string>
     <string name="event_attend_spots">2/4 spots</string>
+    <string name="signed_up">You signed up to the event!</string>
+    <string name="spots">spots</string>
+
 
     // chat
-    <string name="author_comment">Detta är en kommentar</string>
+    <string name="author_comment">This is a comment</string>
+    <string name="write_a_comment">Write a comment...</string>
+    <string name="post">Post</string>
+
+    <string name="option_1">Option 1</string>
+    <string name="option_2">Option 2</string>
+    <string name="option_3">Option 3</string>
+
 
     // login screen
     <string name="log_in">Log in</string>
@@ -44,7 +56,9 @@
     <string name="password">Password</string>
     <string name="login_buttonText_email">Sign in with Email</string>
     <string name="login_buttonText_google">Sign in with Google</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
+    // Google Client ID
+    <string name="default_web_client_id">413888895821-11vgur7plqpme9pjk09hce41r6k28jm3.apps.googleusercontent.com</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 

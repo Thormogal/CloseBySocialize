@@ -1,4 +1,4 @@
-package com.example.closebysocialize
+package com.example.closebysocialize.chat
 
 data class Comment(
     val id: String,
