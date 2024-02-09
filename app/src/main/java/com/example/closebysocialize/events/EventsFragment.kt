@@ -13,10 +13,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.R
 import com.example.closebysocialize.chat.ChatFragment
 import com.example.closebysocialize.dataClass.Event
+import com.example.closebysocialize.utils.FirestoreUtils
 import com.example.closebysocialize.utils.FragmentUtils
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.QuerySnapshot
 
 
 class EventsFragment : Fragment() {
@@ -63,9 +68,10 @@ class EventsFragment : Fragment() {
         }
         val floatingActionButton: FloatingActionButton = view.findViewById(R.id.floatingActionButton)
         floatingActionButton.setOnClickListener {
+            // animation on click, can remove if you want
             floatingActionButton.animate().scaleX(0.7f).scaleY(0.7f).setDuration(200).withEndAction {
                 floatingActionButton.animate().scaleX(1f).scaleY(1f).setDuration(200).withEndAction {
-/*  TODO
+                    /*  TODO switch ADddFragment
                     FragmentUtils.switchFragment(
                         activity = activity as AppCompatActivity,
                         containerId = R.id.fragment_container,
@@ -79,7 +85,6 @@ class EventsFragment : Fragment() {
 
         return view
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -99,41 +104,44 @@ class EventsFragment : Fragment() {
                 }
             }
         }
+        val showOnlyMyEvents = arguments?.getBoolean("showOnlyMyEvents", false) ?: false
+        if (showOnlyMyEvents) {
+            setAllFiltersToDefaultSize()
+        } else {
+            initializeDefaultSelection()
+        }
+        setFilterTextViewsListeners()
         fetchDataFromFirestore()
+        fetchUserSavedEvents()
     }
 
-    private fun fetchDataFromFirestore() {
-        val db = FirebaseFirestore.getInstance()
-        val eventsList = mutableListOf<Event>()
-        val usersRef = db.collection("users")
-        usersRef.get().addOnSuccessListener { usersSnapshot ->
-            if (usersSnapshot.documents.isEmpty()) {
-                updateRecyclerView(eventsList)
-            }
-            for (userDocument in usersSnapshot) {
-                userDocument.reference.collection("Event")
-                    .get()
-                    .addOnSuccessListener { eventsSnapshot ->
-                        for (eventDocument in eventsSnapshot) {
-                            val event = eventDocument.toObject(Event::class.java)
-                            eventsList.add(event)
-                        }
-                        updateRecyclerView(eventsList)
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.d("EventsFragment", "Error getting events for user ${userDocument.id}: ", exception)
-                    }
-            }
-        }.addOnFailureListener { exception ->
-            Log.d("EventsFragment", "Error getting users: ", exception)
+    private fun setAllFiltersToDefaultSize() {
+        val defaultTextSize = 14f
+        savedTextView.textSize = defaultTextSize
+        allTextView.textSize = defaultTextSize
+        attendedTextView.textSize = defaultTextSize
+    }
+
+    private fun fetchDataFromFirestore(showOnlyMyEvents: Boolean = this.arguments?.getBoolean("showOnlyMyEvents", false) ?: false) {
+        if (showOnlyMyEvents) {
+            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+            FirestoreUtils.fetchUserEvents(
+                userId = currentUserId,
+                onSuccess = { eventsList -> updateRecyclerView(eventsList) },
+                onFailure = { exception -> Log.d("EventsFragment", "Error fetching user's events: ", exception) }
+            )
+        } else {
+            FirestoreUtils.fetchEventsForAllUsers(
+                onSuccess = { eventsList -> updateRecyclerView(eventsList) },
+                onFailure = { exception -> Log.d("EventsFragment", "Error fetching events: ", exception) }
+            )
         }
     }
+
 
     private fun updateRecyclerView(eventsList: List<Event>) {
         eventsAdapter.updateData(eventsList)
     }
-
-
 
 
     private fun initializeDefaultSelection() {
@@ -168,11 +176,24 @@ class EventsFragment : Fragment() {
         attendedTextView.textSize = size
     }
     private fun filterData(filterType: String) {
-        /*    TODO (fetch from firestore or filter existing cotent
-        filter for savedTextView
-        filter for allTextView
-        filter for attendedTextView
-        */
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        when (filterType) {
+            "all" -> FirestoreUtils.fetchEventsForAllUsers(::updateRecyclerView, ::handleError)
+            "saved" -> FirestoreUtils.fetchSavedEventsByUser(userId, ::updateRecyclerView, ::handleError)
+            "attending" -> FirestoreUtils.fetchAttendingEventsByUser(userId, ::updateRecyclerView, ::handleError)
+        }
+    }
+
+    private fun fetchUserSavedEvents() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirestoreUtils.fetchSavedEventsByUser(userId,
+            onSuccess = { events -> updateRecyclerView(events) },
+            onFailure = { exception -> Log.w("EventsFragment", "Error fetching saved events", exception) }
+        )
+    }
+    private fun handleError(exception: Exception) {
+        Log.e("EventsFragment", "Error fetching data from Firestore", exception)
     }
 
 }
+

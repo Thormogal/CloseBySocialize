@@ -218,10 +218,9 @@
             android:id="@+id/editImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
             android:layout_marginBottom="18dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/chatImageView"
+            app:layout_constraintEnd_toStartOf="@+id/savedImageView"
             app:srcCompat="@drawable/icon_edit" />
 
         <ImageView
@@ -286,6 +285,16 @@
             app:layout_constraintHorizontal_bias="0.501"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/descriptionTextView" />
+
+        <ImageView
+            android:id="@+id/savedImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:layout_marginBottom="17dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/chatImageView"
+            app:srcCompat="@drawable/icon_heart" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
