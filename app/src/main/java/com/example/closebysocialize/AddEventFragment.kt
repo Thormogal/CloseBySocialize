@@ -48,6 +48,7 @@ class AddEventFragment : Fragment() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
 
+
             val editTextEventDate = view.findViewById<EditText>(R.id.edit_event_date)
             editTextEventDate.setOnClickListener {
                 val calendar = Calendar.getInstance()
