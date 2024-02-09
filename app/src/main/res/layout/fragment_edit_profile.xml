@@ -65,10 +65,11 @@
         android:id="@+id/airPlaneImage"
         android:layout_width="30dp"
         android:layout_height="30dp"
+        android:layout_marginStart="40dp"
         android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toTopOf="@+id/cinemaImage"
-        app:srcCompat="@drawable/interests_airplane_takeoff"
-        tools:layout_editor_absoluteX="301dp" />
+        app:layout_constraintStart_toEndOf="@+id/bookImage"
+        app:srcCompat="@drawable/interests_airplane_takeoff" />
 
     <ImageView
         android:id="@+id/cookingImage"
@@ -169,21 +170,28 @@
         android:id="@+id/editProfileBackButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="14dp"
         android:backgroundTint="@color/primary_blue"
-        app:srcCompat="@drawable/go_back_button"
-        tools:layout_editor_absoluteX="30dp"
-        tools:layout_editor_absoluteY="28dp" />
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/go_back_button" />
 
     <EditText
         android:id="@+id/editName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:ems="10"
         android:inputType="text"
         android:text="Name"
         android:textAlignment="center"
-        tools:layout_editor_absoluteX="105dp"
-        tools:layout_editor_absoluteY="32dp" />
+        app:layout_constraintEnd_toEndOf="@+id/toolbar"
+        app:layout_constraintHorizontal_bias="0.452"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/editProfileAboutText"
@@ -202,13 +210,16 @@
         android:layout_height="34dp"
         android:ems="10"
         android:inputType="number"
-        tools:layout_editor_absoluteX="180dp"
-        tools:layout_editor_absoluteY="204dp" />
+        app:layout_constraintBottom_toTopOf="@+id/editProfileInterestText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editImage" />
 
     <EditText
         android:id="@+id/editTextTextMultiLine"
         android:layout_width="222dp"
         android:layout_height="131dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="148dp"
         android:ems="10"
         android:gravity="start|top"
@@ -216,7 +227,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editProfileAboutText" />
 
     <ImageView
         android:id="@+id/bookImage"
