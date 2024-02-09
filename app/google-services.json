@@ -12,7 +12,20 @@
           "package_name": "com.example.closebysocialize"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "413888895821-26ejmcmdacpvdivk4f3fjj5up219nke8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.closebysocialize",
+            "certificate_hash": "8fe935e4006f76717cc3ce76d710e1d694d3e772"
+          }
+        },
+        {
+          "client_id": "413888895821-11vgur7plqpme9pjk09hce41r6k28jm3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBNzVjNbkJPwFWl1ERm4XhprcwFdzWKzNU"
@@ -20,7 +33,41 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "413888895821-11vgur7plqpme9pjk09hce41r6k28jm3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413888895821:android:dd63bfdab7a9c24a493504",
+        "android_client_info": {
+          "package_name": "com.example.golfcherrys"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "413888895821-11vgur7plqpme9pjk09hce41r6k28jm3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNzVjNbkJPwFWl1ERm4XhprcwFdzWKzNU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "413888895821-11vgur7plqpme9pjk09hce41r6k28jm3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
