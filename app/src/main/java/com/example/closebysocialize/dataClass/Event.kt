@@ -15,5 +15,6 @@ data class Event(
     val spots: String = "",
     val profileImageUrl: String = "",
     val authorId: String = "",
-    val attendedPeopleProfilePictureUrls: List<String> = listOf()
+    val attendedPeopleProfilePictureUrls: List<String> = listOf(),
+    var isSaved: Boolean = false
 )

@@ -17,6 +17,8 @@
     // profile menu
     <string name="edit_profile">Edit profile</string>
     <string name="log_out">Log out</string>
+    <string name="my_events">My events</string>
+
 
     // events
     <string name="saved">Saved</string>
@@ -35,9 +37,11 @@
     <string name="event_withdraw">Withdraw</string>
     <string name="event_attend_spots">2/4 spots</string>
     <string name="signed_up">You signed up to the event!</string>
+    <string name="spots">spots</string>
+
 
     // chat
-    <string name="author_comment">Detta är en kommentar</string>
+    <string name="author_comment">This is a comment</string>
     <string name="write_a_comment">Write a comment...</string>
     <string name="post">Post</string>
 

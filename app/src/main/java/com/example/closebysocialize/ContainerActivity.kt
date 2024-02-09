@@ -66,6 +66,13 @@ class ContainerActivity : AppCompatActivity() {
         popup.menuInflater.inflate(R.menu.profile_menu, popup.menu)
         popup.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
+                R.id.menu_my_events -> {
+                    val args = Bundle().apply {
+                        putBoolean("showOnlyMyEvents", true)
+                    }
+                    FragmentUtils.switchFragment(this, R.id.fragment_container, EventsFragment::class.java, args)
+                    true
+                }
                 R.id.menu_profile -> {
                     FragmentUtils.switchFragment(this, R.id.fragment_container, ProfileFragment::class.java)
                     true

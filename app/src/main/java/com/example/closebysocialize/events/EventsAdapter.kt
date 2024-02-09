@@ -1,5 +1,6 @@
 package com.example.closebysocialize.events
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,9 +15,12 @@ import com.example.closebysocialize.R
 import com.example.closebysocialize.dataClass.Event
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 
 class EventsAdapter(private var eventsList: List<Event>) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
     var chatImageViewClickListener: ((String) -> Unit)? = null
+    private var savedEventsIds = mutableSetOf<String>()
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val authorProfilePictureImageView: ImageView = view.findViewById(R.id.authorProfilePictureImageView)
@@ -34,7 +38,7 @@ class EventsAdapter(private var eventsList: List<Event>) : RecyclerView.Adapter<
         val chatImageView: ImageView = view.findViewById(R.id.chatImageView)
         val editImageView: ImageView = view.findViewById(R.id.editImageView)
         val deleteImageView: ImageView = view.findViewById(R.id.deleteImageView)
-
+        val savedImageView: ImageView = view.findViewById(R.id.savedImageView)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -44,6 +48,20 @@ class EventsAdapter(private var eventsList: List<Event>) : RecyclerView.Adapter<
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val event = eventsList[position]
+        val isSaved = savedEventsIds.contains(event.id)
+        holder.savedImageView.setImageResource(if (isSaved) R.drawable.icon_heart_filled else R.drawable.icon_heart)
+        holder.savedImageView.setOnClickListener {
+            val currentlySaved = savedEventsIds.contains(event.id)
+            if (currentlySaved) {
+                savedEventsIds.remove(event.id)
+                holder.savedImageView.setImageResource(R.drawable.icon_heart)
+            } else {
+                savedEventsIds.add(event.id)
+                holder.savedImageView.setImageResource(R.drawable.icon_heart_filled)
+                // TODO TOO BIG
+            }
+            toggleSavedEvent(event.id, currentlySaved)
+        }
         Glide.with(holder.itemView.context)
             .load(event.profileImageUrl)
             .circleCrop()
@@ -58,6 +76,7 @@ class EventsAdapter(private var eventsList: List<Event>) : RecyclerView.Adapter<
         holder.usernameTextView.text = event.author
         holder.descriptionTextView.text = event.description
         holder.openSpotsTextView.text = event.spots
+        holder.openSpotsTextView.text = "${event.spots} ${holder.itemView.context.getString(R.string.spots)}"
         holder.chatImageView.setOnClickListener {
             chatImageViewClickListener?.invoke(event.id)
         }
@@ -71,8 +90,6 @@ class EventsAdapter(private var eventsList: List<Event>) : RecyclerView.Adapter<
             }
         }
 
-
-
         val currentUserId = getCurrentUserId()
         if (event.authorId == currentUserId && currentUserId != null) {
             holder.editImageView.visibility = View.VISIBLE
@@ -81,8 +98,6 @@ class EventsAdapter(private var eventsList: List<Event>) : RecyclerView.Adapter<
             holder.editImageView.visibility = View.GONE
             holder.deleteImageView.visibility = View.GONE
         }
-
-
 
         val attendedPeopleLinearLayout = holder.itemView.findViewById<LinearLayout>(R.id.attendedPeopleLinearLayout)
         attendedPeopleLinearLayout.removeAllViews()
@@ -120,6 +135,27 @@ class EventsAdapter(private var eventsList: List<Event>) : RecyclerView.Adapter<
     fun View.dpToPx(dp: Int): Int {
         return (dp * context.resources.displayMetrics.density).toInt()
     }
+
+    private fun toggleSavedEvent(eventId: String, isSaved: Boolean) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection("users").document(userId)
+
+        if (isSaved) {
+            userRef.update("savedEvents", FieldValue.arrayRemove(eventId))
+                .addOnSuccessListener { Log.d("EventsAdapter", "Event removed from saved events") }
+                .addOnFailureListener { e -> Log.e("EventsAdapter", "Error removing event from saved events", e) }
+        } else {
+            userRef.update("savedEvents", FieldValue.arrayUnion(eventId))
+                .addOnSuccessListener { Log.d("EventsAdapter", "Event added to saved events") }
+                .addOnFailureListener { e -> Log.e("EventsAdapter", "Error adding event to saved events", e) }
+        }
+    }
+
+
+
+
+
 }
 
 
