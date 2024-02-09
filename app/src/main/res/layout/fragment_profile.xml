@@ -192,26 +192,34 @@
         tools:layout_editor_absoluteY="628dp" />
 
     <Switch
-        android:id="@+id/switch1"
+        android:id="@+id/darkModeSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="292dp"
-        tools:layout_editor_absoluteY="628dp" />
+        android:layout_marginBottom="76dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toEndOf="@+id/textView8" />
 
     <ImageView
-        android:id="@+id/imageView9"
+        android:id="@+id/reportBugsImageButton"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:src="@drawable/arrow_right"
-        tools:layout_editor_absoluteX="308dp"
-        tools:layout_editor_absoluteY="547dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.433"
+        app:layout_constraintStart_toEndOf="@+id/textView6"
+        tools:layout_editor_absoluteY="549dp" />
 
     <ImageView
-        android:id="@+id/imageView10"
+        android:id="@+id/languageImageButton"
         android:layout_width="30dp"
         android:layout_height="30dp"
+        android:layout_marginBottom="12dp"
         android:src="@drawable/arrow_right"
-        tools:layout_editor_absoluteX="308dp"
-        tools:layout_editor_absoluteY="585dp" />
+        app:layout_constraintBottom_toTopOf="@+id/darkModeSwitch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.469"
+        app:layout_constraintStart_toEndOf="@+id/textView7" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
