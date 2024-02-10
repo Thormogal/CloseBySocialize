@@ -4,15 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/primary_blue"
-    android:padding="0dp">
+    android:backgroundTint="@color/primary_blue">
 
     <ImageView
         android:id="@+id/backgroundImageView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="@+id/squareContainer"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -22,25 +21,23 @@
     <View
         android:id="@+id/faderView"
         android:layout_width="0sp"
-        android:layout_height="60dp"
+        android:layout_height="100dp"
         android:background="@drawable/gradient_overlay"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="0dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
         android:paddingTop="10dp"
         app:cardBackgroundColor="@color/primary_text_background_transparent_85"
         app:cardCornerRadius="5dp"
         app:cardElevation="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/squareContainer"
-        app:layout_constraintStart_toStartOf="@+id/squareContainer"
+        app:layout_constraintStart_toStartOf="@+id/materialSquareContainer"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
@@ -51,9 +48,9 @@
 
             <ImageView
                 android:id="@+id/authorProfilePictureImageView"
-                android:layout_marginTop="4dp"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:layout_marginTop="4dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/profile_top_bar_avatar" />
 
@@ -68,8 +65,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_font_family"
-                    android:paddingEnd="8dp"
                     android:paddingStart="4dp"
+                    android:paddingEnd="8dp"
                     android:text="@string/city"
                     android:textColor="@color/primary_text"
                     android:textSize="20sp" />
@@ -78,226 +75,230 @@
                     android:id="@+id/eventTypeTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_font_family"
                     android:layout_marginTop="-9dp"
-                    android:paddingEnd="8dp"
+                    android:fontFamily="@font/poppins_font_family"
                     android:paddingStart="5dp"
+                    android:paddingEnd="8dp"
                     android:text="@string/event_type"
                     android:textColor="@color/primary_text" />
             </LinearLayout>
         </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 
-    </androidx.cardview.widget.CardView>
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/squareContainer"
-        android:layout_width="360dp"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/materialSquareContainer"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
-        android:background="@color/primary_text_background_transparent_85"
+        android:layout_marginBottom="20dp"
+        app:cardBackgroundColor="@color/primary_text_background_transparent_85"
         app:cardCornerRadius="5dp"
-        app:layout_constraintDimensionRatio="1:1"
+        app:cardElevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/cardView">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
 
-        <LinearLayout
-            android:id="@+id/attendedPeopleLinearLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="120dp"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/attendElevatedButton">
+            <LinearLayout
+                android:id="@+id/attendedPeopleLinearLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="120dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/attendElevatedButton">
+
+                <ImageView
+                    android:id="@+id/attendedPeopleImageView"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginBottom="4dp"
+                    android:elevation="8dp"
+                    app:srcCompat="@drawable/profile_top_bar_avatar" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/eventNameTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/poppins_font_family"
+                android:text="@string/event_name"
+                android:textColor="@color/primary_text"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/locationTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="-4dp"
+                android:fontFamily="@font/poppins_font_family"
+                android:text="@string/event_location"
+                android:textColor="@color/primary_text"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/eventNameTextView" />
+
+            <TextView
+                android:id="@+id/dayTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/poppins_font_family"
+                android:text="@string/event_day"
+                android:textColor="@color/primary_text"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="@+id/timeTextView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/timeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-6dp"
+                android:fontFamily="@font/poppins_font_family"
+                android:text="@string/event_time"
+                android:textColor="@color/primary_text"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/dateTextView"
+                app:layout_constraintTop_toBottomOf="@+id/dayTextView" />
+
+            <TextView
+                android:id="@+id/dateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-4dp"
+                android:layout_marginEnd="20dp"
+                android:fontFamily="@font/poppins_font_family"
+                android:text="@string/event_date"
+                android:textColor="@color/primary_text"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/timeTextView" />
+
+            <TextView
+                android:id="@+id/authorUserNameTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppins_font_family"
+                android:text="@string/event_name_age"
+                android:textColor="@color/primary_text"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="@+id/descriptionTextView"
+                app:layout_constraintTop_toBottomOf="@+id/dateTextView" />
 
             <ImageView
-                android:id="@+id/attendedPeopleImageView"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="0dp"
-                android:layout_marginBottom="4dp"
-                android:elevation="8dp"
-                app:srcCompat="@drawable/profile_top_bar_avatar" />
-        </LinearLayout>
+                android:id="@+id/deleteImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/editImageView"
+                app:srcCompat="@drawable/icon_bin" />
 
-        <TextView
-            android:id="@+id/eventNameTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:fontFamily="@font/poppins_font_family"
-            android:text="@string/event_name"
-            android:textColor="@color/primary_text"
-            android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/editImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/savedImageView"
+                app:srcCompat="@drawable/icon_edit" />
 
-        <TextView
-            android:id="@+id/locationTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="-4dp"
-            android:fontFamily="@font/poppins_font_family"
-            android:text="@string/event_location"
-            android:textColor="@color/primary_text"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/eventNameTextView" />
+            <ImageView
+                android:id="@+id/chatImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
 
-        <TextView
-            android:id="@+id/dayTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:fontFamily="@font/poppins_font_family"
-            android:text="@string/event_day"
-            android:textColor="@color/primary_text"
-            android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="@+id/timeTextView"
-            app:layout_constraintTop_toTopOf="parent" />
+                android:layout_marginBottom="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/icon_message" />
 
-        <TextView
-            android:id="@+id/timeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-6dp"
-            android:fontFamily="@font/poppins_font_family"
-            android:text="@string/event_time"
-            android:textColor="@color/primary_text"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="@+id/dateTextView"
-            app:layout_constraintTop_toBottomOf="@+id/dayTextView" />
+            <TextView
+                android:id="@+id/descriptionTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/rounded_background"
+                android:elevation="12dp"
+                android:fontFamily="@font/poppins_font_family"
+                android:paddingStart="8dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/event_description"
+                android:textColor="@color/primary_text"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/authorUserNameTextView" />
 
-        <TextView
-            android:id="@+id/dateTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-4dp"
-            android:layout_marginEnd="20dp"
-            android:fontFamily="@font/poppins_font_family"
-            android:text="@string/event_date"
-            android:textColor="@color/primary_text"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/timeTextView" />
+            <TextView
+                android:id="@+id/openSpotsTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/poppins_font_family"
+                android:text="@string/event_attend_spots"
+                android:textColor="@color/primary_text"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/attendedPeopleLinearLayout" />
 
-        <TextView
-            android:id="@+id/authorUserNameTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:fontFamily="@font/poppins_font_family"
-            android:text="@string/event_name_age"
-            android:textColor="@color/primary_text"
-            android:textSize="15sp"
-            app:layout_constraintStart_toStartOf="@+id/descriptionTextView"
-            app:layout_constraintTop_toBottomOf="@+id/dateTextView" />
+            <Button
+                android:id="@+id/attendElevatedButton"
+                style="@style/Widget.Material3.Button.ElevatedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/poppins_font_family"
+                android:text="@string/event_attend"
+                android:textColor="@color/primary_text"
+                app:backgroundTint="@color/primary_blue"
+                app:backgroundTintMode="src_in"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.501"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/descriptionTextView" />
 
-        <ImageView
-            android:id="@+id/deleteImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/editImageView"
-            app:srcCompat="@drawable/icon_bin" />
-
-        <ImageView
-            android:id="@+id/editImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="18dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/savedImageView"
-            app:srcCompat="@drawable/icon_edit" />
-
-        <ImageView
-            android:id="@+id/chatImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-
-            android:layout_marginBottom="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@drawable/icon_message" />
-
-        <TextView
-            android:id="@+id/descriptionTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:background="@drawable/rounded_background"
-            android:elevation="12dp"
-            android:fontFamily="@font/poppins_font_family"
-            android:paddingStart="8dp"
-            android:paddingTop="8dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="8dp"
-            android:text="@string/event_description"
-            android:textColor="@color/primary_text"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.503"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/authorUserNameTextView" />
-
-        <TextView
-            android:id="@+id/openSpotsTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="20dp"
-            android:fontFamily="@font/poppins_font_family"
-            android:text="@string/event_attend_spots"
-            android:textColor="@color/primary_text"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/attendedPeopleLinearLayout" />
-
-        <Button
-            android:id="@+id/attendElevatedButton"
-            style="@style/Widget.Material3.Button.ElevatedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:fontFamily="@font/poppins_font_family"
-            android:text="@string/event_attend"
-            android:textColor="@color/primary_text"
-            app:backgroundTint="@color/primary_blue"
-            app:backgroundTintMode="src_in"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.501"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/descriptionTextView" />
-
-        <ImageView
-            android:id="@+id/savedImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="3dp"
-            android:layout_marginBottom="17dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/chatImageView"
-            app:srcCompat="@drawable/icon_heart" />
+            <ImageView
+                android:id="@+id/savedImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="3dp"
+                android:layout_marginBottom="17dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/chatImageView"
+                app:srcCompat="@drawable/icon_heart" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
