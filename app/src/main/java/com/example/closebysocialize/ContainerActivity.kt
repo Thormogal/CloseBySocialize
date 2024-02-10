@@ -11,6 +11,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 import com.example.closebysocialize.chat.MessageFragment
 import com.example.closebysocialize.events.EventsFragment
+import com.example.closebysocialize.login.LoginActivity
 import com.example.closebysocialize.map.MapFragment
 import com.example.closebysocialize.profile.EditProfileFragment
 import com.example.closebysocialize.profile.ProfileFragment

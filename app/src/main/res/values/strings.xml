@@ -72,6 +72,14 @@
     <string name="login_buttonText_email">Sign in with Email</string>
     <string name="login_buttonText_google">Sign in with Google</string>
 
+    // sign up screen
+    <string name="sign_up">Sign up</string>
+    <string name="example_mail">example@gmail.com</string>
+    <string name="create_password">Create a password</string>
+    <string name="max_password_chars">must be at least 8 characters</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="repeat_password">repeat password</string>
+
     // Google Client ID
     <string name="default_web_client_id">413888895821-11vgur7plqpme9pjk09hce41r6k28jm3.apps.googleusercontent.com</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>

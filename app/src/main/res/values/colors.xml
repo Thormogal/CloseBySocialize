@@ -8,5 +8,6 @@
     <color name="primary_text_background_transparent_50">#80FFFFFF</color>
     <color name="primary_text_background_transparent_70">#B3FFFFFF</color>
     <color name="primary_text_background_transparent_85">#D9FFFFFF</color>
+    <color name="primary_text_background_shadow">#DADADA</color>
 
 </resources>
