@@ -19,6 +19,15 @@
     <string name="log_out">Log out</string>
     <string name="my_events">My events</string>
 
+    // profile page
+    <string name="interests">Interests</string>
+    <string name="about_me">About me</string>
+    <string name="report_bugs">Report bugs</string>
+    <string name="language">Language</string>
+    <string name="darkmode">Darkmode</string>
+
+    //Profile edit page
+
 
     // events
     <string name="saved">Saved</string>
