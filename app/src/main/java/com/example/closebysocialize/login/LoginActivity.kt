@@ -1,9 +1,10 @@
-package com.example.closebysocialize
+package com.example.closebysocialize.login
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
 import android.widget.Button
+import com.example.closebysocialize.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 
 
@@ -17,9 +18,16 @@ class LoginActivity : AppCompatActivity() {
 
         loginFirebaseGoogle = LoginFirebaseGoogle(this)
 
-        findViewById<Button>(R.id.button_signInGoogle).setOnClickListener {
+        findViewById<Button>(R.id.signInGoogleButton).setOnClickListener {
             loginFirebaseGoogle.startSigninIntent()
         }
+
+        findViewById<Button>(R.id.signInEmailButton).setOnClickListener {
+            val intent = Intent(this, SignupActivity::class.java)
+            startActivity(intent)
+        }
+
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
