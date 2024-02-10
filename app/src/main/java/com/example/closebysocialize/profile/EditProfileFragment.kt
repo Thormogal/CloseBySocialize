@@ -7,14 +7,15 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import com.example.closebysocialize.R
 
 
 class EditProfileFragment : Fragment() {
 
-    lateinit var editProfileBackButton : ImageButton
-    lateinit var editImage : ImageButton
+    lateinit var goBackButtonImageView: ImageView
+    lateinit var editImage : ImageView
     lateinit var profileSaveButton : Button
     lateinit var editName : EditText
     lateinit var editBirthYear: EditText
@@ -26,8 +27,8 @@ class EditProfileFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_edit_profile, container, false)
 
-        editProfileBackButton = view.findViewById(R.id.editProfileBackButton)
-        editImage = view.findViewById(R.id.editImage)
+        goBackButtonImageView = view.findViewById(R.id.goBackButtonImageView)
+        editImage = view.findViewById(R.id.editPictureImageView)
         profileSaveButton = view.findViewById(R.id.profileSaveButton)
         editName = view.findViewById(R.id.editName)
         editBirthYear = view.findViewById(R.id.editBirthYear)
@@ -38,7 +39,7 @@ class EditProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //kallar på funktionerna, clicklis
-        editProfileBackButton.setOnClickListener{
+        goBackButtonImageView.setOnClickListener{
             //tillbaka till profilsidan
         }
         editImage.setOnClickListener{

@@ -216,7 +216,7 @@
         app:srcCompat="@drawable/interests_dogwalk" />
 
     <ImageView
-        android:id="@+id/imageView7"
+        android:id="@+id/languageimageView"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginTop="57dp"
@@ -226,7 +226,7 @@
         app:srcCompat="@drawable/interests_football" />
 
     <ImageView
-        android:id="@+id/imageView8"
+        android:id="@+id/darkModeimageView"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="50dp"
@@ -242,7 +242,7 @@
         android:layout_marginStart="30dp"
         android:layout_marginBottom="3dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintStart_toEndOf="@+id/imageView8"
+        app:layout_constraintStart_toEndOf="@+id/darkModeimageView"
         app:srcCompat="@drawable/interests_movie" />
 
     <ImageView
