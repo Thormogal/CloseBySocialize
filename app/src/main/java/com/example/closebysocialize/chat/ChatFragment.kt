@@ -8,14 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
 
 class ChatFragment : Fragment() {
-    private var eventName: String? = null
+    private var eventId: String? = null
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var commentAdapter: CommentAdapter
     private lateinit var editTextComment: EditText
@@ -24,10 +27,19 @@ class ChatFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            eventName = it.getString("eventName")
+            eventId = it.getString(ARG_EVENT_ID)
         }
     }
+    companion object {
+        private const val ARG_EVENT_ID = "eventId"
 
+        fun newInstance(eventId: String) =
+            ChatFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_EVENT_ID, eventId)
+                }
+            }
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,62 +54,57 @@ class ChatFragment : Fragment() {
         }
         return view
     }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        commentAdapter = CommentAdapter(mutableListOf(), this)
+        recyclerView.adapter = commentAdapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
-    companion object {
-        @JvmStatic
-        fun newInstance(eventName: String) = ChatFragment().apply {
-            arguments = Bundle().apply {
-                putString("eventName", eventName)
-            }
+        fetchComments()
+    }
+    private fun postComment() {
+        val commentText = editTextComment.text.toString().trim()
+        if (commentText.isNotEmpty()) {
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+            val userName = FirebaseAuth.getInstance().currentUser?.displayName ?: "Anonymous"
+            val userPhotoUrl = FirebaseAuth.getInstance().currentUser?.photoUrl.toString()
+
+            val newComment = hashMapOf(
+                "userId" to userId,
+                "commentText" to commentText,
+                "displayName" to userName,
+                "profileImageUrl" to userPhotoUrl,
+            )
+            FirebaseFirestore.getInstance().collection("events").document(eventId!!)
+                .collection("comments").add(newComment)
+                .addOnSuccessListener {
+                    Log.d("ChatFragment", "Comment added successfully.")
+                    editTextComment.setText("") // Clear the input field
+                    fetchComments()
+                }
+                .addOnFailureListener { e ->
+                    Log.e("ChatFragment", "Error adding comment", e)
+                }
         }
     }
 
-    private fun postComment() {
-        val commentText = editTextComment.text.toString()
-        if (commentText.isNotEmpty()) {
-            val user = FirebaseAuth.getInstance().currentUser
-            val userId = user?.uid
-            UserDetailsFetcher.fetchUserDetails(userId) { userDetails, exception ->
-                if (exception != null) {
-                    Log.e("ChatFragment", "Error fetching user details", exception)
-                    return@fetchUserDetails
-                }
-
-                userDetails?.let {
-                    val displayName = if (it.firstName.isNotEmpty() && it.lastName.isNotEmpty()) {
-                        "${it.firstName} ${it.lastName}"
-                    } else {
-                        it.username
+    private fun fetchComments() {
+        FirebaseFirestore.getInstance()
+            .collection("events")
+            .document(eventId!!)
+            .collection("comments")
+            .get()
+            .addOnSuccessListener { documents ->
+                val commentsList = documents.mapNotNull { document ->
+                    document.toObject(Comment::class.java).apply {
+                        id = document.id
                     }
-                    val profileImageUrl = it.profileImageUrl
-
-                    val newCommentData = hashMapOf(
-                        "displayName" to displayName,
-                        "commentText" to commentText,
-                        "profileImageUrl" to profileImageUrl,
-                    )
-
-                    val db = FirebaseFirestore.getInstance()
-                    db.collection("comments").add(newCommentData).addOnSuccessListener { documentReference ->
-                        val newComment = Comment(
-                            id = documentReference.id,
-                            displayName = displayName,
-                            commentText = commentText,
-                            profileImageUrl = profileImageUrl,
-                        )
-                        activity?.runOnUiThread {
-                            val updatedComments = commentAdapter.comments.toMutableList().apply {
-                                add(newComment)
-                            }
-                            commentAdapter.updateComments(updatedComments)
-                            editTextComment.setText("")
-                        }
-                    }
-                        .addOnFailureListener { e ->
-                        }
-                }
+                }.toMutableList()
+                commentAdapter.updateComments(commentsList)
             }
-        }
+            .addOnFailureListener { exception ->
+                Log.e("ChatFragment", "Error fetching comments", exception)
+            }
     }
 
 
