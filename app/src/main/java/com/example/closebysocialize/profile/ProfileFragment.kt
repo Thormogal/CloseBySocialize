@@ -6,12 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.Switch
 import com.example.closebysocialize.R
 
 class ProfileFragment : Fragment() {
-    private lateinit var reportBugs : ImageButton
-    private lateinit var language: ImageButton
+    private lateinit var reportBugs : ImageView
+    private lateinit var language: ImageView
     private lateinit var darkModeSwitch : Switch
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,8 +26,8 @@ class ProfileFragment : Fragment() {
         ): View? {
             val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
-            reportBugs = view.findViewById(R.id.reportBugsImageButton)
-            language = view.findViewById(R.id.languageImageButton)
+            reportBugs = view.findViewById(R.id.reportBugsButtonImageView)
+            language = view.findViewById(R.id.languageButtonImageView)
             darkModeSwitch = view.findViewById(R.id.darkModeSwitch)
 
             return view
