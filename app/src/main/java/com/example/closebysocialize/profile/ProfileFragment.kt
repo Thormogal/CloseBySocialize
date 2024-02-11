@@ -14,6 +14,9 @@ class ProfileFragment : Fragment() {
     private lateinit var reportBugs : ImageView
     private lateinit var language: ImageView
     private lateinit var darkModeSwitch : Switch
+    private lateinit var profileImageView: ImageView
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +32,7 @@ class ProfileFragment : Fragment() {
             reportBugs = view.findViewById(R.id.reportBugsButtonImageView)
             language = view.findViewById(R.id.languageButtonImageView)
             darkModeSwitch = view.findViewById(R.id.darkModeSwitch)
+            profileImageView = view.findViewById(R.id.profileimageView)
 
             return view
         }
