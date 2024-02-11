@@ -5,16 +5,26 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Switch
+import android.widget.TextView
+import android.widget.Toast
 import com.example.closebysocialize.R
+import android.app.AlertDialog
+
 
 class ProfileFragment : Fragment() {
+    private lateinit var profileImageView: ImageView
+    private lateinit var nameTextView: TextView
+
     private lateinit var reportBugs : ImageView
     private lateinit var language: ImageView
     private lateinit var darkModeSwitch : Switch
-    private lateinit var profileImageView: ImageView
+    private lateinit var editTextText : EditText
+
+    val languageOptions = arrayOf("Swedish", "English")
+
 
 
 
@@ -33,6 +43,8 @@ class ProfileFragment : Fragment() {
             language = view.findViewById(R.id.languageButtonImageView)
             darkModeSwitch = view.findViewById(R.id.darkModeSwitch)
             profileImageView = view.findViewById(R.id.profileimageView)
+            nameTextView = view.findViewById(R.id.nameTextView)
+            editTextText = view.findViewById(R.id.editTextText)
 
             return view
         }
@@ -40,19 +52,41 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //kallar på funktionerna, clicklis
-        reportBugs.setOnClickListener{
+        reportBugs.setOnClickListener {
             //Ska man komma vidare till någon sida här?
         }
-        language.setOnClickListener{
+        language.setOnClickListener {
             //Picker eller spinner med länder?
+            showLanguagePicker()
+
+
         }
+
+
         darkModeSwitch.setOnClickListener {
             //darkmode ska kunna justeras
         }
 
     }
 
-        //Funktioner
+    //Funktioner
 
+    private fun showLanguagePicker() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Select Language")
+            .setItems(languageOptions) { dialog, which ->
+                val selectedLanguage = languageOptions[which]
+                // Uppdatera språk i appen baserat på valt språk
+                Toast.makeText(
+                    requireContext(),
+                    "Selected Language: $selectedLanguage",
+                    Toast.LENGTH_SHORT
+                ).show()
+                dialog.dismiss()
+            }
+
+        val dialog = builder.create()
+        dialog.show()
+    }
 }
 
