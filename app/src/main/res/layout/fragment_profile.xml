@@ -10,7 +10,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar2"
         android:layout_width="429dp"
-        android:layout_height="81dp"
+        android:layout_height="50dp"
         android:background="@drawable/button_border"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
@@ -18,23 +18,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.003" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/profileimageView"
-        android:layout_width="181dp"
-        android:layout_height="190dp"
-        android:layout_marginTop="64dp"
+        android:layout_width="129dp"
+        android:layout_height="114dp"
+        android:layout_marginTop="36dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/toolbar2"
+        app:srcCompat="@drawable/profile_top_bar_avatar"
         tools:src="@drawable/profile_top_bar_avatar" />
 
     <TextView
-        android:id="@+id/profileInterestText"
+        android:id="@+id/profileInterestTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="5dp"
         android:fontFamily="@font/poppins_medium"
         android:text="Interests"
         app:layout_constraintEnd_toEndOf="parent"
@@ -47,46 +49,54 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginBottom="55dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="92dp"
         android:src="@drawable/interests_book"
         app:layout_constraintBottom_toTopOf="@+id/editTextText"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileInterestTextView" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="92dp"
+        android:src="@drawable/interests_dogwalk"
+        app:layout_constraintBottom_toTopOf="@+id/editTextText"
+        app:layout_constraintStart_toEndOf="@+id/imageView3"
+        app:layout_constraintTop_toBottomOf="@+id/profileInterestTextView" />
 
     <ImageView
         android:id="@+id/imageView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginBottom="55dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="92dp"
         android:src="@drawable/interests_movie"
         app:layout_constraintBottom_toTopOf="@+id/editTextText"
-        app:layout_constraintStart_toEndOf="@+id/imageView6" />
+        app:layout_constraintStart_toEndOf="@+id/imageView6"
+        app:layout_constraintTop_toBottomOf="@+id/profileInterestTextView" />
 
     <ImageView
         android:id="@+id/imageView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginBottom="55dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="92dp"
         android:src="@drawable/interests_restaurant"
         app:layout_constraintBottom_toTopOf="@+id/editTextText"
-        app:layout_constraintStart_toEndOf="@+id/imageView4" />
-
-    <ImageView
-        android:id="@+id/imageView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginBottom="55dp"
-        android:src="@drawable/interests_dogwalk"
-        app:layout_constraintBottom_toTopOf="@+id/editTextText"
-        app:layout_constraintStart_toEndOf="@+id/imageView3" />
+        app:layout_constraintStart_toEndOf="@+id/imageView4"
+        app:layout_constraintTop_toBottomOf="@+id/profileInterestTextView" />
 
     <TextView
-        android:id="@+id/profileAboutText"
+        android:id="@+id/profileAboutTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="324dp"
+        android:layout_marginBottom="328dp"
         android:fontFamily="@font/poppins_medium"
         android:text="About me"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -97,7 +107,7 @@
         android:id="@+id/nameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/poppins_medium"
         android:text="Cat McWiskers"
         app:layout_constraintEnd_toEndOf="parent"
@@ -178,10 +188,10 @@
         android:id="@+id/darkModeSwitch"
         android:layout_width="103dp"
         android:layout_height="51dp"
-        android:layout_marginBottom="28dp"
+        android:layout_marginBottom="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.666"
+        app:layout_constraintHorizontal_bias="0.783"
         app:layout_constraintStart_toEndOf="@+id/textView8" />
 
     <ImageView
@@ -192,18 +202,18 @@
         android:src="@drawable/arrow_right"
         app:layout_constraintBottom_toTopOf="@+id/languageButtonImageView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.435"
+        app:layout_constraintHorizontal_bias="0.844"
         app:layout_constraintStart_toEndOf="@+id/textView6" />
 
     <ImageView
         android:id="@+id/languageButtonImageView"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="16dp"
         android:src="@drawable/arrow_right"
         app:layout_constraintBottom_toTopOf="@+id/darkModeSwitch"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintHorizontal_bias="0.854"
         app:layout_constraintStart_toEndOf="@+id/textView7" />
 
     <EditText
@@ -219,6 +229,6 @@
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileAboutText" />
+        app:layout_constraintTop_toBottomOf="@+id/profileAboutTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

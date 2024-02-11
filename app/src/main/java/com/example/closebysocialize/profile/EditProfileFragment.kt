@@ -1,6 +1,7 @@
 package com.example.closebysocialize.profile
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,8 @@ class EditProfileFragment : Fragment() {
         editName = view.findViewById(R.id.editName)
         editBirthYear = view.findViewById(R.id.editBirthYear)
         editTextTextMultiLine = view.findViewById(R.id.editTextTextMultiLine)
+        editBirthYear = view.findViewById(R.id.editBirthYear)
+
 
         return view
     }
@@ -40,7 +43,7 @@ class EditProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         //kallar på funktionerna, clicklis
         goBackButtonImageView.setOnClickListener{
-            //tillbaka till profilsidan
+            //tillbaka till fragmentet profile fragment
         }
         editImage.setOnClickListener{
             //redigera bild
@@ -49,14 +52,12 @@ class EditProfileFragment : Fragment() {
             //Redigera namn
         }
         editBirthYear.setOnClickListener {
-            // redigera födelseår
+            editBirthYear.inputType = InputType.TYPE_CLASS_NUMBER
         }
         editTextTextMultiLine.setOnClickListener {
             // redigera text om mig själv
         }
-
     }
-
         //Funktioner
 
 }
