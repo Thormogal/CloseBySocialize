@@ -15,47 +15,34 @@
         android:scaleType="centerCrop"
         android:background="@drawable/profile_image_round" />
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginStart="8dp">
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:elevation="12dp"
-            app:cardBackgroundColor="@color/primary_text_background_transparent_30"
-            app:cardCornerRadius="16dp">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="8dp">
-
-                <TextView
-                    android:id="@+id/commentsUserName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/event_name_age"
-                    android:textColor="@color/primary_text"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/commentsText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/author_comment"
-                    android:textColor="@color/primary_text" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        app:cardElevation="4dp"
+        app:cardCornerRadius="16dp"
+        app:cardBackgroundColor="#DAD9D9"
+        style="?attr/materialCardViewStyle">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"/>
+            android:orientation="vertical"
+            android:padding="8dp">
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/commentsUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/event_name_age"
+                android:textColor="@color/primary_text"
+                android:textStyle="bold" />
 
+            <TextView
+                android:id="@+id/commentsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/author_comment"
+                android:textColor="@color/primary_text" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </LinearLayout>

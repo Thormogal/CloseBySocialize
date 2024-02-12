@@ -1,8 +1,10 @@
-package com.example.closebysocialize
+package com.example.closebysocialize.login
 
 import android.app.Activity
 import android.content.Intent
 import android.widget.Toast
+import com.example.closebysocialize.ContainerActivity
+import com.example.closebysocialize.R
 import com.example.closebysocialize.utils.FirestoreUtils
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount

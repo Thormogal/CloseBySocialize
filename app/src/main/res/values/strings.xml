@@ -19,6 +19,15 @@
     <string name="log_out">Log out</string>
     <string name="my_events">My events</string>
 
+    // profile page
+    <string name="interests">Interests</string>
+    <string name="about_me">About me</string>
+    <string name="report_bugs">Report bugs</string>
+    <string name="language">Language</string>
+    <string name="darkmode">Darkmode</string>
+
+    //Profile edit page
+
 
     // events
     <string name="saved">Saved</string>
@@ -48,6 +57,12 @@
     <string name="option_1">Option 1</string>
     <string name="option_2">Option 2</string>
     <string name="option_3">Option 3</string>
+    <string name="text_filter_2">Option 3</string>
+    <string name="text_filter_3">Option 3</string>
+    <string name="text_filter_4">Option 3</string>
+    <string name="text_filter_5">Option 3</string>
+    <string name="text_filter_6">Option 3</string>
+
 
 
     // login screen
@@ -56,6 +71,14 @@
     <string name="password">Password</string>
     <string name="login_buttonText_email">Sign in with Email</string>
     <string name="login_buttonText_google">Sign in with Google</string>
+
+    // sign up screen
+    <string name="sign_up">Sign up</string>
+    <string name="example_mail">example@gmail.com</string>
+    <string name="create_password">Create a password</string>
+    <string name="max_password_chars">must be at least 8 characters</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="repeat_password">repeat password</string>
 
     // Google Client ID
     <string name="default_web_client_id">413888895821-11vgur7plqpme9pjk09hce41r6k28jm3.apps.googleusercontent.com</string>

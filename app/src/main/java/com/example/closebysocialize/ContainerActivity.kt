@@ -1,16 +1,20 @@
 package com.example.closebysocialize
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import com.example.closebysocialize.chat.MessageFragment
 import com.example.closebysocialize.events.EventsFragment
+import com.example.closebysocialize.login.LoginActivity
 import com.example.closebysocialize.map.MapFragment
+import com.example.closebysocialize.profile.EditProfileFragment
+import com.example.closebysocialize.profile.ProfileFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.example.closebysocialize.utils.FragmentUtils
 
@@ -74,6 +78,7 @@ class ContainerActivity : AppCompatActivity() {
                     true
                 }
                 R.id.menu_profile -> {
+                    Log.d("!!!", "Profile opens")
                     FragmentUtils.switchFragment(this, R.id.fragment_container, ProfileFragment::class.java)
                     true
                 }
@@ -82,7 +87,8 @@ class ContainerActivity : AppCompatActivity() {
                     true
                 }
                 R.id.menu_logout -> {
-                    // Handle "Log Out"
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
                     true
                 }
                 else -> false

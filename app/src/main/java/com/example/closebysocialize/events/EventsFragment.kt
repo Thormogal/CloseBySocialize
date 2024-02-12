@@ -1,5 +1,4 @@
 package com.example.closebysocialize.events
-
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,6 +18,9 @@ import com.example.closebysocialize.utils.FragmentUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.QuerySnapshot
+import com.example.closebysocialize.AddEventFragment
 
 
 class EventsFragment : Fragment() {
@@ -51,7 +53,6 @@ class EventsFragment : Fragment() {
 
         FirebaseApp.initializeApp(requireContext())
 
-
         eventsAdapter.chatImageViewClickListener = { event ->
             val containerId = R.id.fragment_container
             val args = Bundle().apply {
@@ -75,31 +76,26 @@ class EventsFragment : Fragment() {
                         fragmentClass = AddEventFragment::class.java
                     )
 
-
                 }
             }
         }
-
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initializeDefaultSelection()
         recyclerView = view.findViewById(R.id.eventsRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
         eventsAdapter = EventsAdapter(listOf())
         recyclerView.adapter = eventsAdapter
-        eventsAdapter.chatImageViewClickListener = { eventName ->
-            val args = Bundle().apply {
-                putString("eventName", eventName)
-            }
-            activity?.let {
-                if (it is AppCompatActivity) {
-                    val containerId = R.id.fragment_container
-                    FragmentUtils.switchFragment(it, containerId, ChatFragment::class.java, args)
-                }
-            }
+        eventsAdapter.chatImageViewClickListener = { eventId ->
+            val chatFragment = ChatFragment.newInstance(eventId)
+            activity?.supportFragmentManager?.beginTransaction()
+                ?.replace(R.id.fragment_container, chatFragment)
+                ?.addToBackStack(null)
+                ?.commit()
         }
         val showOnlyMyEvents = arguments?.getBoolean("showOnlyMyEvents", false) ?: false
         if (showOnlyMyEvents) {

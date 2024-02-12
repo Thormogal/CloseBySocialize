@@ -5,12 +5,12 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProfileFragment">
+    tools:context=".profile.ProfileFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar2"
         android:layout_width="429dp"
-        android:layout_height="81dp"
+        android:layout_height="50dp"
         android:background="@drawable/button_border"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
@@ -18,121 +18,104 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.003" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="76dp"
-        app:layout_constraintBottom_toTopOf="@+id/birthYear"
+        android:id="@+id/profileimageView"
+        android:layout_width="129dp"
+        android:layout_height="114dp"
+        android:layout_marginTop="36dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/toolbar2"
-        tools:src="@tools:sample/avatars" />
+        app:srcCompat="@drawable/profile_top_bar_avatar"
+        tools:src="@drawable/profile_top_bar_avatar" />
 
     <TextView
-        android:id="@+id/profileInterestText"
+        android:id="@+id/profileInterestTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="5dp"
         android:fontFamily="@font/poppins_medium"
         android:text="Interests"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+        app:layout_constraintTop_toBottomOf="@+id/profileimageView" />
 
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginBottom="368dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="92dp"
         android:src="@drawable/interests_book"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginBottom="364dp"
-        android:src="@drawable/interests_movie"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView6" />
-
-    <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginBottom="364dp"
-        android:src="@drawable/interests_restaurant"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView4" />
+        app:layout_constraintBottom_toTopOf="@+id/editTextText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileInterestTextView" />
 
     <ImageView
         android:id="@+id/imageView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginBottom="364dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="92dp"
         android:src="@drawable/interests_dogwalk"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView3" />
+        app:layout_constraintBottom_toTopOf="@+id/editTextText"
+        app:layout_constraintStart_toEndOf="@+id/imageView3"
+        app:layout_constraintTop_toBottomOf="@+id/profileInterestTextView" />
 
-    <TextView
-        android:id="@+id/profileAboutText"
+    <ImageView
+        android:id="@+id/imageView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="324dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="92dp"
+        android:src="@drawable/interests_movie"
+        app:layout_constraintBottom_toTopOf="@+id/editTextText"
+        app:layout_constraintStart_toEndOf="@+id/imageView6"
+        app:layout_constraintTop_toBottomOf="@+id/profileInterestTextView" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="92dp"
+        android:src="@drawable/interests_restaurant"
+        app:layout_constraintBottom_toTopOf="@+id/editTextText"
+        app:layout_constraintStart_toEndOf="@+id/imageView4"
+        app:layout_constraintTop_toBottomOf="@+id/profileInterestTextView" />
+
+    <TextView
+        android:id="@+id/profileAboutTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="328dp"
         android:fontFamily="@font/poppins_medium"
         android:text="About me"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <EditText
-        android:id="@+id/aboutMeText"
-        android:layout_width="260dp"
-        android:layout_height="103dp"
-        android:layout_marginBottom="212dp"
-        android:ems="10"
-        android:gravity="start|top"
-        android:inputType="textMultiLine"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <TextView
         android:id="@+id/nameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/poppins_medium"
         android:text="Cat McWiskers"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/birthYear"
-        android:layout_width="56dp"
-        android:layout_height="33dp"
-        android:ems="10"
-        android:inputType="number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="218dp" />
-
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/bugimageView"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginBottom="152dp"
@@ -143,7 +126,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView7"
+        android:id="@+id/languageimageView"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginBottom="116dp"
@@ -153,73 +136,79 @@
         app:layout_constraintHorizontal_bias="0.051"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageView
-        android:id="@+id/imageView8"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginBottom="80dp"
-        android:src="@drawable/profile_darkmode"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.051"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <TextView
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="1dp"
+        android:layout_marginBottom="15dp"
         android:fontFamily="@font/poppins_medium"
         android:text="Report bugs"
-        tools:layout_editor_absoluteX="78dp"
-        tools:layout_editor_absoluteY="553dp" />
+        app:layout_constraintBottom_toTopOf="@+id/textView7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.072"
+        app:layout_constraintStart_toEndOf="@+id/bugimageView" />
 
     <TextView
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="23dp"
         android:fontFamily="@font/poppins_medium"
         android:text="Language"
-        tools:layout_editor_absoluteX="77dp"
-        tools:layout_editor_absoluteY="589dp" />
-
-    <TextView
-        android:id="@+id/textView8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins_medium"
-        android:text="Darkmode"
-        tools:layout_editor_absoluteX="77dp"
-        tools:layout_editor_absoluteY="628dp" />
+        app:layout_constraintBottom_toTopOf="@+id/darkModeSwitch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.068"
+        app:layout_constraintStart_toEndOf="@+id/languageimageView" />
 
     <Switch
         android:id="@+id/darkModeSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="76dp"
+        android:layout_width="103dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="292dp"
+        android:layout_marginBottom="44dp"
+        android:checked="false"
+        android:text="Dark mode"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toEndOf="@+id/textView8" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/reportBugsImageButton"
+        android:id="@+id/reportBugsButtonImageView"
         android:layout_width="30dp"
         android:layout_height="30dp"
+        android:layout_marginBottom="8dp"
         android:src="@drawable/arrow_right"
+        app:layout_constraintBottom_toTopOf="@+id/languageButtonImageView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.433"
-        app:layout_constraintStart_toEndOf="@+id/textView6"
-        tools:layout_editor_absoluteY="549dp" />
+        app:layout_constraintHorizontal_bias="0.844"
+        app:layout_constraintStart_toEndOf="@+id/textView6" />
 
     <ImageView
-        android:id="@+id/languageImageButton"
+        android:id="@+id/languageButtonImageView"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="16dp"
         android:src="@drawable/arrow_right"
         app:layout_constraintBottom_toTopOf="@+id/darkModeSwitch"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.469"
+        app:layout_constraintHorizontal_bias="0.854"
         app:layout_constraintStart_toEndOf="@+id/textView7" />
+
+    <EditText
+        android:id="@+id/editTextText"
+        android:layout_width="385dp"
+        android:layout_height="126dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="20dp"
+        android:ems="10"
+        android:hint="ABOUT ME"
+        android:inputType="text"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileAboutTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
