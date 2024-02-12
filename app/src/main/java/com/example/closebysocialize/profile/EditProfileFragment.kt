@@ -13,6 +13,8 @@ import android.widget.ImageView
 import android.widget.NumberPicker
 import androidx.fragment.app.Fragment
 import com.example.closebysocialize.R
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 
 
 class EditProfileFragment : Fragment() {
@@ -65,6 +67,11 @@ class EditProfileFragment : Fragment() {
         }
         editTextTextMultiLine.setOnClickListener {
             // redigera text om mig själv
+        }
+
+        profileSaveButton.setOnClickListener {
+
+
         }
     }
 
