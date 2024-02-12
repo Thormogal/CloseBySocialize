@@ -18,9 +18,6 @@ import com.example.closebysocialize.utils.FragmentUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldPath
-import com.google.firebase.firestore.QuerySnapshot
-import com.example.closebysocialize.AddEventFragment
 
 
 class EventsFragment : Fragment() {
