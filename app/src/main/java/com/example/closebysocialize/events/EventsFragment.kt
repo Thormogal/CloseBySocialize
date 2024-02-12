@@ -1,29 +1,26 @@
 package com.example.closebysocialize.events
-
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.closebysocialize.AddEventFragment
 import com.example.closebysocialize.R
 import com.example.closebysocialize.chat.ChatFragment
 import com.example.closebysocialize.dataClass.Event
 import com.example.closebysocialize.utils.FirestoreUtils
 import com.example.closebysocialize.utils.FragmentUtils
-import com.google.android.gms.tasks.Tasks
-import com.google.firebase.FirebaseApp
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.QuerySnapshot
 import com.example.closebysocialize.AddEventFragment
-
 
 
 class EventsFragment : Fragment() {
@@ -72,6 +69,7 @@ class EventsFragment : Fragment() {
             // animation on click, can remove if you want
             floatingActionButton.animate().scaleX(0.7f).scaleY(0.7f).setDuration(200).withEndAction {
                 floatingActionButton.animate().scaleX(1f).scaleY(1f).setDuration(200).withEndAction {
+
                     FragmentUtils.switchFragment(
                         activity = activity as AppCompatActivity,
                         containerId = R.id.fragment_container,
