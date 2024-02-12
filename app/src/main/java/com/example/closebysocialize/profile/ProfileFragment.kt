@@ -60,13 +60,13 @@ class ProfileFragment : Fragment() {
             showLanguagePicker()
         }
 
-            //darkmode ska kunna justeras
+            // adjust dark mode switch
             darkModeSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
-                    // Anropa funktion för att byta till dark mode
+                    // call function for switch to darkmode
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                 } else {
-                    // Anropa funktion för att byta till light mode
+                    // call function for switch to lightmode
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 }
             }
