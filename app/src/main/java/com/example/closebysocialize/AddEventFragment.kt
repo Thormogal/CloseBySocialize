@@ -44,12 +44,16 @@ class AddEventFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val gridLayout = view.findViewById<GridLayout>(R.id.gridLayout)
+        var selectedImageView: ImageView? = null
+
 
         for (i in 0 until gridLayout.childCount) {
             val child = gridLayout.getChildAt(i)
 
             if (child is ImageView) {
                 child.setOnClickListener {
+                    selectedImageView?.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
+
                     val background = it.background
                     if (background is ColorDrawable) {
                         val color = background.color
@@ -57,9 +61,12 @@ class AddEventFragment : Fragment() {
                             it.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
                         } else {
                             it.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary_blue))
+                            selectedImageView = it as ImageView
                         }
                     } else {
                         it.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary_blue))
+                        selectedImageView = it as ImageView
+
                     }
                 }
             }
