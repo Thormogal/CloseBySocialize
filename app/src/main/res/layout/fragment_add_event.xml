@@ -281,7 +281,7 @@
         android:id="@+id/imageView16"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginEnd="312dp"
+        android:layout_marginEnd="320dp"
         android:src="@drawable/bottom_nav_profile"
         app:layout_constraintBottom_toTopOf="@+id/materialButton"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -291,8 +291,10 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="28dp"
+        android:layout_marginEnd="15dp"
         android:src="@drawable/bottom_nav_profile"
         app:layout_constraintBottom_toTopOf="@+id/materialButton"
+        app:layout_constraintEnd_toStartOf="@+id/imageView16"
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.button.MaterialButton
