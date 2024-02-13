@@ -15,6 +15,7 @@ import com.example.closebysocialize.R
 import android.app.AlertDialog
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -78,7 +79,7 @@ class ProfileFragment : Fragment() {
 
             }
         }
-    }
+
 
         //Funktioner
 
