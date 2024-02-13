@@ -21,10 +21,11 @@
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="37dp"
             android:layout_columnSpan="6"
             android:layout_gravity="center_horizontal"
             android:text="Event Category"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
 
@@ -203,7 +204,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="15dp" />
+            android:layout_height="8dp" />
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
@@ -258,23 +259,11 @@
         android:id="@+id/imageView18"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginTop="36dp"
-        android:layout_marginEnd="30dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="36dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout1"
         app:srcCompat="@drawable/add_picture"
-        tools:ignore="MissingConstraints" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/event_attend_spots"
-        app:layout_constraintBottom_toTopOf="@+id/imageView16"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout1"
         tools:ignore="MissingConstraints" />
 
     <ImageView
@@ -282,6 +271,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginEnd="320dp"
+        android:layout_marginBottom="48dp"
         android:src="@drawable/bottom_nav_profile"
         app:layout_constraintBottom_toTopOf="@+id/materialButton"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -292,10 +282,25 @@
         android:layout_height="30dp"
         android:layout_marginStart="28dp"
         android:layout_marginEnd="15dp"
+        android:layout_marginBottom="48dp"
         android:src="@drawable/bottom_nav_profile"
         app:layout_constraintBottom_toTopOf="@+id/materialButton"
         app:layout_constraintEnd_toStartOf="@+id/imageView16"
+        app:layout_constraintHorizontal_bias="0.75"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/event_attend_spots"
+        app:layout_constraintBottom_toTopOf="@+id/imageView16"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout1"
+        app:layout_constraintVertical_bias="0.864"
+        tools:ignore="MissingConstraints" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/materialButton"
