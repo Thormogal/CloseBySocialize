@@ -1,5 +1,6 @@
 package com.example.closebysocialize.profile
 
+import UserDetails
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,7 +13,10 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.closebysocialize.R
 import android.app.AlertDialog
+import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class ProfileFragment : Fragment() {
@@ -59,6 +63,8 @@ class ProfileFragment : Fragment() {
         language.setOnClickListener {
             showLanguagePicker()
         }
+        
+        
 
             // adjust dark mode switch
             darkModeSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -69,8 +75,10 @@ class ProfileFragment : Fragment() {
                     // call function for switch to lightmode
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 }
+
             }
         }
+    }
 
         //Funktioner
 

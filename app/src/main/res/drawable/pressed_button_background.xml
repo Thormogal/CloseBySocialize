@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <item android:state_pressed="true">
+            <shape android:shape="rectangle">
+                <solid android:color="#C3EDFF"/> <!-- Ange den önskade bakgrundsfärgen när knappen är intryckt -->
+            </shape>
+        </item>
+        <item>
+            <shape android:shape="rectangle">
+                <solid android:color="#FFFFFF"/> <!-- Ange den normala bakgrundsfärgen för knappen -->
+            </shape>
+        </item>
+
+</selector>
