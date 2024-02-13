@@ -271,9 +271,11 @@
         android:layout_width="109dp"
         android:layout_height="83dp"
         android:layout_marginStart="20dp"
+
         android:layout_marginTop="80dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.024"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/profile_top_bar_avatar" />

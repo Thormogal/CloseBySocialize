@@ -18,6 +18,8 @@ import android.widget.ImageView
 import android.widget.NumberPicker
 import androidx.fragment.app.Fragment
 import com.example.closebysocialize.R
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 
 
 class EditProfileFragment : Fragment() {
@@ -128,6 +130,7 @@ class EditProfileFragment : Fragment() {
         aboutMeEditText.setOnClickListener {
             // redigera text om mig själv
         }
+
         profileSaveButton.setOnClickListener {
             val bundle = Bundle().apply{
                 putStringArrayList("interests", ArrayList(selectedInterests))
@@ -137,6 +140,7 @@ class EditProfileFragment : Fragment() {
 //            profileFragment.arguments = bundle
 //            fragmentManager?.beginTransaction()?.replace(R.id.fragment_container, profileFragment)?.commit()
 //        }
+
     }
         }
 
