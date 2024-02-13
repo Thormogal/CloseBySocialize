@@ -2,10 +2,14 @@ package com.example.closebysocialize
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.GridLayout
+import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import java.util.Calendar
@@ -25,6 +29,8 @@ class AddEventFragment : Fragment() {
         }
     }
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -32,8 +38,39 @@ class AddEventFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_add_event, container, false)
     }
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val gridLayout = view.findViewById<GridLayout>(R.id.gridLayout)
+        var selectedImageView: ImageView? = null
+
+
+        for (i in 0 until gridLayout.childCount) {
+            val child = gridLayout.getChildAt(i)
+
+            if (child is ImageView) {
+                child.setOnClickListener {
+                    selectedImageView?.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
+
+                    val background = it.background
+                    if (background is ColorDrawable) {
+                        val color = background.color
+                        if (color == ContextCompat.getColor(requireContext(), R.color.primary_blue)) {
+                            it.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
+                        } else {
+                            it.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary_blue))
+                            selectedImageView = it as ImageView
+                        }
+                    } else {
+                        it.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary_blue))
+                        selectedImageView = it as ImageView
+
+                    }
+                }
+            }
+        }
 
 
         val eventDateEditText = view.findViewById<TextInputEditText>(R.id.event_date)
