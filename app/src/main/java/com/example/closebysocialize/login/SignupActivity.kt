@@ -35,8 +35,8 @@ class SignupActivity : AppCompatActivity() {
         passwordEditText = findViewById(R.id.passwordEditText)
         repeatPasswordEditText = findViewById(R.id.repeatPasswordEditText)
         signupButton = findViewById(R.id.signupButton)
-        progressSpinner = findViewById(R.id.progressSpinner)
-        frameLayout = findViewById(R.id.frameLayout)
+        progressSpinner = findViewById(R.id.signUpProgressSpinner)
+        frameLayout = findViewById(R.id.signUpFrameLayout)
 
         signupButton.setOnClickListener {
             val email = emailEditText.text.toString()
