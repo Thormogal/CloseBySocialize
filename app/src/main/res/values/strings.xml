@@ -68,7 +68,10 @@
     // login screen
     <string name="log_in">Log in</string>
     <string name="email_address">Email address</string>
+    <string name="registered_email">your registered email address</string>
     <string name="password">Password</string>
+    <string name="registered_password">your registered password</string>
+    <string name="forgot_password">Forgot password?</string>
     <string name="login_buttonText_email">Sign in with Email</string>
     <string name="login_buttonText_google">Sign in with Google</string>
 
@@ -83,7 +86,6 @@
     // forgot password screen
     <string name="reset_password">Reset password</string>
     <string name="help_password">Please type a password you\'ll remember</string>
-    <string name="registered_email">your registered email address</string>
     <string name="new_password">New password</string>
     <string name="confirm_new_password">Confirm new password</string>
 
