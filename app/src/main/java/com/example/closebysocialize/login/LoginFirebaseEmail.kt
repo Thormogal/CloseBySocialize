@@ -20,9 +20,29 @@ class LoginFirebaseEmail(private val auth: FirebaseAuth) {
                 }
             }
     }
-    private fun sendVerificationEmail(user: FirebaseUser?, onSuccess: () -> Unit, onError: (Exception) -> Unit) {
+
+    private fun sendVerificationEmail(
+        user: FirebaseUser?,
+        onSuccess: () -> Unit,
+        onError: (Exception) -> Unit
+    ) {
         user?.sendEmailVerification()
             ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    onSuccess()
+                } else {
+                    task.exception?.let { onError(it) }
+                }
+            }
+    }
+
+    fun sendPasswordResetEmail(
+        email: String,
+        onSuccess: () -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     onSuccess()
                 } else {
