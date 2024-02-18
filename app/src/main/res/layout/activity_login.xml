@@ -6,14 +6,129 @@
     android:layout_height="match_parent"
     android:background="@color/primary_background">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/loginVerticalGuideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.08" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/loginVerticalGuideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.92" />
+
+    <TextView
+        android:id="@+id/logInTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_medium"
+        android:text="@string/log_in"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
+        app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.20" />
+
+    <TextView
+        android:id="@+id/loginEmailTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:shadowColor="@color/primary_text_background_shadow"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="1"
+        android:text="@string/email_address"
+        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
+        app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
+        app:layout_constraintTop_toBottomOf="@+id/logInTextView" />
+
+    <EditText
+        android:id="@+id/loginEmailEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_login_border"
+        android:hint="@string/registered_email"
+        android:inputType="textEmailAddress"
+        android:maxLines="1"
+        android:minHeight="48dp"
+        android:padding="10dp"
+        android:textColorHint="#757575"
+        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
+        app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
+        app:layout_constraintTop_toBottomOf="@id/loginEmailTextView" />
+
+    <TextView
+        android:id="@+id/loginPasswordTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:shadowColor="@color/primary_text_background_shadow"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="1"
+        android:text="@string/password"
+        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
+        app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
+        app:layout_constraintTop_toBottomOf="@+id/loginEmailEditText" />
+
+    <EditText
+        android:id="@+id/loginPasswordEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_login_border"
+        android:hint="@string/registered_password"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        android:minHeight="48dp"
+        android:padding="10dp"
+        android:textColorHint="#757575"
+        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
+        app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
+        app:layout_constraintTop_toBottomOf="@id/loginPasswordTextView" />
+
+    <TextView
+        android:id="@+id/forgotPasswordTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:shadowColor="@color/primary_text_background_shadow"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="1"
+        android:text="@string/forgot_password"
+        android:textAlignment="textEnd"
+        android:textColor="@color/primary_text_forgot_password_blue"
+        app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
+        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
+        app:layout_constraintTop_toBottomOf="@+id/loginPasswordEditText" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/loginButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:background="@drawable/button_login_border"
+        android:backgroundTint="@color/primary_blue"
+        android:backgroundTintMode="multiply"
+        android:minHeight="60dp"
+        android:text="@string/log_in"
+        android:textAlignment="center"
+        android:textColor="@color/primary_text"
+        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
+        app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
+        app:layout_constraintTop_toBottomOf="@+id/forgotPasswordTextView" />
+
     <Button
         android:id="@+id/signInEmailButton"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginTop="25dp"
         android:backgroundTint="@color/primary_background"
         android:fontFamily="@font/poppins_medium"
         android:includeFontPadding="false"
@@ -24,10 +139,10 @@
         app:iconGravity="textStart"
         app:iconPadding="10dp"
         app:iconTint="@color/primary_text"
+        app:layout_constraintTop_toBottomOf="@+id/loginButton"
         app:layout_constraintBottom_toTopOf="@id/signInGoogleButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logInTextView"
+        app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
+        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
         app:strokeColor="@color/primary_text"
         app:strokeWidth="0.1dp" />
 
@@ -35,10 +150,7 @@
         android:id="@+id/signInGoogleButton"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="100dp"
         android:backgroundTint="@color/primary_background"
         android:fontFamily="@font/poppins_medium"
         android:includeFontPadding="false"
@@ -50,26 +162,10 @@
         app:iconPadding="10dp"
         app:iconTint="@color/primary_background"
         app:iconTintMode="multiply"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/signInEmailButton"
+        app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
+        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
         app:strokeColor="@color/primary_text"
         app:strokeWidth="0.1dp" />
-
-    <TextView
-        android:id="@+id/logInTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins_medium"
-        android:text="@string/log_in"
-        android:textSize="34sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.15"
-        app:layout_constraintVertical_bias="0.25" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,5 +9,6 @@
     <color name="primary_text_background_transparent_70">#B3FFFFFF</color>
     <color name="primary_text_background_transparent_85">#D9FFFFFF</color>
     <color name="primary_text_background_shadow">#DADADA</color>
+    <color name="primary_text_forgot_password_blue">#2400FF</color>
 
 </resources>
