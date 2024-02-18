@@ -26,13 +26,14 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins_medium"
         android:text="@string/log_in"
+        android:textColor="@color/primary_text"
         android:textSize="34sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
-        app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.20" />
+        app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
+        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.15" />
 
     <TextView
         android:id="@+id/loginEmailTextView"
@@ -44,8 +45,9 @@
         android:shadowDy="2"
         android:shadowRadius="1"
         android:text="@string/email_address"
-        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
+        android:textColor="@color/primary_text"
         app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
+        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
         app:layout_constraintTop_toBottomOf="@+id/logInTextView" />
 
     <EditText
@@ -73,8 +75,9 @@
         android:shadowDy="2"
         android:shadowRadius="1"
         android:text="@string/password"
-        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
+        android:textColor="@color/primary_text"
         app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
+        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
         app:layout_constraintTop_toBottomOf="@+id/loginEmailEditText" />
 
     <EditText
@@ -96,7 +99,7 @@
         android:id="@+id/forgotPasswordTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:shadowColor="@color/primary_text_background_shadow"
         android:shadowDx="2"
         android:shadowDy="2"
