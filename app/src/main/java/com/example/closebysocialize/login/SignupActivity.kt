@@ -47,11 +47,15 @@ class SignupActivity : AppCompatActivity() {
 
     private fun isEmailValid(email: String): Boolean {
         val validEndings = listOf(".com", ".net", ".org", ".se", ".gov")
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches() && validEndings.any { email.endsWith(it) }
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches() && validEndings.any {
+            email.endsWith(
+                it
+            )
+        }
     }
 
     private fun isPasswordValid(password: String): Boolean {
-        return password.length >= 8
+        return password.length >= 6
     }
 
     private fun showProgressSpinner(show: Boolean) {
@@ -73,7 +77,11 @@ class SignupActivity : AppCompatActivity() {
         }
 
         if (!isPasswordValid(password)) {
-            Toast.makeText(this, "The password must be at least 8 characters long", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                "The password must be at least 6 characters long",
+                Toast.LENGTH_LONG
+            ).show()
             return
         }
 
@@ -87,7 +95,11 @@ class SignupActivity : AppCompatActivity() {
             showProgressSpinner(true)
         },
             onError = { exception ->
-                Toast.makeText(this, "Error with registration: ${exception.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this,
+                    "Error with registration: ${exception.message}",
+                    Toast.LENGTH_LONG
+                ).show()
 
             }
         )
@@ -109,9 +121,5 @@ class SignupActivity : AppCompatActivity() {
             }
         }
         handler.post(checkEmailVerificationRunnable)
-    }
-    override fun onDestroy() {
-        super.onDestroy()
-        handler.removeCallbacks(checkEmailVerificationRunnable)
     }
 }

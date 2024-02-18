@@ -79,7 +79,7 @@
     <string name="sign_up">Sign up</string>
     <string name="example_mail">example@gmail.com</string>
     <string name="create_password">Create a password</string>
-    <string name="max_password_chars">must be at least 8 characters</string>
+    <string name="max_password_chars">must be at least 6 characters</string>
     <string name="confirm_password">Confirm password</string>
     <string name="repeat_password">repeat password</string>
 

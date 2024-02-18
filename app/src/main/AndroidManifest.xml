@@ -21,6 +21,9 @@
             android:name=".login.SignupActivity"
             android:exported="false" />
         <activity
+            android:name=".login.ResetPasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".ContainerActivity"
             android:exported="false" />
         <activity

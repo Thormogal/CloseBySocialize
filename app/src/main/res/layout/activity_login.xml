@@ -60,9 +60,10 @@
         android:maxLines="1"
         android:minHeight="48dp"
         android:padding="10dp"
+        android:textColor="@color/primary_text"
         android:textColorHint="#757575"
-        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
         app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
+        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
         app:layout_constraintTop_toBottomOf="@id/loginEmailTextView" />
 
     <TextView
@@ -90,9 +91,10 @@
         android:maxLines="1"
         android:minHeight="48dp"
         android:padding="10dp"
+        android:textColor="@color/primary_text"
         android:textColorHint="#757575"
-        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
         app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
+        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
         app:layout_constraintTop_toBottomOf="@id/loginPasswordTextView" />
 
     <TextView

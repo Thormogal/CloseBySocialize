@@ -51,11 +51,16 @@ class LoginFirebaseGoogle(private val activity: Activity) {
                         activity.startActivity(intent)
                         activity.finish()
                     } else {
-                        Toast.makeText(activity, "Log in to Firebase failed: ${firebaseTask.exception?.message}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            activity,
+                            "Log in to Firebase failed: ${firebaseTask.exception?.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
         } catch (e: ApiException) {
-            Toast.makeText(activity, "Log in with Google failed: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(activity, "Log in with Google failed: ${e.message}", Toast.LENGTH_LONG)
+                .show()
         }
     }
 
