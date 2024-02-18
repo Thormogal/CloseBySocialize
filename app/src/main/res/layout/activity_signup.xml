@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/primary_background"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.Guideline
@@ -25,13 +26,14 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins_medium"
         android:text="@string/sign_up"
+        android:textColor="@color/primary_text"
         android:textSize="34sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/signUpVerticalGuideline2"
         app:layout_constraintStart_toStartOf="@id/signUpVerticalGuideline1"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.20" />
+        app:layout_constraintVertical_bias="0.15" />
 
     <TextView
         android:id="@+id/emailTextView"
@@ -43,8 +45,9 @@
         android:shadowDy="2"
         android:shadowRadius="1"
         android:text="@string/email_address"
-        app:layout_constraintStart_toStartOf="@id/signUpVerticalGuideline1"
+        android:textColor="@color/primary_text"
         app:layout_constraintEnd_toEndOf="@id/signUpVerticalGuideline2"
+        app:layout_constraintStart_toStartOf="@id/signUpVerticalGuideline1"
         app:layout_constraintTop_toBottomOf="@+id/signUpTextView" />
 
     <EditText
@@ -72,8 +75,9 @@
         android:shadowDy="2"
         android:shadowRadius="1"
         android:text="@string/create_password"
-        app:layout_constraintStart_toStartOf="@id/signUpVerticalGuideline1"
+        android:textColor="@color/primary_text"
         app:layout_constraintEnd_toEndOf="@id/signUpVerticalGuideline2"
+        app:layout_constraintStart_toStartOf="@id/signUpVerticalGuideline1"
         app:layout_constraintTop_toBottomOf="@+id/emailEditText" />
 
     <EditText
@@ -101,8 +105,9 @@
         android:shadowDy="2"
         android:shadowRadius="1"
         android:text="@string/confirm_password"
-        app:layout_constraintStart_toStartOf="@id/signUpVerticalGuideline1"
+        android:textColor="@color/primary_text"
         app:layout_constraintEnd_toEndOf="@id/signUpVerticalGuideline2"
+        app:layout_constraintStart_toStartOf="@id/signUpVerticalGuideline1"
         app:layout_constraintTop_toBottomOf="@+id/passwordEditText" />
 
     <EditText
