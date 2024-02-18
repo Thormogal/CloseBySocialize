@@ -1,5 +1,6 @@
 package com.example.closebysocialize.login
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -32,6 +33,7 @@ class ResetPasswordActivity : AppCompatActivity() {
         loginFirebaseEmail.sendPasswordResetEmail(email, onSuccess = {
             Toast.makeText(this, "Check your email to reset your password.", Toast.LENGTH_LONG)
                 .show()
+            navigateToLoginPage()
         }, //email will succeed even if no user is registered with that mail due to anti-fraud.
             //harder for hackers to know which mails that are truly registered or not.
             //Firebase makes sure that un-registered mail addresses will not receive a mail.
@@ -43,5 +45,10 @@ class ResetPasswordActivity : AppCompatActivity() {
                     Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_LONG).show()
                 }
             })
+    }
+    private fun navigateToLoginPage() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
