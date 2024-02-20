@@ -1,5 +1,6 @@
 package com.example.closebysocialize
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.graphics.drawable.ColorDrawable
@@ -45,6 +46,7 @@ class AddEventFragment : Fragment() {
     }
 
 
+    @SuppressLint("CutPasteId")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -103,6 +105,9 @@ class AddEventFragment : Fragment() {
 
 
         val eventDateEditText = view.findViewById<TextInputEditText>(R.id.eventDate)
+        eventDateEditText.isFocusable = false
+        eventDateEditText.isClickable = true
+
         eventDateEditText.setOnClickListener {
             val calendar = Calendar.getInstance()
             val year = calendar.get(Calendar.YEAR)
@@ -111,7 +116,7 @@ class AddEventFragment : Fragment() {
             val hour = calendar.get(Calendar.HOUR_OF_DAY)
             val minute = calendar.get(Calendar.MINUTE)
 
-            val datePickerDialog = DatePickerDialog(
+                val datePickerDialog = DatePickerDialog(
                 it.context,
                 { _, selectedYear, selectedMonth, selectedDay ->
                     val selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
@@ -131,8 +136,8 @@ class AddEventFragment : Fragment() {
                 month,
                 day
             )
-            datePickerDialog.show()
-        }
+                datePickerDialog.show()
+            }
 
 
         val createEventButton = view.findViewById<MaterialButton>(R.id.materialButton)
@@ -176,4 +181,3 @@ class AddEventFragment : Fragment() {
             }
     }
 }
-
