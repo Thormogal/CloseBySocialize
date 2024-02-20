@@ -27,7 +27,7 @@
             android:name=".ContainerActivity"
             android:exported="false" />
         <activity
-            android:name=".login.MainActivity"
+            android:name=".login.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -64,6 +64,9 @@
     <string name="text_filter_6">Option 3</string>
 
 
+    // splash screen
+    <string name="close_by_socialize">CloseBySocialize</string>
+    <string name="splash_message">Talk to thy neighbour</string>
 
     // login screen
     <string name="log_in">Log in</string>
