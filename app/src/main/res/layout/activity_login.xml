@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary_background">
@@ -170,6 +169,28 @@
         app:layout_constraintTop_toBottomOf="@id/signInEmailButton"
         app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
         app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
+        app:strokeColor="@color/primary_text"
+        app:strokeWidth="0.1dp" />
+
+    <Button
+        android:id="@+id/signInGithubButton"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="5dp"
+        android:backgroundTint="@color/primary_background"
+        android:fontFamily="@font/poppins_medium"
+        android:includeFontPadding="false"
+        android:text="@string/login_buttonText_github"
+        android:textColor="@color/primary_text"
+        app:cornerRadius="7dp"
+        app:icon="@drawable/icon_github"
+        app:iconGravity="textStart"
+        app:iconPadding="10dp"
+        app:iconTint="@color/primary_background"
+        app:iconTintMode="multiply"
+        app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
+        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
+        app:layout_constraintTop_toBottomOf="@id/signInGoogleButton"
         app:strokeColor="@color/primary_text"
         app:strokeWidth="0.1dp" />
 

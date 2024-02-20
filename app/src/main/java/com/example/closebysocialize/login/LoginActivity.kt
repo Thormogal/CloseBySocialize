@@ -19,6 +19,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var passwordEditText: EditText
     private lateinit var loginButton: Button
     private lateinit var loginFirebaseGoogle: LoginFirebaseGoogle
+    private lateinit var loginFirebaseGithub: LoginFirebaseGithub
     private val firebaseAuth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,31 +30,53 @@ class LoginActivity : AppCompatActivity() {
         passwordEditText = findViewById(R.id.loginPasswordEditText)
         loginButton = findViewById(R.id.loginButton)
         loginFirebaseGoogle = LoginFirebaseGoogle(this)
+        loginFirebaseGithub = LoginFirebaseGithub(this)
 
         findViewById<TextView>(R.id.forgotPasswordTextView).setOnClickListener {
-            val intent = Intent(this, ResetPasswordActivity::class.java)
-            startActivity(intent)
+            navigateToResetPage()
         }
 
         loginButton.setOnClickListener {
-            val email = emailEditText.text.toString().trim()
-            val password = passwordEditText.text.toString()
+            validateLoginInformation()
+        }
 
-            if (validateForm(email, password)) {
-                loginUser(email, password)
-            }
+        findViewById<Button>(R.id.signInEmailButton).setOnClickListener {
+            navigateToSignupPage()
         }
 
         findViewById<Button>(R.id.signInGoogleButton).setOnClickListener {
             loginFirebaseGoogle.startSigninIntent()
         }
 
-        findViewById<Button>(R.id.signInEmailButton).setOnClickListener {
-            val intent = Intent(this, SignupActivity::class.java)
-            startActivity(intent)
+        findViewById<Button>(R.id.signInGithubButton).setOnClickListener {
+            loginFirebaseGithub.signInWithGitHub()
         }
 
+    }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == LoginFirebaseGoogle.RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            loginFirebaseGoogle.handleSigninResult(task)
+        }
+    }
+
+    private fun navigateToResetPage() {
+        val intent = Intent(this, ResetPasswordActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun navigateToMainPage() {
+        val intent = Intent(this, ContainerActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun navigateToSignupPage() {
+        val intent = Intent(this, SignupActivity::class.java)
+        startActivity(intent)
     }
 
     private fun validateForm(email: String, password: String): Boolean {
@@ -75,23 +98,21 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(baseContext, "Logged in successfully", Toast.LENGTH_SHORT).show()
                     navigateToMainPage()
                 } else {
-                    Toast.makeText(baseContext, "Authentication failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        baseContext,
+                        "Authentication failed: ${task.exception?.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    private fun validateLoginInformation() {
+        val email = emailEditText.text.toString().trim()
+        val password = passwordEditText.text.toString()
 
-        if (requestCode == LoginFirebaseGoogle.RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            loginFirebaseGoogle.handleSigninResult(task)
+        if (validateForm(email, password)) {
+            loginUser(email, password)
         }
-    }
-
-    private fun navigateToMainPage() {
-        val intent = Intent(this, ContainerActivity::class.java)
-        startActivity(intent)
-        finish()
     }
 }

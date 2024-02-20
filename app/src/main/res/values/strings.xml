@@ -74,6 +74,7 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="login_buttonText_email">Sign in with Email</string>
     <string name="login_buttonText_google">Sign in with Google</string>
+    <string name="login_buttonText_github">Sign in with Github</string>
 
     // sign up screen
     <string name="sign_up">Sign up</string>
