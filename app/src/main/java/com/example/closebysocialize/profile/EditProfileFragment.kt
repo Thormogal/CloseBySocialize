@@ -1,37 +1,32 @@
 package com.example.closebysocialize.profile
 
-import android.animation.AnimatorInflater
-import android.animation.AnimatorSet
 import android.annotation.SuppressLint
 import android.icu.util.Calendar
-import android.media.Image
 import android.os.Bundle
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.NumberPicker
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.closebysocialize.R
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
 
 
 class EditProfileFragment : Fragment() {
 
     lateinit var goBackButtonImageView: ImageView
-    lateinit var editImage : ImageView
-    lateinit var profileSaveButton : Button
-    lateinit var editName : EditText
-    lateinit var birthYearPicker : NumberPicker
-    lateinit var aboutMeEditText : EditText
+    lateinit var editImage: ImageView
+    lateinit var profileSaveButton: Button
+    lateinit var editName: EditText
+    lateinit var birthYearPicker: NumberPicker
+    lateinit var aboutMeEditText: EditText
 
-    lateinit var dogImageView : ImageView
+    lateinit var dogImageView: ImageView
     lateinit var airplaneImageView: ImageView
     lateinit var bookImageView: ImageView
     lateinit var cookingImageView: ImageView
@@ -46,6 +41,8 @@ class EditProfileFragment : Fragment() {
 
     private val selectedInterests = mutableListOf<String>()
 
+    private val db = FirebaseFirestore.getInstance()
+    private val userId = "user123" // Ersätt detta med rätt användar-ID
 
 
     override fun onCreateView(
@@ -58,7 +55,7 @@ class EditProfileFragment : Fragment() {
         goBackButtonImageView = view.findViewById(R.id.goBackButtonImageView)
         editImage = view.findViewById(R.id.editPictureImageView)
         profileSaveButton = view.findViewById(R.id.profileSaveButton)
-        editName = view.findViewById(R.id.editName)
+        editName = view.findViewById(R.id.editNameEditText)
         birthYearPicker = view.findViewById(R.id.birthYearPicker)
         aboutMeEditText = view.findViewById(R.id.aboutMeEditText)
         dogImageView = view.findViewById(R.id.dogImageView)
@@ -81,13 +78,16 @@ class EditProfileFragment : Fragment() {
 
         return view
     }
+
     @SuppressLint("ResourceType")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val interestImageViews = listOf<ImageView>(dogImageView,airplaneImageView,bookImageView,
-            cookingImageView,gardenImageView,cinemaImageView,restaurantImageView,sportImageView,
-            coffeeImageView,gameImageView,theatreImageView,strollerImageView)
+        val interestImageViews = listOf<ImageView>(
+            dogImageView, airplaneImageView, bookImageView,
+            cookingImageView, gardenImageView, cinemaImageView, restaurantImageView, sportImageView,
+            coffeeImageView, gameImageView, theatreImageView, strollerImageView
+        )
 
         val interestClickListener = View.OnClickListener { view ->
             val interest = view.tag as? String
@@ -100,7 +100,10 @@ class EditProfileFragment : Fragment() {
                     // Om intresset inte är valt, lägg till det i listan och tillämpa nedtryckningsanimationen
                     selectedInterests.add(interest)
 
-                    val scaleDownAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_button_animation)
+                    val scaleDownAnimation = AnimationUtils.loadAnimation(
+                        requireContext(),
+                        R.anim.scale_button_animation
+                    )
                     view.startAnimation(scaleDownAnimation)
                 }
                 // Uppdatera knappens markerade status baserat på om intresset är valt eller inte
@@ -115,16 +118,16 @@ class EditProfileFragment : Fragment() {
 //kallar på funktionerna, clicklis
 
 
-        goBackButtonImageView.setOnClickListener{
+        goBackButtonImageView.setOnClickListener {
             //tillbaka till fragmentet profile fragment
         }
-        editImage.setOnClickListener{
+        editImage.setOnClickListener {
             //redigera bild
         }
         editName.setOnClickListener {
             //Redigera namn
         }
-        birthYearPicker.setOnValueChangedListener {picker, oldVal, newVal ->
+        birthYearPicker.setOnValueChangedListener { picker, oldVal, newVal ->
             val selectedYear = newVal
         }
         aboutMeEditText.setOnClickListener {
@@ -132,19 +135,41 @@ class EditProfileFragment : Fragment() {
         }
 
         profileSaveButton.setOnClickListener {
-            val bundle = Bundle().apply{
-                putStringArrayList("interests", ArrayList(selectedInterests))
-            }
-            // Öppna profilsidan och skicka med de valda intressena
-//            val profileFragment = ProfileFragment()
-//            profileFragment.arguments = bundle
-//            fragmentManager?.beginTransaction()?.replace(R.id.fragment_container, profileFragment)?.commit()
-//        }
-
-    }
+            saveProfileDataToDatabase()
         }
 
-}
+    }
+
+            private fun saveProfileDataToDatabase() {
+                val aboutMeText = aboutMeEditText.text.toString()
+                val name = editName.text.toString()
+                val birthYear = birthYearPicker.value
+
+
+                val userRef = db.collection("users").document(userId)
+
+                // Uppdatera flera fält samtidigt i databasen
+                userRef.update(
+                    mapOf(
+                        "aboutMe" to aboutMeText,
+                        "name" to name,
+                        "birthYear" to birthYear
+                        // Lägg till fler fält här om det behövs
+                    )
+                )
+                    .addOnSuccessListener {
+                        // Uppdatering lyckades
+                        // Visa en bekräftelse för användaren eller gör andra åtgärder vid behov
+                    }
+                    .addOnFailureListener {
+                        // Uppdatering misslyckades
+                        // Hantera fel här, exempelvis visa ett felmeddelande
+                    }
+            }
+        }
+
+
+
 
 
 
