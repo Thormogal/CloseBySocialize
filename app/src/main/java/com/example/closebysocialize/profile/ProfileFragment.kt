@@ -58,6 +58,10 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //kallar på funktionerna, clicklis
+
+        fetchUserName()
+
+
         reportBugs.setOnClickListener {
             //Ska man komma vidare till någon sida här?
         }
@@ -82,6 +86,27 @@ class ProfileFragment : Fragment() {
 
 
         //Funktioner
+
+    private fun fetchUserName() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+            userRef.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val userName = documentSnapshot.getString("name")
+                        nameTextView.text = userName
+                    } else {
+                        Log.d("!!!", "Document does not exist")
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("!!!", "Failed to fetch user name", exception)
+                }
+        } else {
+            // Användaren är inte inloggad
+        }
+    }
 
         private fun showLanguagePicker() {
             val builder = AlertDialog.Builder(requireContext())

@@ -265,7 +265,7 @@
         app:srcCompat="@drawable/profile_top_bar_avatar" />
 
     <EditText
-        android:id="@+id/editName"
+        android:id="@+id/editNameEditText"
         android:layout_width="211dp"
         android:layout_height="62dp"
         android:layout_marginTop="50dp"
