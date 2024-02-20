@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Calendar
 
 private const val ARG_PARAM1 = "param1"
@@ -23,7 +23,7 @@ class AddEventFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    private lateinit var database: FirebaseDatabase
+    private lateinit var firestore: FirebaseFirestore
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,10 +32,9 @@ class AddEventFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        database = FirebaseDatabase.getInstance()
+        firestore = FirebaseFirestore.getInstance()
 
     }
-
 
 
     override fun onCreateView(
@@ -44,7 +43,6 @@ class AddEventFragment : Fragment() {
     ): View? {
         return inflater.inflate(R.layout.fragment_add_event, container, false)
     }
-
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,19 +57,43 @@ class AddEventFragment : Fragment() {
 
             if (child is ImageView) {
                 child.setOnClickListener {
-                    selectedImageView?.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
+                    selectedImageView?.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            android.R.color.transparent
+                        )
+                    )
 
                     val background = it.background
                     if (background is ColorDrawable) {
                         val color = background.color
-                        if (color == ContextCompat.getColor(requireContext(), R.color.primary_blue)) {
-                            it.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
+                        if (color == ContextCompat.getColor(
+                                requireContext(),
+                                R.color.primary_blue
+                            )
+                        ) {
+                            it.setBackgroundColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    android.R.color.transparent
+                                )
+                            )
                         } else {
-                            it.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary_blue))
+                            it.setBackgroundColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.primary_blue
+                                )
+                            )
                             selectedImageView = it as ImageView
                         }
                     } else {
-                        it.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary_blue))
+                        it.setBackgroundColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.primary_blue
+                            )
+                        )
                         selectedImageView = it as ImageView
 
                     }
@@ -113,35 +135,35 @@ class AddEventFragment : Fragment() {
         }
 
 
-
         val createEventButton = view.findViewById<MaterialButton>(R.id.materialButton)
 
         createEventButton.setOnClickListener {
-        val eventNameTextView = view.findViewById<TextInputEditText>(R.id.eventNameTextView)
-        val eventPlace = view.findViewById<TextInputEditText>(R.id.eventPlace)
-        val eventDate = view.findViewById<TextInputEditText>(R.id.eventDate)
-        val eventGuests = view.findViewById<TextInputEditText>(R.id.eventGuests)
-        val eventDescription = view.findViewById<TextInputEditText>(R.id.eventDescription)
+            val eventNameTextView = view.findViewById<TextInputEditText>(R.id.eventNameTextView)
+            val eventPlace = view.findViewById<TextInputEditText>(R.id.eventPlace)
+            val eventDate = view.findViewById<TextInputEditText>(R.id.eventDate)
+            val eventGuests = view.findViewById<TextInputEditText>(R.id.eventGuests)
+            val eventDescription = view.findViewById<TextInputEditText>(R.id.eventDescription)
 
-        val eventName = eventNameTextView.text.toString()
-        val place = eventPlace.text.toString()
-        val date = eventDate.text.toString()
-        val guests = eventGuests.text.toString()
-        val description = eventDescription.text.toString()
+            val eventName = eventNameTextView.text.toString()
+            val place = eventPlace.text.toString()
+            val date = eventDate.text.toString()
+            val guests = eventGuests.text.toString()
+            val description = eventDescription.text.toString()
 
 
-        val event = hashMapOf(
-            "eventName" to eventName,
-            "place" to place,
-            "date" to date,
-            "guests" to guests,
-            "description" to description
-        )
+            val event = hashMapOf(
+                "eventName" to eventName,
+                "place" to place,
+                "date" to date,
+                "guests" to guests,
+                "description" to description
+            )
+            firestore.collection("events").add(event)
+
+        }
 
     }
 
-
-      }
 
     companion object {
         @JvmStatic
@@ -154,3 +176,4 @@ class AddEventFragment : Fragment() {
             }
     }
 }
+
