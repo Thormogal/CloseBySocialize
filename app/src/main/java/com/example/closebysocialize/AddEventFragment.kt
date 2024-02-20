@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
@@ -116,7 +117,7 @@ class AddEventFragment : Fragment() {
             val hour = calendar.get(Calendar.HOUR_OF_DAY)
             val minute = calendar.get(Calendar.MINUTE)
 
-                val datePickerDialog = DatePickerDialog(
+            val datePickerDialog = DatePickerDialog(
                 it.context,
                 { _, selectedYear, selectedMonth, selectedDay ->
                     val selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
@@ -136,8 +137,8 @@ class AddEventFragment : Fragment() {
                 month,
                 day
             )
-                datePickerDialog.show()
-            }
+            datePickerDialog.show()
+        }
 
 
         val createEventButton = view.findViewById<MaterialButton>(R.id.materialButton)
@@ -155,6 +156,23 @@ class AddEventFragment : Fragment() {
             val guests = eventGuests.text.toString()
             val description = eventDescription.text.toString()
 
+            if (eventName.isEmpty()) {
+                eventNameTextView.error = "Event name is required"
+                return@setOnClickListener
+            }
+            if (place.isEmpty()) {
+                eventPlace.error = "Place is required"
+                return@setOnClickListener
+            }
+            if (date.isEmpty()) {
+                eventDate.error = "Date is required"
+                return@setOnClickListener
+            }
+
+            if (description.isEmpty()) {
+                eventDescription.error = "Description is required"
+                return@setOnClickListener
+            }
 
             val event = hashMapOf(
                 "eventName" to eventName,
@@ -163,12 +181,26 @@ class AddEventFragment : Fragment() {
                 "guests" to guests,
                 "description" to description
             )
+
             firestore.collection("events").add(event)
+                .addOnSuccessListener {
+                    eventNameTextView.text = null
+                    eventPlace.text = null
+                    eventDate.text = null
+                    eventGuests.text = null
+                    eventDescription.text = null
+
+                    Toast.makeText(context, "Event added successfully", Toast.LENGTH_SHORT).show()
+
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(context, "Error adding event: ${e.message}", Toast.LENGTH_SHORT)
+                        .show()
+                }
 
         }
 
     }
-
 
     companion object {
         @JvmStatic
