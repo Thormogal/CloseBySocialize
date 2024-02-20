@@ -141,7 +141,7 @@
             app:boxStrokeWidth="0dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/eventPlace2"
+                android:id="@+id/eventNameTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
@@ -192,7 +192,7 @@
             app:boxStrokeWidth="0dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/event_date"
+                android:id="@+id/eventDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
@@ -217,7 +217,7 @@
             app:boxStrokeWidth="0dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/eventPlace1"
+                android:id="@+id/eventGuests"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
@@ -243,7 +243,7 @@
             app:boxStrokeWidth="0dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_event_nam"
+                android:id="@+id/eventDescription"
                 android:layout_width="match_parent"
                 android:layout_height="89dp"
                 android:imeOptions="actionNext"

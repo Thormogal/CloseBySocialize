@@ -73,7 +73,7 @@ class AddEventFragment : Fragment() {
         }
 
 
-        val eventDateEditText = view.findViewById<TextInputEditText>(R.id.event_date)
+        val eventDateEditText = view.findViewById<TextInputEditText>(R.id.eventDate)
         eventDateEditText.setOnClickListener {
             val calendar = Calendar.getInstance()
             val year = calendar.get(Calendar.YEAR)
