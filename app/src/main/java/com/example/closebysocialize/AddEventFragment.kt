@@ -1,5 +1,6 @@
 package com.example.closebysocialize
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.graphics.drawable.ColorDrawable
@@ -9,9 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Calendar
 
 private const val ARG_PARAM1 = "param1"
@@ -21,14 +25,18 @@ class AddEventFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private lateinit var firestore: FirebaseFirestore
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-    }
+        firestore = FirebaseFirestore.getInstance()
 
+    }
 
 
     override fun onCreateView(
@@ -39,7 +47,7 @@ class AddEventFragment : Fragment() {
     }
 
 
-
+    @SuppressLint("CutPasteId")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -52,19 +60,43 @@ class AddEventFragment : Fragment() {
 
             if (child is ImageView) {
                 child.setOnClickListener {
-                    selectedImageView?.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
+                    selectedImageView?.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            android.R.color.transparent
+                        )
+                    )
 
                     val background = it.background
                     if (background is ColorDrawable) {
                         val color = background.color
-                        if (color == ContextCompat.getColor(requireContext(), R.color.primary_blue)) {
-                            it.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
+                        if (color == ContextCompat.getColor(
+                                requireContext(),
+                                R.color.primary_blue
+                            )
+                        ) {
+                            it.setBackgroundColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    android.R.color.transparent
+                                )
+                            )
                         } else {
-                            it.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary_blue))
+                            it.setBackgroundColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.primary_blue
+                                )
+                            )
                             selectedImageView = it as ImageView
                         }
                     } else {
-                        it.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.primary_blue))
+                        it.setBackgroundColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.primary_blue
+                            )
+                        )
                         selectedImageView = it as ImageView
 
                     }
@@ -73,7 +105,10 @@ class AddEventFragment : Fragment() {
         }
 
 
-        val eventDateEditText = view.findViewById<TextInputEditText>(R.id.event_date)
+        val eventDateEditText = view.findViewById<TextInputEditText>(R.id.eventDate)
+        eventDateEditText.isFocusable = false
+        eventDateEditText.isClickable = true
+
         eventDateEditText.setOnClickListener {
             val calendar = Calendar.getInstance()
             val year = calendar.get(Calendar.YEAR)
@@ -104,6 +139,67 @@ class AddEventFragment : Fragment() {
             )
             datePickerDialog.show()
         }
+
+
+        val createEventButton = view.findViewById<MaterialButton>(R.id.materialButton)
+
+        createEventButton.setOnClickListener {
+            val eventNameTextView = view.findViewById<TextInputEditText>(R.id.eventNameTextView)
+            val eventPlace = view.findViewById<TextInputEditText>(R.id.eventPlace)
+            val eventDate = view.findViewById<TextInputEditText>(R.id.eventDate)
+            val eventGuests = view.findViewById<TextInputEditText>(R.id.eventGuests)
+            val eventDescription = view.findViewById<TextInputEditText>(R.id.eventDescription)
+
+            val eventName = eventNameTextView.text.toString()
+            val place = eventPlace.text.toString()
+            val date = eventDate.text.toString()
+            val guests = eventGuests.text.toString()
+            val description = eventDescription.text.toString()
+
+            if (eventName.isEmpty()) {
+                eventNameTextView.error = "Event name is required"
+                return@setOnClickListener
+            }
+            if (place.isEmpty()) {
+                eventPlace.error = "Place is required"
+                return@setOnClickListener
+            }
+            if (date.isEmpty()) {
+                eventDate.error = "Date is required"
+                return@setOnClickListener
+            }
+
+            if (description.isEmpty()) {
+                eventDescription.error = "Description is required"
+                return@setOnClickListener
+            }
+
+            val event = hashMapOf(
+                "eventName" to eventName,
+                "place" to place,
+                "date" to date,
+                "guests" to guests,
+                "description" to description
+            )
+
+            firestore.collection("events").add(event)
+                .addOnSuccessListener {
+                    eventNameTextView.text = null
+                    eventPlace.text = null
+                    eventDate.text = null
+                    eventGuests.text = null
+                    eventDescription.text = null
+
+                    Toast.makeText(context, "Event added successfully", Toast.LENGTH_SHORT).show()
+
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(context, "Error adding event: ${e.message}", Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+        }
+
     }
 
     companion object {
