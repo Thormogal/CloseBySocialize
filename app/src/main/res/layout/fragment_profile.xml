@@ -52,7 +52,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="92dp"
         android:src="@drawable/interests_book"
-        app:layout_constraintBottom_toTopOf="@+id/editTextText"
+        app:layout_constraintBottom_toTopOf="@+id/aboutMeTextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileInterestTextView" />
 
@@ -64,7 +64,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="92dp"
         android:src="@drawable/interests_dogwalk"
-        app:layout_constraintBottom_toTopOf="@+id/editTextText"
+        app:layout_constraintBottom_toTopOf="@+id/aboutMeTextView"
         app:layout_constraintStart_toEndOf="@+id/imageView3"
         app:layout_constraintTop_toBottomOf="@+id/profileInterestTextView" />
 
@@ -76,7 +76,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="92dp"
         android:src="@drawable/interests_movie"
-        app:layout_constraintBottom_toTopOf="@+id/editTextText"
+        app:layout_constraintBottom_toTopOf="@+id/aboutMeTextView"
         app:layout_constraintStart_toEndOf="@+id/imageView6"
         app:layout_constraintTop_toBottomOf="@+id/profileInterestTextView" />
 
@@ -88,7 +88,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="92dp"
         android:src="@drawable/interests_restaurant"
-        app:layout_constraintBottom_toTopOf="@+id/editTextText"
+        app:layout_constraintBottom_toTopOf="@+id/aboutMeTextView"
         app:layout_constraintStart_toEndOf="@+id/imageView4"
         app:layout_constraintTop_toBottomOf="@+id/profileInterestTextView" />
 
@@ -195,8 +195,8 @@
         app:layout_constraintHorizontal_bias="0.854"
         app:layout_constraintStart_toEndOf="@+id/textView7" />
 
-    <EditText
-        android:id="@+id/editTextText"
+    <TextView
+        android:id="@+id/aboutMeTextView"
         android:layout_width="385dp"
         android:layout_height="126dp"
         android:layout_marginStart="20dp"
@@ -204,7 +204,6 @@
         android:layout_marginEnd="20dp"
         android:ems="10"
         android:hint="ABOUT ME"
-        android:inputType="text"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

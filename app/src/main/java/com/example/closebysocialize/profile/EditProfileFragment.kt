@@ -3,6 +3,7 @@ package com.example.closebysocialize.profile
 import android.annotation.SuppressLint
 import android.icu.util.Calendar
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +15,9 @@ import android.widget.NumberPicker
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.closebysocialize.R
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 
 
 class EditProfileFragment : Fragment() {
@@ -42,7 +45,7 @@ class EditProfileFragment : Fragment() {
     private val selectedInterests = mutableListOf<String>()
 
     private val db = FirebaseFirestore.getInstance()
-    private val userId = "user123" // Ersätt detta med rätt användar-ID
+    private val userId = FirebaseAuth.getInstance().currentUser?.uid ?:""
 
 
     override fun onCreateView(
