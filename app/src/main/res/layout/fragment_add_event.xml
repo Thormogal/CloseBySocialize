@@ -319,14 +319,14 @@
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
+        android:stateListAnimator="@anim/scale_button_animation"
         android:text="Create Event"
-        android:textColor="@android:color/white"
+        android:textColor="#000000"
         app:backgroundTint="@color/primary_blue"
         app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
- />
+        app:layout_constraintRight_toRightOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

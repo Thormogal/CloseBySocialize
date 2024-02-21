@@ -122,10 +122,12 @@ class AddEventFragment : Fragment() {
 
             val datePickerDialog = DatePickerDialog(
                 it.context,
+                R.style.DialogTheme,
                 { _, selectedYear, selectedMonth, selectedDay ->
                     val selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
                     val timePickerDialog = TimePickerDialog(
                         it.context,
+                        R.style.DialogTheme,
                         { _, selectedHour, selectedMinute ->
                             val selectedTime = "$selectedHour:$selectedMinute"
                             eventDateEditText.setText("$selectedDate $selectedTime")
