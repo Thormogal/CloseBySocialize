@@ -14,6 +14,7 @@ import com.example.closebysocialize.R
 import android.app.AlertDialog
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -26,6 +27,7 @@ class ProfileFragment : Fragment() {
     private lateinit var language: ImageView
     private lateinit var darkModeSwitch: Switch
     private lateinit var aboutMeTextView: TextView
+    private lateinit var userID: String
 
     val languageOptions = arrayOf("Swedish", "English")
 
@@ -93,7 +95,9 @@ class ProfileFragment : Fragment() {
                 .addOnSuccessListener { documentSnapshot ->
                     if (documentSnapshot.exists()) {
                         val userName = documentSnapshot.getString("name")
+                        val profileImageUrl = documentSnapshot.getString("profileImage")
                         nameTextView.text = userName
+                        loadImage(profileImageUrl)
 
                         val aboutMe = documentSnapshot.getString("aboutMe")
                         aboutMeTextView.text = aboutMe
@@ -126,6 +130,18 @@ class ProfileFragment : Fragment() {
             val dialog = builder.create()
             dialog.show()
         }
+
+        private fun loadImage(imageUrl: String?) {
+            if (imageUrl != null && imageUrl.isNotEmpty()) {
+            // Använd Glide eller annan bildladdningsbibliotek för att ladda ner och visa bilden
+                Glide.with(requireContext())
+                    .load(imageUrl)
+                    .into(profileImageView)
+            } else {
+            // Visa en standardbild om ingen profilbild finns
+                profileImageView.setImageResource(R.drawable.profile_top_bar_avatar)
+        }
+    }
     }
 
 
