@@ -30,84 +30,96 @@
 
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/bookImageView"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_columnWeight="1"
+            android:contentDescription="Reading"
             app:srcCompat="@drawable/interests_book" />
 
         <ImageView
-            android:id="@+id/imageView4"
+            android:id="@+id/coffeeImageView"
             android:layout_width="0dp"
             android:layout_height="30dp"
+            android:contentDescription="Café"
             android:layout_columnWeight="1"
             app:srcCompat="@drawable/interests_coffeemug" />
 
         <ImageView
-            android:id="@+id/imageView5"
+            android:id="@+id/cookingImageView"
+            android:contentDescription="Cooking"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_columnWeight="1"
             app:srcCompat="@drawable/interests_cooking" />
 
         <ImageView
-            android:id="@+id/imageView6"
+            android:id="@+id/dogImageView"
+            android:contentDescription="Dog stroll"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_columnWeight="1"
             app:srcCompat="@drawable/interests_dogwalk" />
 
         <ImageView
-            android:id="@+id/imageView7"
+            android:id="@+id/sportImageView"
+            android:contentDescription="Sports"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_columnWeight="1"
             app:srcCompat="@drawable/interests_football" />
 
         <ImageView
-            android:id="@+id/imageView8"
+            android:id="@+id/gameImageView"
+            android:contentDescription="Gaming"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_columnWeight="1"
             app:srcCompat="@drawable/interests_gamingcontroller" />
 
         <ImageView
-            android:id="@+id/imageView9"
+            android:id="@+id/cinemaImageView"
             android:layout_width="0dp"
+            android:contentDescription="Cinema"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
             app:srcCompat="@drawable/interests_movie" />
 
         <ImageView
-            android:id="@+id/imageView10"
+            android:id="@+id/restaurantImageView"
+            android:contentDescription="Lunch"
             android:layout_width="0dp"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
             app:srcCompat="@drawable/interests_restaurant" />
 
         <ImageView
-            android:id="@+id/imageView11"
+            android:id="@+id/strollerImageView"
+            android:contentDescription="Baby stroll"
             android:layout_width="0dp"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
             app:srcCompat="@drawable/interests_stroller" />
 
         <ImageView
-            android:id="@+id/imageView12"
+            android:id="@+id/theatreImageView"
             android:layout_width="0dp"
+            android:contentDescription="Theatre"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
             app:srcCompat="@drawable/interests_theatermask" />
 
         <ImageView
-            android:id="@+id/imageView13"
+            android:id="@+id/gardenImageView"
+            android:contentDescription="Gardening"
             android:layout_width="0dp"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
             app:srcCompat="@drawable/intrerests_garden" />
 
         <ImageView
-            android:id="@+id/imageView14"
+            android:id="@+id/airPlaneImageView"
+            android:contentDescription="Traveling"
             android:layout_width="0dp"
             android:layout_height="33dp"
             android:layout_columnWeight="1"

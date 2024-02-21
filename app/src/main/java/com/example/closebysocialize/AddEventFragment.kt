@@ -1,6 +1,5 @@
 package com.example.closebysocialize
 
-import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.graphics.drawable.ColorDrawable
@@ -47,18 +46,20 @@ class AddEventFragment : Fragment() {
     }
 
 
-    @SuppressLint("CutPasteId")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val gridLayout = view.findViewById<GridLayout>(R.id.gridLayout)
         var selectedImageView: ImageView? = null
+        var selectedCategory: String? = null
 
 
         for (i in 0 until gridLayout.childCount) {
             val child = gridLayout.getChildAt(i)
 
             if (child is ImageView) {
+
+                child.tag = child.contentDescription
                 child.setOnClickListener {
                     selectedImageView?.setBackgroundColor(
                         ContextCompat.getColor(
@@ -98,6 +99,8 @@ class AddEventFragment : Fragment() {
                             )
                         )
                         selectedImageView = it as ImageView
+                        selectedCategory = it.tag as String
+
 
                     }
                 }
@@ -173,13 +176,18 @@ class AddEventFragment : Fragment() {
                 eventDescription.error = "Description is required"
                 return@setOnClickListener
             }
+            if (selectedCategory == null) {
+                Toast.makeText(context, "Please select a category", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             val event = hashMapOf(
                 "eventName" to eventName,
                 "place" to place,
                 "date" to date,
                 "guests" to guests,
-                "description" to description
+                "description" to description,
+                "category" to selectedCategory
             )
 
             firestore.collection("events").add(event)
@@ -189,10 +197,18 @@ class AddEventFragment : Fragment() {
                     eventDate.text = null
                     eventGuests.text = null
                     eventDescription.text = null
+                    selectedCategory = null
+                    selectedImageView?.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            android.R.color.transparent
+                        )
+                    )
+                    selectedImageView = null
 
                     Toast.makeText(context, "Event added successfully", Toast.LENGTH_SHORT).show()
-
                 }
+
                 .addOnFailureListener { e ->
                     Toast.makeText(context, "Error adding event: ${e.message}", Toast.LENGTH_SHORT)
                         .show()
@@ -211,5 +227,6 @@ class AddEventFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+
     }
 }
