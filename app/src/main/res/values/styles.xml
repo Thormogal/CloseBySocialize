@@ -10,4 +10,7 @@
     <style name="PoppinsTextStyle">
         <item name="android:fontFamily">@font/poppins_font_family</item>
     </style>
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/primary_blue</item>
+    </style>
 </resources>
