@@ -3,6 +3,7 @@ package com.example.closebysocialize.login
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.facebook.FacebookSdk
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
@@ -13,6 +14,8 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        FacebookSdk.setApplicationId("3196808700613916")
+        FacebookSdk.sdkInitialize(applicationContext)
 
         val splashText = findViewById<TextView>(R.id.splash_text)
         val fadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.splash_screen_animation)

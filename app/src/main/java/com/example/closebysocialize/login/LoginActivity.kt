@@ -20,6 +20,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var loginButton: Button
     private lateinit var loginFirebaseGoogle: LoginFirebaseGoogle
     private lateinit var loginFirebaseGithub: LoginFirebaseGithub
+    private lateinit var loginFirebaseFacebook: LoginFirebaseFacebook
     private val firebaseAuth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +32,7 @@ class LoginActivity : AppCompatActivity() {
         loginButton = findViewById(R.id.loginButton)
         loginFirebaseGoogle = LoginFirebaseGoogle(this)
         loginFirebaseGithub = LoginFirebaseGithub(this)
+        loginFirebaseFacebook = LoginFirebaseFacebook(this)
 
         findViewById<TextView>(R.id.forgotPasswordTextView).setOnClickListener {
             navigateToResetPage()
@@ -48,6 +50,10 @@ class LoginActivity : AppCompatActivity() {
             loginFirebaseGoogle.startSigninIntent()
         }
 
+        findViewById<Button>(R.id.signInFacebookButton).setOnClickListener {
+            loginFirebaseFacebook.startFacebookLogin()
+        }
+
         findViewById<Button>(R.id.signInGithubButton).setOnClickListener {
             loginFirebaseGithub.signInWithGitHub()
         }
@@ -61,6 +67,7 @@ class LoginActivity : AppCompatActivity() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             loginFirebaseGoogle.handleSigninResult(task)
         }
+        loginFirebaseFacebook.handleActivityResult(requestCode, resultCode, data)
     }
 
     private fun navigateToResetPage() {

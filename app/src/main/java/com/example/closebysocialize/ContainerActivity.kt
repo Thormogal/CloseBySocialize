@@ -89,6 +89,7 @@ class ContainerActivity : AppCompatActivity() {
                 R.id.menu_logout -> {
                     val intent = Intent(this, LoginActivity::class.java)
                     startActivity(intent)
+                    finishAffinity()
                     true
                 }
                 else -> false

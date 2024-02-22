@@ -78,6 +78,7 @@
     <string name="login_buttonText_email">Sign in with Email</string>
     <string name="login_buttonText_google">Sign in with Google</string>
     <string name="login_buttonText_github">Sign in with Github</string>
+    <string name="login_buttonText_facebook">Sign in with Facebook</string>
 
     // sign up screen
     <string name="sign_up">Sign up</string>
@@ -96,6 +97,11 @@
     // Google Client ID
     <string name="default_web_client_id">413888895821-11vgur7plqpme9pjk09hce41r6k28jm3.apps.googleusercontent.com</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    // Facebook Client ID
+    <string name="facebook_app_id">3196808700613916</string>
+    <string name="fb_login_protocol_scheme">fb3196808700613916</string>
+    <string name="facebook_client_token">f8cba8f6fbdf119830765ca32a2ab6b7</string>
 
 
 </resources>

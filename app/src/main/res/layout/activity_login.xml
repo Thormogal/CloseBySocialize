@@ -173,6 +173,28 @@
         app:strokeWidth="0.1dp" />
 
     <Button
+        android:id="@+id/signInFacebookButton"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="5dp"
+        android:backgroundTint="@color/primary_background"
+        android:fontFamily="@font/poppins_medium"
+        android:includeFontPadding="false"
+        android:text="@string/login_buttonText_facebook"
+        android:textColor="@color/primary_text"
+        app:cornerRadius="7dp"
+        app:icon="@drawable/icon_facebook"
+        app:iconGravity="textStart"
+        app:iconPadding="10dp"
+        app:iconTint="@color/primary_background"
+        app:iconTintMode="multiply"
+        app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
+        app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
+        app:layout_constraintTop_toBottomOf="@id/signInGoogleButton"
+        app:strokeColor="@color/primary_text"
+        app:strokeWidth="0.1dp" />
+
+    <Button
         android:id="@+id/signInGithubButton"
         android:layout_width="0dp"
         android:layout_height="48dp"
@@ -190,7 +212,7 @@
         app:iconTintMode="multiply"
         app:layout_constraintEnd_toEndOf="@id/loginVerticalGuideline2"
         app:layout_constraintStart_toStartOf="@id/loginVerticalGuideline1"
-        app:layout_constraintTop_toBottomOf="@id/signInGoogleButton"
+        app:layout_constraintTop_toBottomOf="@id/signInFacebookButton"
         app:strokeColor="@color/primary_text"
         app:strokeWidth="0.1dp" />
 
