@@ -7,7 +7,9 @@ import com.facebook.FacebookSdk
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
+import com.example.closebysocialize.ContainerActivity
 import com.example.closebysocialize.R
+import com.google.firebase.auth.FirebaseAuth
 
 class SplashActivity : AppCompatActivity() {
 
@@ -26,12 +28,26 @@ class SplashActivity : AppCompatActivity() {
             }
 
             override fun onAnimationEnd(animation: Animation) {
-                navigateToLogin()
+                checkLoginAndNavigate()
             }
 
             override fun onAnimationRepeat(animation: Animation) {
             }
         })
+    }
+
+    private fun checkLoginAndNavigate() {
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            navigateToMainPage()
+        } else {
+            navigateToLogin()
+        }
+    }
+
+    private fun navigateToMainPage() {
+        val intent = Intent(this, ContainerActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     private fun navigateToLogin() {
