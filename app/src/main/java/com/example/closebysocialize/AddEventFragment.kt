@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,12 +54,9 @@ class AddEventFragment : Fragment() {
         var selectedImageView: ImageView? = null
         var selectedCategory: String? = null
 
-
         for (i in 0 until gridLayout.childCount) {
             val child = gridLayout.getChildAt(i)
-
             if (child is ImageView) {
-
                 child.tag = child.contentDescription
                 child.setOnClickListener {
                     selectedImageView?.setBackgroundColor(
@@ -67,7 +65,6 @@ class AddEventFragment : Fragment() {
                             android.R.color.transparent
                         )
                     )
-
                     val background = it.background
                     if (background is ColorDrawable) {
                         val color = background.color
@@ -152,13 +149,13 @@ class AddEventFragment : Fragment() {
             val eventNameTextView = view.findViewById<TextInputEditText>(R.id.eventNameTextView)
             val eventPlace = view.findViewById<TextInputEditText>(R.id.eventPlace)
             val eventDate = view.findViewById<TextInputEditText>(R.id.eventDate)
-            val eventGuests = view.findViewById<TextInputEditText>(R.id.eventGuests)
+        //    val eventGuests = view.findViewById<TextInputEditText>(R.id.eventGuests)
+            // val guests = eventGuests.text.toString()
             val eventDescription = view.findViewById<TextInputEditText>(R.id.eventDescription)
 
             val eventName = eventNameTextView.text.toString()
             val place = eventPlace.text.toString()
             val date = eventDate.text.toString()
-            val guests = eventGuests.text.toString()
             val description = eventDescription.text.toString()
 
             if (eventName.isEmpty()) {
@@ -182,42 +179,64 @@ class AddEventFragment : Fragment() {
                 Toast.makeText(context, "Please select a category", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            val currentUserId = AuthUtil.getCurrentUserId()
+            UserDetailsFetcher.fetchUserDetails(currentUserId) { userDetails, exception ->
+                if (exception != null) {
+                    Log.e("AddEvent", "Error fetching user details", exception)
+                    return@fetchUserDetails
+                }
+                if (userDetails == null) {
+                    Log.e("AddEvent", "User details are null")
+                    return@fetchUserDetails
+                }
+                val attendedPeopleProfilePictureUrls = mutableListOf(userDetails.profileImageUrl)
 
-            val event = hashMapOf(
-                "eventName" to eventName,
-                "place" to place,
-                "date" to date,
-                "guests" to guests,
-                "description" to description,
-                "category" to selectedCategory
-            )
+                val event = hashMapOf(
+                    "title" to eventName,
+                    "location" to place,
+                    // "city"          behöver ett fält till för city
+                    "date" to date,             //    kan man spara om denna till , "lördag", datum, tid?
+                    //  day, time, date
+                    "description" to description,
+                    "eventType" to selectedCategory,
+                    //  "spots"        behöver en spinner eller liknande för spots, alltid en plats upptagen,
+                    "authorId" to currentUserId,
+                    "authorProfileImageUrl" to userDetails.profileImageUrl,
+                    "authorFirstName" to userDetails.firstName,
+                    "authorLastName" to userDetails.lastName,
+                    "attendedPeopleProfilePictureUrls" to attendedPeopleProfilePictureUrls
 
-            firestore.collection("events").add(event)
-                .addOnSuccessListener {
-                    eventNameTextView.text = null
-                    eventPlace.text = null
-                    eventDate.text = null
-                    eventGuests.text = null
-                    eventDescription.text = null
-                    selectedCategory = null
-                    selectedImageView?.setBackgroundColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            android.R.color.transparent
+                )
+
+                firestore.collection("events").add(event)
+                    .addOnSuccessListener {
+                        eventNameTextView.text = null
+                        eventPlace.text = null
+                        eventDate.text = null
+                //        eventGuests.text = null
+                        eventDescription.text = null
+                        selectedCategory = null
+                        selectedImageView?.setBackgroundColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                android.R.color.transparent
+                            )
                         )
-                    )
-                    selectedImageView = null
+                        selectedImageView = null
+                        Toast.makeText(context, "Event added successfully", Toast.LENGTH_SHORT)
+                            .show()
+                    }
 
-                    Toast.makeText(context, "Event added successfully", Toast.LENGTH_SHORT).show()
-                }
-
-                .addOnFailureListener { e ->
-                    Toast.makeText(context, "Error adding event: ${e.message}", Toast.LENGTH_SHORT)
-                        .show()
-                }
-
+                    .addOnFailureListener { e ->
+                        Toast.makeText(
+                            context,
+                            "Error adding event: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                    }
+            }
         }
-
     }
 
     companion object {
@@ -231,4 +250,5 @@ class AddEventFragment : Fragment() {
             }
 
     }
+
 }

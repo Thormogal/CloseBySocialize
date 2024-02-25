@@ -2,13 +2,15 @@ package com.example.closebysocialize.utils
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
+import android.widget.ImageView
+import com.bumptech.glide.Glide
 import com.example.closebysocialize.dataClass.Event
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.storage.FirebaseStorage
 
 object FirestoreUtils {
     // save user data to users
@@ -16,7 +18,7 @@ object FirestoreUtils {
         val userInfo = hashMapOf(
             "name" to firebaseUser.displayName,
             "email" to firebaseUser.email,
-            "PhotoUrl" to (firebaseUser.photoUrl?.toString() ?: "defaultUrl")
+            "profileImageUrl" to (firebaseUser.photoUrl?.toString() ?: "defaultUrl")
         )
         FirebaseFirestore.getInstance().collection("users").document(firebaseUser.uid)
             .set(userInfo)
@@ -45,45 +47,6 @@ object FirestoreUtils {
     }
 
 
-
-    // for the nested Event class inside users
-    fun fetchEventsForAllUsers(onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit) {
-        val db = FirebaseFirestore.getInstance()
-        val eventsList = mutableListOf<Event>()
-        db.collection("users").get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val usersSnapshot = task.result
-                if (usersSnapshot != null && !usersSnapshot.isEmpty) {
-                    val userCount = usersSnapshot.size()
-                    var processedUsers = 0
-                    usersSnapshot.documents.forEach { userDocument ->
-                        userDocument.reference.collection("Event")
-                            .get()
-                            .addOnSuccessListener { eventsSnapshot ->
-                                eventsSnapshot.forEach { eventDocument ->
-                                    eventDocument.toObject(Event::class.java)?.let { event ->
-                                        eventsList.add(event)
-                                    }
-                                }
-                                processedUsers++
-                                if (processedUsers == userCount) {
-                                    onSuccess(eventsList)
-                                }
-                            }
-                            .addOnFailureListener { exception ->
-                                Log.e("FirestoreUtils", "Error fetching events", exception)
-                            }
-                    }
-                } else {
-                    onSuccess(emptyList())
-                }
-            } else {
-                task.exception?.let {
-                    onFailure(it)
-                }
-            }
-        }
-    }
     // fetch events created by user
     fun fetchUserEvents(userId: String?, onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit) {
         val db = FirebaseFirestore.getInstance()
@@ -138,6 +101,23 @@ object FirestoreUtils {
                 }
             }
             .addOnFailureListener(onFailure)
+    }
+
+    fun fetchAllEvents(onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("events")
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val eventsList = snapshot.documents.mapNotNull { document ->
+                    val event = document.toObject(Event::class.java)
+                    event?.id = document.id
+                    event
+                }
+                onSuccess(eventsList)
+            }
+            .addOnFailureListener { exception ->
+                onFailure(exception)
+            }
     }
 
 

@@ -1,7 +1,7 @@
 package com.example.closebysocialize.dataClass
 
 data class Event(
-    val id: String = "",
+    var id: String = "",
     val city: String = "",
     val eventType: String = "",
     val title: String = "",
@@ -9,12 +9,13 @@ data class Event(
     val day: String = "",
     val time: String = "",
     val date: String = "",
-    val author: String = "",
     val description: String = "",
     val attended: String = "",
     val spots: String = "",
-    val profileImageUrl: String = "",
+    val authorProfileImageUrl: String = "",
+    val authorFirstName: String = "",
+    val authorLastName: String = "",
     val authorId: String = "",
     val attendedPeopleProfilePictureUrls: List<String> = listOf(),
-    var isSaved: Boolean = false
+    var isSaved: Boolean = false,
 )
