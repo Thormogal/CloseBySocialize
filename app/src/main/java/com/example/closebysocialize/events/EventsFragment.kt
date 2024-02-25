@@ -82,6 +82,17 @@ class EventsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirestoreUtils.fetchSavedEventsByUser(userId, onSuccess = { savedEvents ->
+            eventsAdapter.savedEventsIds.clear()
+            eventsAdapter.savedEventsIds.addAll(savedEvents.map { it.id })
+            eventsAdapter.notifyDataSetChanged()
+        }, onFailure = { exception ->
+            Log.e("EventsFragment", "Error fetching saved events", exception)
+        })
+
+
+
         initializeDefaultSelection()
         recyclerView = view.findViewById(R.id.eventsRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -112,21 +123,28 @@ class EventsFragment : Fragment() {
         attendedTextView.textSize = defaultTextSize
     }
 
-    private fun fetchDataFromFirestore(showOnlyMyEvents: Boolean = this.arguments?.getBoolean("showOnlyMyEvents", false) ?: false) {
+
+
+    private fun fetchDataFromFirestore() {
+        val showOnlyMyEvents = this.arguments?.getBoolean("showOnlyMyEvents", false) ?: false
         if (showOnlyMyEvents) {
             val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
-            FirestoreUtils.fetchUserEvents(
-                userId = currentUserId,
-                onSuccess = { eventsList -> updateRecyclerView(eventsList) },
-                onFailure = { exception -> Log.d("EventsFragment", "Error fetching user's events: ", exception) }
-            )
+            if (currentUserId != null) {
+                FirestoreUtils.fetchUserEvents(
+                    userId = currentUserId,
+                    onSuccess = { eventsList -> updateRecyclerView(eventsList) },
+                    onFailure = { exception -> Log.d("EventsFragment", "Error fetching user's events: ", exception) }
+                )
+            }
         } else {
-            FirestoreUtils.fetchEventsForAllUsers(
+            FirestoreUtils.fetchAllEvents(
                 onSuccess = { eventsList -> updateRecyclerView(eventsList) },
                 onFailure = { exception -> Log.d("EventsFragment", "Error fetching events: ", exception) }
             )
         }
     }
+
+
 
 
     private fun updateRecyclerView(eventsList: List<Event>) {
@@ -168,7 +186,7 @@ class EventsFragment : Fragment() {
     private fun filterData(filterType: String) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         when (filterType) {
-            "all" -> FirestoreUtils.fetchEventsForAllUsers(::updateRecyclerView, ::handleError)
+            "all" -> FirestoreUtils.fetchAllEvents(::updateRecyclerView, ::handleError)
             "saved" -> FirestoreUtils.fetchSavedEventsByUser(userId, ::updateRecyclerView, ::handleError)
             "attending" -> FirestoreUtils.fetchAttendingEventsByUser(userId, ::updateRecyclerView, ::handleError)
         }
@@ -184,6 +202,8 @@ class EventsFragment : Fragment() {
     private fun handleError(exception: Exception) {
         Log.e("EventsFragment", "Error fetching data from Firestore", exception)
     }
+
+
 
 }
 

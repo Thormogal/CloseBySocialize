@@ -10,7 +10,7 @@
         android:id="@+id/textViewsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#17020202"
+        android:background="@color/primary_background"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="16dp"
