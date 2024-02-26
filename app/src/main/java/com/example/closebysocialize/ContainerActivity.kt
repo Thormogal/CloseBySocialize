@@ -11,6 +11,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 import com.example.closebysocialize.chat.MessageFragment
 import com.example.closebysocialize.events.EventsFragment
+import com.example.closebysocialize.friends.FriendsFragment
 import com.example.closebysocialize.login.LoginActivity
 import com.example.closebysocialize.map.MapFragment
 import com.example.closebysocialize.profile.EditProfileFragment
@@ -80,6 +81,10 @@ class ContainerActivity : AppCompatActivity() {
                 R.id.menu_profile -> {
                     Log.d("!!!", "Profile opens")
                     FragmentUtils.switchFragment(this, R.id.fragment_container, ProfileFragment::class.java)
+                    true
+                }
+                R.id.menu_friends -> {
+                    FragmentUtils.switchFragment(this, R.id.fragment_container, FriendsFragment::class.java)
                     true
                 }
                 R.id.menu_edit_profile -> {
