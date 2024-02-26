@@ -6,10 +6,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.closebysocialize.R
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 
-class MapFragment : Fragment() {
+class MapFragment : Fragment(), OnMapReadyCallback {
+
+    private lateinit var mapView: MapView
+    private lateinit var googleMap: GoogleMap
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         arguments?.let {
         }
     }
@@ -18,6 +30,49 @@ class MapFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_map, container, false)
+
+        val view = inflater.inflate(R.layout.fragment_map, container, false)
+
+        mapView = view.findViewById(R.id.mapView)
+        mapView.onCreate(savedInstanceState)
+        mapView.onResume()
+
+        // Initialize the GoogleMap asynchronously
+        mapView.getMapAsync(this)
+
+        return view
+    }
+
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+
+        val sweden = LatLng(60.4843, 15.4340)
+        val cameraPosition = CameraPosition.Builder()
+            .target(sweden) // Sets the center of the map to Sweden
+            .zoom(6f) // Sets the zoom level
+            .build()
+
+        // Move and animate the camera to the specified position
+        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView.onLowMemory()
     }
 }
