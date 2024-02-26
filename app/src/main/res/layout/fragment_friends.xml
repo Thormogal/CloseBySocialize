@@ -14,41 +14,16 @@
         android:layout_marginTop="12dp"
          />
 
-    <Button
-        android:id="@+id/addFriendButton"
-        style="@style/Widget.Material3.Button.ElevatedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
-        android:fontFamily="@font/poppins_font_family"
-        android:text="@string/add_friend"
-        android:textColor="@color/primary_text"
-        app:backgroundTint="@color/primary_blue"
-        app:backgroundTintMode="src_in"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="20dp"
-        />
-    <Button
-        android:id="@+id/removeFriendButton"
-        style="@style/Widget.Material3.Button.ElevatedButton"
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addFriendsFloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:fontFamily="@font/poppins_font_family"
-        android:text="@string/remove_friend"
-        android:textColor="@color/primary_text"
-        app:backgroundTint="@color/primary_blue"
-        app:backgroundTintMode="src_in"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        />
-
+        android:layout_margin="16dp"
+        app:hoveredFocusedTranslationZ="4dp"
+        app:pressedTranslationZ="8dp"
+        app:backgroundTint="@color/primary_background"
+        app:srcCompat="@drawable/icon_plus"
+        app:tint="@color/primary_text"/>
 </FrameLayout>

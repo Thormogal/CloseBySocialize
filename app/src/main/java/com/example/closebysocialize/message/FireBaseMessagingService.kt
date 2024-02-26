@@ -1,4 +1,4 @@
-package com.example.closebysocialize.chat
+package com.example.closebysocialize.message
 
 import android.util.Log
 import com.google.firebase.messaging.RemoteMessage
