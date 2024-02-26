@@ -7,22 +7,21 @@ import android.icu.util.Calendar
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.NumberPicker
 import android.widget.Toast
+import androidx.compose.ui.graphics.Color
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.example.closebysocialize.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
+
 
 
 class EditProfileFragment : Fragment() {
@@ -55,12 +54,13 @@ class EditProfileFragment : Fragment() {
     private var selectedImageUri: Uri? = null
 
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_edit_profile, container, false)
-
 
         goBackButtonImageView = view.findViewById(R.id.goBackButtonImageView)
         editImage = view.findViewById(R.id.editPictureImageView)
@@ -93,7 +93,7 @@ class EditProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val interestImageViews = listOf<ImageView>(
+        val interestImageViews = listOf(
             dogImageView, airplaneImageView, bookImageView,
             cookingImageView, gardenImageView, cinemaImageView, restaurantImageView, sportImageView,
             coffeeImageView, gameImageView, theatreImageView, strollerImageView
@@ -105,24 +105,20 @@ class EditProfileFragment : Fragment() {
                 if (selectedInterests.contains(interest)) {
                     // Om intresset redan är valt, ta bort det från listan och återställ knappens animation
                     selectedInterests.remove(interest)
-                    view.clearAnimation()
+                    view.isSelected = false
                 } else {
                     // Om intresset inte är valt, lägg till det i listan och tillämpa nedtryckningsanimationen
                     selectedInterests.add(interest)
-
-                    val scaleDownAnimation = AnimationUtils.loadAnimation(
-                        requireContext(),
-                        R.anim.scale_button_animation
-                    )
-                    view.startAnimation(scaleDownAnimation)
+                    view.isSelected = true
                 }
-                // Uppdatera knappens markerade status baserat på om intresset är valt eller inte
-                view.isSelected = selectedInterests.contains(interest)
             }
         }
 
         interestImageViews.forEach { imageView ->
             imageView.setOnClickListener(interestClickListener)
+            imageView.setBackgroundResource(R.drawable.unselected_button_background)// Ange standardbakgrund
+
+
         }
 
 //kallar på funktionerna, clicklis
@@ -132,22 +128,13 @@ class EditProfileFragment : Fragment() {
             //tillbaka till fragmentet profile fragment
         }
         editImage.setOnClickListener {
-            //redigera bild
             val galleryIntent =
                 Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE)
         }
-
-        editName.setOnClickListener {
-            //Redigera namn
-        }
         birthYearPicker.setOnValueChangedListener { picker, oldVal, newVal ->
             val selectedYear = newVal
         }
-        aboutMeEditText.setOnClickListener {
-            // redigera text om mig själv
-        }
-
         profileSaveButton.setOnClickListener {
             saveProfileDataToDatabase()
         }
@@ -173,37 +160,27 @@ class EditProfileFragment : Fragment() {
             )
         )
             .addOnSuccessListener {
-                // Uppdatering lyckades
-                // Visa en bekräftelse för användaren eller gör andra åtgärder vid behov
             }
             .addOnFailureListener {
-                // Uppdatering misslyckades
-                // Hantera fel här, exempelvis visa ett felmeddelande
             }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            // Kolla om resultatet kommer från galleriaktiviteten och om det var en lyckad operation
             selectedImageUri = data?.data
-            // Anropa din funktion för att ställa in profilbilden med den valda bilden
             setProfileImage(selectedImageUri)
         }
     }
 
     private fun setProfileImage(imageUri: Uri?) {
-        // Gör något med den valda bilden, t.ex. ställ in den som profilbild
         if (imageUri != null) {
-            // Omvandla Uri till Bitmap om det behövs
             val bitmap = MediaStore.Images.Media.getBitmap(
                 requireContext().contentResolver,
                 imageUri
             )
-            // Tillämpa bilden på din ImageView
             editImage.setImageBitmap(bitmap)
         } else {
-            // Felhantering om ingen bild valdes
             Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_SHORT).show()
         }
     }
