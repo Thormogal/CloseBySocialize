@@ -50,14 +50,12 @@ class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
         )
     }
     override fun onFriendClick(friend: Friend) {
-        FragmentUtils.switchFragment(
-            activity = requireActivity() as AppCompatActivity,
-            containerId = R.id.fragment_container,
-            fragmentClass = OpenChatFragment::class.java,
-            args = Bundle().apply {
-                putString("friendId", friend.id)
-            }
-        )
+        val chatFragment = OpenChatFragment.newInstance(friend.id)
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, chatFragment)
+            .addToBackStack(null)
+            .commit()
+
     }
     override fun onMessageClick(friend: Friend) {
     }
