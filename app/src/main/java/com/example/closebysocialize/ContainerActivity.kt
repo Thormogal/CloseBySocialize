@@ -1,5 +1,6 @@
 package com.example.closebysocialize
 
+import FriendsFragment
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,9 +10,8 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
-import com.example.closebysocialize.chat.MessageFragment
+import com.example.closebysocialize.message.MessageFragment
 import com.example.closebysocialize.events.EventsFragment
-import com.example.closebysocialize.friends.FriendsFragment
 import com.example.closebysocialize.login.LoginActivity
 import com.example.closebysocialize.map.MapFragment
 import com.example.closebysocialize.profile.EditProfileFragment

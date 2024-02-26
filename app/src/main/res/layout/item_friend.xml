@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
-    android:background="?attr/selectableItemBackground">
+    android:background="?attr/selectableItemBackground"
+    android:padding="16dp">
 
     <ImageView
         android:id="@+id/friendProfilePictureImageView"
@@ -29,13 +28,25 @@
         app:layout_constraintStart_toEndOf="@+id/friendProfilePictureImageView"
         app:layout_constraintTop_toTopOf="@+id/friendProfilePictureImageView" />
 
+
     <ImageView
-        android:id="@+id/selectionIndicator"
+        android:id="@+id/messageIcon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/baseline_done_24"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/nameTextView"
-        app:layout_constraintStart_toEndOf="@+id/nameTextView"
-        app:layout_constraintTop_toTopOf="@+id/nameTextView" />
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/icon_message"
+        app:layout_constraintBottom_toBottomOf="@+id/friendProfilePictureImageView"
+        app:layout_constraintEnd_toStartOf="@+id/binIcon"
+        app:layout_constraintTop_toTopOf="@+id/friendProfilePictureImageView" />
+
+    <ImageView
+        android:id="@+id/binIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/icon_bin"
+        app:layout_constraintBottom_toBottomOf="@+id/friendProfilePictureImageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/friendProfilePictureImageView" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

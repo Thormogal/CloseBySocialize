@@ -6,7 +6,9 @@ import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.closebysocialize.dataClass.Event
+import com.example.closebysocialize.dataClass.Friend
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
@@ -132,6 +134,20 @@ object FirestoreUtils {
             }
     }
 
-
-
+    fun loadFriends(userId: String, onSuccess: (List<Friend>) -> Unit, onFailure: (Exception) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("users")
+            .document(userId)
+            .collection("friends")
+            .get()
+            .addOnSuccessListener { documents ->
+                val friendsList = documents.mapNotNull { it.toObject(Friend::class.java) }
+                onSuccess(friendsList)
+            }
+            .addOnFailureListener { exception ->
+                onFailure(exception)
+            }
+    }
 }
+
+

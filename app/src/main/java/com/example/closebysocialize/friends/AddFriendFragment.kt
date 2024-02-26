@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.R
 import com.example.closebysocialize.dataClass.Users
+import com.example.closebysocialize.message.FireBaseMessagingService.Companion.TAG
 import com.example.closebysocialize.utils.UserAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -89,6 +90,11 @@ class AddFriendFragment : Fragment() {
             "profileImageUrl" to user.profileImageUrl,
             "name" to user.name
         )
+        val messageData = hashMapOf(
+            "senderId" to currentUser.uid,
+            "recipientId" to user.id,
+            "content" to "Hello!"
+        )
 
         db.collection("users")
             .document(currentUser.uid)
@@ -104,6 +110,14 @@ class AddFriendFragment : Fragment() {
                         .set(friendData)
                         .addOnSuccessListener {
                             Toast.makeText(context, "Friend added successfully", Toast.LENGTH_SHORT).show()
+                            val conversationRef = db.collection("conversations").document()
+                            conversationRef.collection("messages").add(messageData)
+                                .addOnSuccessListener {
+                                    Log.d("!!!", "Initial message sent successfully")
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.e("!!!", "Error sending initial message", e)
+                                }
                         }
                         .addOnFailureListener {
                             Toast.makeText(context, "Failed to add friend", Toast.LENGTH_SHORT).show()
