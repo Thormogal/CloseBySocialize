@@ -13,6 +13,7 @@ import android.widget.ProgressBar
 import com.example.closebysocialize.R
 import androidx.appcompat.app.AppCompatActivity
 import com.example.closebysocialize.ContainerActivity
+import com.example.closebysocialize.utils.FirestoreUtils
 import com.google.firebase.auth.FirebaseAuth
 
 class SignupActivity : AppCompatActivity() {
@@ -85,14 +86,23 @@ class SignupActivity : AppCompatActivity() {
             return
         }
 
-        loginFirebaseEmail.registerUser(email, password, onSuccess = {
-            Toast.makeText(
-                this,
-                "Confirmation mail sent. Please check your e-mail account.",
-                Toast.LENGTH_LONG
-            ).show()
-            startEmailVerificationCheck()
-            showProgressSpinner(true)
+        loginFirebaseEmail.registerUser(email, password, onSuccess = { firebaseUser ->
+            firebaseUser?.let {
+                FirestoreUtils.saveUserToFirestore(it, this)
+                Toast.makeText(
+                    this,
+                    "Confirmation mail sent. Please check your e-mail account.",
+                    Toast.LENGTH_LONG
+                ).show()
+                startEmailVerificationCheck()
+                showProgressSpinner(true)
+            } ?: run {
+                Toast.makeText(
+                    this,
+                    "Registration successful but encountered an issue fetching user details.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         },
             onError = { exception ->
                 Toast.makeText(
@@ -100,9 +110,7 @@ class SignupActivity : AppCompatActivity() {
                     "Error with registration: ${exception.message}",
                     Toast.LENGTH_LONG
                 ).show()
-
-            }
-        )
+            })
     }
 
     private fun startEmailVerificationCheck() {

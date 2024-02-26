@@ -8,7 +8,7 @@ class LoginFirebaseEmail(private val auth: FirebaseAuth) {
     fun registerUser(
         email: String,
         password: String,
-        onSuccess: () -> Unit,
+        onSuccess: (FirebaseUser?) -> Unit,
         onError: (Exception) -> Unit
     ) {
         auth.createUserWithEmailAndPassword(email, password)
@@ -23,13 +23,13 @@ class LoginFirebaseEmail(private val auth: FirebaseAuth) {
 
     private fun sendVerificationEmail(
         user: FirebaseUser?,
-        onSuccess: () -> Unit,
+        onSuccess: (FirebaseUser?) -> Unit,
         onError: (Exception) -> Unit
     ) {
         user?.sendEmailVerification()
             ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    onSuccess()
+                    onSuccess(user)
                 } else {
                     task.exception?.let { onError(it) }
                 }

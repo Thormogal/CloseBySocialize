@@ -5,6 +5,7 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import com.example.closebysocialize.ContainerActivity
+import com.example.closebysocialize.utils.FirestoreUtils
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -45,9 +46,14 @@ class LoginFirebaseFacebook(private val activity: Activity) {
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(activity) { task ->
                 if (task.isSuccessful) {
-                    val intent = Intent(activity, ContainerActivity::class.java)
-                    activity.startActivity(intent)
-                    activity.finish()
+                    Toast.makeText(activity, "Log in with Facebook succeeded.", Toast.LENGTH_SHORT).show()
+                    val firebaseUser = firebaseAuth.currentUser
+                    firebaseUser?.let {
+                        FirestoreUtils.saveUserToFirestore(it, activity)
+                        val intent = Intent(activity, ContainerActivity::class.java)
+                        activity.startActivity(intent)
+                        activity.finish()
+                    }
                 } else {
                     Log.e("FacebookLogin", "Firebase Authentication failed", task.exception)
                     Toast.makeText(activity, "Authentication failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()

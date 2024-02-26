@@ -3,6 +3,7 @@ package com.example.closebysocialize.utils
 import android.content.Context
 import android.util.Log
 import android.widget.ImageView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.closebysocialize.dataClass.Event
 import com.google.android.gms.tasks.Tasks
@@ -11,25 +12,36 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
+import java.util.UUID
 
 object FirestoreUtils {
     // save user data to users
     fun saveUserToFirestore(firebaseUser: FirebaseUser, context: Context) {
-        val userInfo = hashMapOf(
-            "name" to firebaseUser.displayName,
-            "email" to firebaseUser.email,
-            "profileImageUrl" to (firebaseUser.photoUrl?.toString() ?: "defaultUrl")
-        )
-        FirebaseFirestore.getInstance().collection("users").document(firebaseUser.uid)
-            .set(userInfo)
-            .addOnSuccessListener {
-                // TODO do you want a message?
-               // Toast.makeText(context, "User information saved to Firestore", Toast.LENGTH_SHORT).show()
+        val userRef = FirebaseFirestore.getInstance().collection("users").document(firebaseUser.uid)
+        userRef.get().addOnSuccessListener { document ->
+            if (!document.exists()) {
+                val uniqueId = UUID.randomUUID().toString()
+                val userInfo = hashMapOf(
+                    "id" to uniqueId,
+                    "name" to firebaseUser.displayName,
+                    "email" to firebaseUser.email,
+                    "profileImageUrl" to (firebaseUser.photoUrl?.toString() ?: "defaultUrl")
+                )
+
+                userRef.set(userInfo)
+                    .addOnSuccessListener {
+                        Toast.makeText(context, "Your information has been saved to Firestore.", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(context, "Error with saving user information: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+            } else {
+                Toast.makeText(context, "User information already exists in Firestore.", Toast.LENGTH_SHORT).show()
+
             }
-            .addOnFailureListener { e ->
-                // TODO do you want a message?
-                // Toast.makeText(context, "Failed to save user information: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+        }.addOnFailureListener { e ->
+            Toast.makeText(context, "Error when checking if the profile exists: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 
     // for any specific data class
