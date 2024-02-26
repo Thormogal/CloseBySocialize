@@ -1,5 +1,7 @@
 package com.example.closebysocialize
 
+import AuthUtil
+import UserDetailsFetcher
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.graphics.drawable.ColorDrawable
@@ -16,7 +18,9 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -24,6 +28,9 @@ private const val ARG_PARAM2 = "param2"
 class AddEventFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
+    private var chosenDay: String? = null
+    private var chosenDate: String? = null
+    private var chosenTime: String? = null
 
     private lateinit var firestore: FirebaseFirestore
 
@@ -121,13 +128,18 @@ class AddEventFragment : Fragment() {
                 it.context,
                 R.style.DialogTheme,
                 { _, selectedYear, selectedMonth, selectedDay ->
-                    val selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
                     val timePickerDialog = TimePickerDialog(
                         it.context,
                         R.style.DialogTheme,
                         { _, selectedHour, selectedMinute ->
-                            val selectedTime = "$selectedHour:$selectedMinute"
-                            eventDateEditText.setText("$selectedDate $selectedTime")
+                            calendar.set(selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute)
+                            val dayFormat = SimpleDateFormat("EEEE", Locale.getDefault())
+                            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                            val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                            chosenDay = dayFormat.format(calendar.time)
+                            chosenDate = dateFormat.format(calendar.time)
+                            chosenTime = timeFormat.format(calendar.time)
+                            eventDateEditText.setText("$chosenDay, $chosenDate, $chosenTime")
                         },
                         hour,
                         minute,
@@ -141,7 +153,6 @@ class AddEventFragment : Fragment() {
             )
             datePickerDialog.show()
         }
-
 
         val createEventButton = view.findViewById<MaterialButton>(R.id.materialButton)
 
@@ -195,8 +206,9 @@ class AddEventFragment : Fragment() {
                     "title" to eventName,
                     "location" to place,
                     // "city"          behöver ett fält till för city
-                    "date" to date,             //    kan man spara om denna till , "lördag", datum, tid?
-                    //  day, time, date
+                    "day" to chosenDay,
+                    "date" to chosenDate,
+                    "time" to chosenTime,
                     "description" to description,
                     "eventType" to selectedCategory,
                     //  "spots"        behöver en spinner eller liknande för spots, alltid en plats upptagen,
