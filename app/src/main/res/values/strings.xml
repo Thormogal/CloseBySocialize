@@ -19,6 +19,7 @@
     <string name="log_out">Log out</string>
     <string name="my_events">My events</string>
 
+
     // profile page
     <string name="interests">Interests</string>
     <string name="about_me">About me</string>
@@ -102,6 +103,13 @@
     <string name="facebook_app_id">3196808700613916</string>
     <string name="fb_login_protocol_scheme">fb3196808700613916</string>
     <string name="facebook_client_token">f8cba8f6fbdf119830765ca32a2ab6b7</string>
+
+
+    // Friends
+    <string name="friend_name">Friend name</string>
+    <string name="remove_friend">Remove Friend</string>
+    <string name="friends">Friends</string>
+    <string name="add_friend">Add Friend</string>
 
 
 </resources>
