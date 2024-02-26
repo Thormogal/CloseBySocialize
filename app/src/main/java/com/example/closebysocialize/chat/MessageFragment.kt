@@ -18,7 +18,13 @@ class MessageFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_message, container, false)
+        val view = inflater.inflate(R.layout.fragment_message, container, false)
+
+
+
+
+
+        return view
     }
 
 }

@@ -205,7 +205,6 @@ class AddEventFragment : Fragment() {
                     "authorFirstName" to userDetails.firstName,
                     "authorLastName" to userDetails.lastName,
                     "attendedPeopleProfilePictureUrls" to attendedPeopleProfilePictureUrls
-
                 )
 
                 firestore.collection("events").add(event)
