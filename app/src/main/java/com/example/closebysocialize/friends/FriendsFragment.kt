@@ -48,13 +48,12 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendSelectionListener {
             openAddFriendFragment()
         }
 
-        val removeFriendButton = view.findViewById<Button>(R.id.removeFriendButton)
+        removeFriendButton = view.findViewById<Button>(R.id.removeFriendButton)
         removeFriendButton.visibility = View.GONE
         removeFriendButton.setOnClickListener {
             removeSelectedFriends()
+            removeFriendButton.visibility = View.GONE
         }
-
-
     }
 
     override fun onResume() {
@@ -105,6 +104,8 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendSelectionListener {
     }
     override fun onSelectionChanged() {
         val anySelected = friendsAdapter.friends.any { it.isSelected }
+        val addFriendButton = view?.findViewById<Button>(R.id.addFriendButton)
+        addFriendButton?.visibility = if (anySelected) View.GONE else View.VISIBLE
         removeFriendButton?.visibility = if (anySelected) View.VISIBLE else View.GONE
     }
 

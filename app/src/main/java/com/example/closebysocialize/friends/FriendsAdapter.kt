@@ -56,9 +56,7 @@ class FriendsAdapter(var friends: List<Friend>, var selectionListener: FriendSel
                 .circleCrop()
                 .into(holder.profileImageView)
         }
-
     }
-
     override fun getItemCount() = friends.size
 
 
