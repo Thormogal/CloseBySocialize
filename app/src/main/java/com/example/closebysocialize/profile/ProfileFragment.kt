@@ -22,12 +22,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 class ProfileFragment : Fragment() {
     private lateinit var profileImageView: ImageView
     private lateinit var nameTextView: TextView
-
     private lateinit var reportBugs: ImageView
     private lateinit var language: ImageView
     private lateinit var darkModeSwitch: Switch
     private lateinit var aboutMeTextView: TextView
-    private lateinit var userID: String
 
     val languageOptions = arrayOf("Swedish", "English")
 
@@ -56,11 +54,9 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         //kallar på funktionerna, clicklis
 
         fetchUserInfo()
-
 
         reportBugs.setOnClickListener {
             //Ska man komma vidare till någon sida här?
@@ -69,15 +65,11 @@ class ProfileFragment : Fragment() {
             showLanguagePicker()
         }
         
-        
 
-            // adjust dark mode switch
             darkModeSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
-                    // call function for switch to darkmode
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                 } else {
-                    // call function for switch to lightmode
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 }
 
@@ -96,11 +88,8 @@ class ProfileFragment : Fragment() {
                     if (documentSnapshot.exists()) {
                         val userName = documentSnapshot.getString("name")
                         val profileImageUrl = documentSnapshot.getString("profileImage")
-                        nameTextView.text = userName
-                        loadImage(profileImageUrl)
-
                         val aboutMe = documentSnapshot.getString("aboutMe")
-                        aboutMeTextView.text = aboutMe
+                        updateProfileUI(aboutMe, userName,profileImageUrl)
                     } else {
                         Log.d("!!!", "Document does not exist")
                     }
@@ -113,12 +102,25 @@ class ProfileFragment : Fragment() {
         }
     }
 
+        private fun updateProfileUI(aboutMe: String?, userName: String?, profileImageUrl: String?) {
+            if (!userName.isNullOrEmpty()) {
+                nameTextView.text = userName
+         }
+            if (!aboutMe.isNullOrEmpty()) {
+               aboutMeTextView.text = aboutMe
+            }
+
+
+        if (!profileImageUrl.isNullOrEmpty()) {
+            loadImage(profileImageUrl)
+        }
+    }
+
         private fun showLanguagePicker() {
             val builder = AlertDialog.Builder(requireContext())
             builder.setTitle("Select Language")
                 .setItems(languageOptions) { dialog, which ->
                     val selectedLanguage = languageOptions[which]
-                    // Uppdatera språk i appen baserat på valt språk
                     Toast.makeText(
                         requireContext(),
                         "Selected Language: $selectedLanguage",
@@ -133,16 +135,14 @@ class ProfileFragment : Fragment() {
 
         private fun loadImage(imageUrl: String?) {
             if (imageUrl != null && imageUrl.isNotEmpty()) {
-            // Använd Glide eller annan bildladdningsbibliotek för att ladda ner och visa bilden
                 Glide.with(requireContext())
                     .load(imageUrl)
                     .into(profileImageView)
             } else {
-            // Visa en standardbild om ingen profilbild finns
                 profileImageView.setImageResource(R.drawable.profile_top_bar_avatar)
         }
     }
-    }
+}
 
 
 
