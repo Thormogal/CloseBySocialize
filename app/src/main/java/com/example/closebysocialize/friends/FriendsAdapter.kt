@@ -14,12 +14,17 @@ import com.example.closebysocialize.dataClass.Friend
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class FriendsAdapter(var friends: List<Friend>) : RecyclerView.Adapter<FriendsAdapter.FriendViewHolder>() {
+class FriendsAdapter(var friends: List<Friend>, var selectionListener: FriendSelectionListener?) : RecyclerView.Adapter<FriendsAdapter.FriendViewHolder>() {
+
+    interface FriendSelectionListener {
+        fun onSelectionChanged()
+    }
 
     class FriendViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val nameTextView: TextView = view.findViewById(R.id.nameTextView)
         private val selectionIndicator: ImageView = view.findViewById(R.id.selectionIndicator)
         val profileImageView: ImageView = view.findViewById(R.id.friendProfilePictureImageView)
+
         fun bind(friend: Friend) {
             nameTextView.text = friend.name
             if (friend.isSelected) {
@@ -31,6 +36,7 @@ class FriendsAdapter(var friends: List<Friend>) : RecyclerView.Adapter<FriendsAd
             }
         }
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_friend, parent, false)
         return FriendViewHolder(view)
@@ -40,9 +46,9 @@ class FriendsAdapter(var friends: List<Friend>) : RecyclerView.Adapter<FriendsAd
         val friend = friends[position]
         holder.bind(friend)
         holder.itemView.setOnClickListener {
-            removeFriendFromFirestore(friend.id, position)
-            //friend.isSelected = !friend.isSelected
-            //notifyItemChanged(position)
+            friend.isSelected = !friend.isSelected
+            notifyItemChanged(position)
+            selectionListener?.onSelectionChanged()
         }
         friend.profileImageUrl?.let { url ->
             Glide.with(holder.itemView.context)
@@ -61,30 +67,4 @@ class FriendsAdapter(var friends: List<Friend>) : RecyclerView.Adapter<FriendsAd
         notifyDataSetChanged()
     }
 
-
-    private fun removeFriendFromFirestore(friendId: String, position: Int) {
-        val db = FirebaseFirestore.getInstance()
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val friendDocRef = db.collection("users").document(userId).collection("friends").document(friendId)
-        friendDocRef
-            .delete()
-            .addOnSuccessListener {
-                removeFriendAtPosition(position)
-                Log.d("FriendsAdapter", "Friend successfully deleted from Firestore")
-            }
-            .addOnFailureListener { e ->
-                Log.w("FriendsAdapter", "Error deleting friend from Firestore", e)
-            }
-    }
-
-
-    fun removeFriendAtPosition(position: Int) {
-        if (position >= 0 && position < friends.size) {
-            friends = friends.toMutableList().apply {
-                removeAt(position)
-            }
-            notifyItemRemoved(position)
-            notifyItemRangeChanged(position, friends.size)
-        }
-    }
 }
