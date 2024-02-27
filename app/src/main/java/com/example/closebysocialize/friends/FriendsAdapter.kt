@@ -34,9 +34,6 @@ class FriendsAdapter(private val context: Context, private var friends: List<Fri
             view.findViewById(R.id.friendProfilePictureImageView)
         private val messageIcon: ImageView = view.findViewById(R.id.messageIcon)
         private val binIcon: ImageView = view.findViewById(R.id.binIcon)
-        private val acceptIcon: ImageView = view.findViewById(R.id.acceptIcon)
-        private val declineIcon: ImageView = view.findViewById(R.id.declineIcon)
-
 
         fun bind(friend: Friend) {
             nameTextView.text = friend.name
@@ -51,80 +48,18 @@ class FriendsAdapter(private val context: Context, private var friends: List<Fri
                 messageIcon.visibility = View.GONE
                 binIcon.visibility = View.GONE
             }
-
-            if (friend.isRequest) {
-                acceptIcon.visibility = View.VISIBLE
-                declineIcon.visibility = View.VISIBLE
-            } else {
-                acceptIcon.visibility = View.GONE
-                declineIcon.visibility = View.GONE
-            }
-
             itemView.setOnClickListener {
-                if (friend.isRequest) {
-                    listener?.onFriendClick(friend)
-                } else {
                     listener?.onMessageClick(friend)
-                }
+
             }
 
             binIcon.setOnClickListener {
                 listener?.onBinClick(friend)
             }
 
-            acceptIcon.setOnClickListener {
-                acceptFriendRequest(context, friend.requestId, friend.user)
-            }
-
-            declineIcon.setOnClickListener {
-                rejectFriendRequest(friend.requestId)
-            }
         }
     }
-    private fun acceptFriendRequest(context: Context, requestId: String, user: Users) {
-        val currentUser = FirebaseAuth.getInstance().currentUser ?: return
-        val db = FirebaseFirestore.getInstance()
-        val friendData = hashMapOf(
-            "id" to user.id,
-            "email" to user.email,
-            "profileImageUrl" to user.profileImageUrl,
-            "name" to user.name
-        )
-        db.collection("users")
-            .document(currentUser.uid)
-            .collection("friends")
-            .document(user.id)
-            .set(friendData)
-            .addOnSuccessListener {
-                Toast.makeText(context, "Friend added successfully", Toast.LENGTH_SHORT).show()
-                db.collection("friend_requests")
-                    .document(requestId)
-                    .delete()
-                    .addOnSuccessListener {
-                        Toast.makeText(context, "Friend request accepted", Toast.LENGTH_SHORT).show()
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(context, "Failed to accept friend request", Toast.LENGTH_SHORT).show()
-                    }
-            }
-            .addOnFailureListener {
-                Toast.makeText(context, "Failed to add friend", Toast.LENGTH_SHORT).show()
-            }
-    }
 
-
-    private fun rejectFriendRequest(requestId: String) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection("friend_requests")
-            .document(requestId)
-            .delete()
-            .addOnSuccessListener {
-                Toast.makeText(context, "Friend request rejected", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(context, "Failed to reject friend request", Toast.LENGTH_SHORT).show()
-            }
-    }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {

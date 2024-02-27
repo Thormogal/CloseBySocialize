@@ -45,7 +45,7 @@ class AddFriendFragment : Fragment() {
 
         userAdapter.onItemClick = { user ->
             //addUserAsFriend(user)
-            sendFriendRequest(user)
+            addUserAsFriend(user)
 
         }
         searchEditText.addTextChangedListener(object : TextWatcher {
@@ -78,32 +78,6 @@ class AddFriendFragment : Fragment() {
             .addOnFailureListener {
             }
     }
-    private fun sendFriendRequest(user: Users) {
-        val currentUser = FirebaseAuth.getInstance().currentUser ?: return
-        if (user.id.isNullOrEmpty()) {
-            Toast.makeText(context, "Invalid user ID", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val db = FirebaseFirestore.getInstance()
-        val requestId = "${currentUser.uid}_${user.id}"
-        val friendRequestData = hashMapOf(
-            "senderId" to currentUser.uid,
-            "recipientId" to user.id,
-            "status" to "pending",
-            "timestamp" to System.currentTimeMillis()
-        )
-        db.collection("friend_requests")
-            .document(requestId)
-            .set(friendRequestData)
-            .addOnSuccessListener {
-                Toast.makeText(context, "Friend request sent successfully", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(context, "Failed to send friend request", Toast.LENGTH_SHORT).show()
-            }
-    }
-
 
     private fun addUserAsFriend(user: Users) {
         val currentUser = FirebaseAuth.getInstance().currentUser ?: return
