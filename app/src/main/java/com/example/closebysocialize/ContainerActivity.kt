@@ -28,7 +28,10 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import android.Manifest
-
+import android.os.Build
+import androidx.annotation.RequiresApi
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.LatLng
 
 
 class ContainerActivity : AppCompatActivity() {
@@ -139,13 +142,16 @@ class ContainerActivity : AppCompatActivity() {
     }
 
     private val locationCallback = object : LocationCallback() {
+        @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
         override fun onLocationResult(locationResult: LocationResult) {
-            // Your implementation here
             for (location in locationResult.locations) {
-                // Handle location updates
+                val mapFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as? MapFragment
+                mapFragment?.updateMapLocation(location)
             }
         }
     }
+
+
 
     private fun showProfileMenu() {
         val view = findViewById<View>(R.id.profile_button) ?: return
