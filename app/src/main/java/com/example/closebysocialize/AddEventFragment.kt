@@ -175,6 +175,8 @@ class AddEventFragment : Fragment() {
             //    val eventGuests = view.findViewById<TextInputEditText>(R.id.eventGuests)
             // val guests = eventGuests.text.toString()
             val eventDescription = view.findViewById<TextInputEditText>(R.id.eventDescription)
+            val spots = numberPicker.value
+
 
             val eventName = eventNameTextView.text.toString()
             val place = eventPlace.text.toString()
@@ -219,13 +221,12 @@ class AddEventFragment : Fragment() {
                     "title" to eventName,
                     "location" to place,
                     "city" to city,
-                    // "city"          behöver ett fält till för city
                     "day" to chosenDay,
                     "date" to chosenDate,
                     "time" to chosenTime,
+                    "spots" to spots,
                     "description" to description,
                     "eventType" to selectedCategory,
-                    //  "spots"        behöver en spinner eller liknande för spots, alltid en plats upptagen,
                     "authorId" to currentUserId,
                     "authorProfileImageUrl" to userDetails.profileImageUrl,
                     "authorFirstName" to userDetails.firstName,
