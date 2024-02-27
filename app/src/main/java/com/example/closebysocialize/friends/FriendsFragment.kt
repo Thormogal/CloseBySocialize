@@ -34,6 +34,7 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
         return inflater.inflate(R.layout.fragment_friends, container, false)
     }
 
+    // comment git
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
