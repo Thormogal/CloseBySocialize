@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.ImageView
+import android.widget.NumberPicker
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -60,6 +61,10 @@ class AddEventFragment : Fragment() {
         val gridLayout = view.findViewById<GridLayout>(R.id.gridLayout)
         var selectedImageView: ImageView? = null
         var selectedCategory: String? = null
+        val numberPicker = view.findViewById<NumberPicker>(R.id.spotPicker)
+        numberPicker.maxValue = 20
+        numberPicker.minValue = 1
+        numberPicker.value = 4
 
         for (i in 0 until gridLayout.childCount) {
             val child = gridLayout.getChildAt(i)
@@ -132,7 +137,13 @@ class AddEventFragment : Fragment() {
                         it.context,
                         R.style.DialogTheme,
                         { _, selectedHour, selectedMinute ->
-                            calendar.set(selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute)
+                            calendar.set(
+                                selectedYear,
+                                selectedMonth,
+                                selectedDay,
+                                selectedHour,
+                                selectedMinute
+                            )
                             val dayFormat = SimpleDateFormat("EEEE", Locale.getDefault())
                             val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                             val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
@@ -160,7 +171,8 @@ class AddEventFragment : Fragment() {
             val eventNameTextView = view.findViewById<TextInputEditText>(R.id.eventNameTextView)
             val eventPlace = view.findViewById<TextInputEditText>(R.id.eventPlace)
             val eventDate = view.findViewById<TextInputEditText>(R.id.eventDate)
-        //    val eventGuests = view.findViewById<TextInputEditText>(R.id.eventGuests)
+            val cityTextView = view.findViewById<TextInputEditText>(R.id.cityTextView)
+            //    val eventGuests = view.findViewById<TextInputEditText>(R.id.eventGuests)
             // val guests = eventGuests.text.toString()
             val eventDescription = view.findViewById<TextInputEditText>(R.id.eventDescription)
 
@@ -168,6 +180,7 @@ class AddEventFragment : Fragment() {
             val place = eventPlace.text.toString()
             val date = eventDate.text.toString()
             val description = eventDescription.text.toString()
+            val city = cityTextView?.text?.toString()
 
             if (eventName.isEmpty()) {
                 eventNameTextView.error = "Event name is required"
@@ -205,6 +218,7 @@ class AddEventFragment : Fragment() {
                 val event = hashMapOf(
                     "title" to eventName,
                     "location" to place,
+                    "city" to city,
                     // "city"          behöver ett fält till för city
                     "day" to chosenDay,
                     "date" to chosenDate,
@@ -225,7 +239,7 @@ class AddEventFragment : Fragment() {
                         eventNameTextView.text = null
                         eventPlace.text = null
                         eventDate.text = null
-                //        eventGuests.text = null
+                        //        eventGuests.text = null
                         eventDescription.text = null
                         selectedCategory = null
                         selectedImageView?.setBackgroundColor(

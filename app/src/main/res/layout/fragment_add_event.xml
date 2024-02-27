@@ -2,9 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/fragment_container"
     android:background="@android:color/white"
     android:outlineProvider="none"
     android:visibility="visible">
@@ -41,94 +41,91 @@
             android:id="@+id/coffeeImageView"
             android:layout_width="0dp"
             android:layout_height="30dp"
-            android:contentDescription="Café"
             android:layout_columnWeight="1"
+            android:contentDescription="Café"
             app:srcCompat="@drawable/interests_coffeemug" />
 
         <ImageView
             android:id="@+id/cookingImageView"
-            android:contentDescription="Cooking"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_columnWeight="1"
+            android:contentDescription="Cooking"
             app:srcCompat="@drawable/interests_cooking" />
 
         <ImageView
             android:id="@+id/dogImageView"
-            android:contentDescription="Dog stroll"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_columnWeight="1"
+            android:contentDescription="Dog stroll"
             app:srcCompat="@drawable/interests_dogwalk" />
 
         <ImageView
             android:id="@+id/sportImageView"
-            android:contentDescription="Sports"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_columnWeight="1"
+            android:contentDescription="Sports"
             app:srcCompat="@drawable/interests_football" />
 
         <ImageView
             android:id="@+id/gameImageView"
-            android:contentDescription="Gaming"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_columnWeight="1"
+            android:contentDescription="Gaming"
             app:srcCompat="@drawable/interests_gamingcontroller" />
 
         <ImageView
             android:id="@+id/cinemaImageView"
             android:layout_width="0dp"
-            android:contentDescription="Cinema"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
+            android:contentDescription="Cinema"
             app:srcCompat="@drawable/interests_movie" />
 
         <ImageView
             android:id="@+id/restaurantImageView"
-            android:contentDescription="Lunch"
             android:layout_width="0dp"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
+            android:contentDescription="Lunch"
             app:srcCompat="@drawable/interests_restaurant" />
 
         <ImageView
             android:id="@+id/strollerImageView"
-            android:contentDescription="Baby stroll"
             android:layout_width="0dp"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
+            android:contentDescription="Baby stroll"
             app:srcCompat="@drawable/interests_stroller" />
 
         <ImageView
             android:id="@+id/theatreImageView"
             android:layout_width="0dp"
-            android:contentDescription="Theatre"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
+            android:contentDescription="Theatre"
             app:srcCompat="@drawable/interests_theatermask" />
 
         <ImageView
             android:id="@+id/gardenImageView"
-            android:contentDescription="Gardening"
             android:layout_width="0dp"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
+            android:contentDescription="Gardening"
             app:srcCompat="@drawable/intrerests_garden" />
 
         <ImageView
             android:id="@+id/airPlaneImageView"
-            android:contentDescription="Traveling"
             android:layout_width="0dp"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
+            android:contentDescription="Traveling"
             app:srcCompat="@drawable/interests_airplane_takeoff" />
 
     </GridLayout>
-
-
-
 
 
     <LinearLayout
@@ -137,8 +134,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
-        tools:ignore="MissingConstraints"
         app:layout_constraintTop_toBottomOf="@id/gridLayout"
+        tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="-16dp"
         tools:layout_editor_absoluteY="191dp">
 
@@ -180,6 +177,31 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/eventPlace"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="textCapWords"
+                android:textSize="16sp"
+                android:textStyle="normal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shadow"
+            android:hint="Event City"
+            android:textColorHint="@color/primary_text"
+            app:boxStrokeColor="@color/primary_text"
+            app:boxStrokeWidth="0dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/cityTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
@@ -278,41 +300,29 @@
         app:srcCompat="@drawable/add_picture"
         tools:ignore="MissingConstraints" />
 
-    <ImageView
-        android:id="@+id/imageView16"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginEnd="320dp"
-        android:layout_marginBottom="48dp"
-        android:src="@drawable/bottom_nav_profile"
-        app:layout_constraintBottom_toTopOf="@+id/materialButton"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <ImageView
-        android:id="@+id/imageView17"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginBottom="48dp"
-        android:src="@drawable/bottom_nav_profile"
-        app:layout_constraintBottom_toTopOf="@+id/materialButton"
-        app:layout_constraintEnd_toStartOf="@+id/imageView16"
-        app:layout_constraintHorizontal_bias="0.75"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/spotsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/event_attend_spots"
-        app:layout_constraintBottom_toTopOf="@+id/imageView16"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="1dp"
+        android:text="Spots"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/spotPicker"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout1"
-        app:layout_constraintVertical_bias="0.864"
         tools:ignore="MissingConstraints" />
+
+    <NumberPicker
+        android:id="@+id/spotPicker"
+        android:layout_width="59dp"
+        android:layout_height="89dp"
+        android:layout_marginTop="24dp"
+        android:text="Select spots"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.045"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout1" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/materialButton"
@@ -327,6 +337,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
