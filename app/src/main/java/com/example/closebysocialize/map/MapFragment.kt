@@ -1,5 +1,6 @@
 package com.example.closebysocialize.map
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -43,17 +44,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         return view
     }
 
+
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-
-        val sweden = LatLng(60.4843, 15.4340)
-        val cameraPosition = CameraPosition.Builder()
-            .target(sweden) // Sets the center of the map to Sweden
-            .zoom(6f) // Sets the zoom level
-            .build()
-
-        // Move and animate the camera to the specified position
-        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
     }
 
     override fun onResume() {
