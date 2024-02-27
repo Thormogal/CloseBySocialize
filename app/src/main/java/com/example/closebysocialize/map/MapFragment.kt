@@ -3,6 +3,9 @@ package com.example.closebysocialize.map
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.health.connect.datatypes.ExerciseRoute
+import android.os.Build
+import android.location.Location
 
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +13,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.example.closebysocialize.R
 import com.google.android.gms.location.LocationServices
@@ -56,6 +60,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         googleMap = map
 
     }
+
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    fun updateMapLocation(location: Location) {
+        val newPos = LatLng(location.latitude, location.longitude)
+        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(newPos, 15f))
+    }
+
 
     override fun onResume() {
         super.onResume()
