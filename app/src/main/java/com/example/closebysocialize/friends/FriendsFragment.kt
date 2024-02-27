@@ -34,7 +34,6 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
         return inflater.inflate(R.layout.fragment_friends, container, false)
     }
 
-    // comment git
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -79,11 +78,10 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
         )
     }
 
-
-
     override fun onMessageClick(friend: Friend) {
     }
     override fun onFriendClick(friend: Friend) {
+
     }
     override fun onBinClick(friend: Friend) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return

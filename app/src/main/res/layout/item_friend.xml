@@ -48,25 +48,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/friendProfilePictureImageView" />
 
-    <ImageView
-        android:id="@+id/acceptIcon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/friendProfilePictureImageView"
-        app:layout_constraintEnd_toStartOf="@+id/declineIcon"
-        app:layout_constraintTop_toTopOf="@+id/friendProfilePictureImageView"
-        app:srcCompat="@drawable/icon_accept" />
-
-    <ImageView
-        android:id="@+id/declineIcon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/friendProfilePictureImageView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/friendProfilePictureImageView"
-        app:layout_constraintVertical_bias="0.576"
-        app:srcCompat="@drawable/icon_decline" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
