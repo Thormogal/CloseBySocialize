@@ -29,13 +29,13 @@ class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         messageRecyclerView = view.findViewById(R.id.messageRecyclerView)
-        messageAdapter = FriendsAdapter(listOf(), showActions = false)
+        messageAdapter = FriendsAdapter(requireContext(), listOf(), showActions = false)
         messageRecyclerView.adapter = messageAdapter
         messageRecyclerView.layoutManager = LinearLayoutManager(context)
         loadFriends()
         messageAdapter.listener = this
-
     }
+
 
     private fun loadFriends() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
