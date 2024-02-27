@@ -4,6 +4,7 @@ import com.example.closebysocialize.dataClass.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.R
@@ -30,15 +31,16 @@ class MessageAdapter(private val messages: MutableList<Message>, private val cur
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val message = messages[position]
-        val previousMessageSenderId = messages.getOrNull(position - 1)?.senderId
-        val showTimestamp = message.senderId != previousMessageSenderId
+        val nextMessageSenderId = messages.getOrNull(position + 1)?.senderId
+        val isLastMessageFromSender = nextMessageSenderId != message.senderId || position == messages.size - 1
 
         if (getItemViewType(position) == SENT_MESSAGE) {
-            (holder as SentMessageViewHolder).bind(message, showTimestamp)
+            (holder as SentMessageViewHolder).bind(message, isLastMessageFromSender)
         } else {
-            (holder as ReceivedMessageViewHolder).bind(message, showTimestamp)
+            (holder as ReceivedMessageViewHolder).bind(message, isLastMessageFromSender)
         }
     }
+
 
     override fun getItemCount() = messages.size
 
@@ -98,12 +100,15 @@ class MessageAdapter(private val messages: MutableList<Message>, private val cur
     inner class ReceivedMessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val messageText: TextView = view.findViewById(R.id.receivedText)
         private val messageTimestamp: TextView = view.findViewById(R.id.messageReceivedTimestamp)
+        private val profilePicture: ImageView = view.findViewById(R.id.receivedProfilePicture)
 
-        fun bind(message: Message, showTimestamp: Boolean) {
+        fun bind(message: Message, showProfilePicture: Boolean) {
             messageText.text = message.content
             messageTimestamp.text = formatTimestamp(message.timestamp)
-            messageTimestamp.visibility = if (showTimestamp) View.VISIBLE else View.GONE
+            profilePicture.visibility = if (showProfilePicture) View.VISIBLE else View.INVISIBLE
+
         }
     }
+
 
 }

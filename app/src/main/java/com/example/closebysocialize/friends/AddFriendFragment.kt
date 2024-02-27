@@ -1,5 +1,7 @@
 package com.example.closebysocialize.friends
 
+import FriendsAdapter
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -42,7 +44,9 @@ class AddFriendFragment : Fragment() {
         recyclerViewFindFriends.layoutManager = LinearLayoutManager(context)
 
         userAdapter.onItemClick = { user ->
-            addUserAsFriend(user)
+            //addUserAsFriend(user)
+            sendFriendRequest(user)
+
         }
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -54,6 +58,8 @@ class AddFriendFragment : Fragment() {
             }
         })
     }
+
+
     private fun searchUsers(query: String) {
         if (query.isEmpty()) return
         val searchQuery = query.split(" ").joinToString(" ") { it.capitalize() }
@@ -72,6 +78,32 @@ class AddFriendFragment : Fragment() {
             .addOnFailureListener {
             }
     }
+    private fun sendFriendRequest(user: Users) {
+        val currentUser = FirebaseAuth.getInstance().currentUser ?: return
+        if (user.id.isNullOrEmpty()) {
+            Toast.makeText(context, "Invalid user ID", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val db = FirebaseFirestore.getInstance()
+        val requestId = "${currentUser.uid}_${user.id}"
+        val friendRequestData = hashMapOf(
+            "senderId" to currentUser.uid,
+            "recipientId" to user.id,
+            "status" to "pending",
+            "timestamp" to System.currentTimeMillis()
+        )
+        db.collection("friend_requests")
+            .document(requestId)
+            .set(friendRequestData)
+            .addOnSuccessListener {
+                Toast.makeText(context, "Friend request sent successfully", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Failed to send friend request", Toast.LENGTH_SHORT).show()
+            }
+    }
+
 
     private fun addUserAsFriend(user: Users) {
         val currentUser = FirebaseAuth.getInstance().currentUser ?: return
@@ -79,7 +111,6 @@ class AddFriendFragment : Fragment() {
             Toast.makeText(context, "Invalid user ID", Toast.LENGTH_SHORT).show()
             return
         }
-
         val db = FirebaseFirestore.getInstance()
         val friendData = hashMapOf(
             "id" to user.id,
@@ -92,7 +123,6 @@ class AddFriendFragment : Fragment() {
             "recipientId" to user.id,
             "content" to "Hello!"
         )
-
         db.collection("users")
             .document(currentUser.uid)
             .collection("friends")
