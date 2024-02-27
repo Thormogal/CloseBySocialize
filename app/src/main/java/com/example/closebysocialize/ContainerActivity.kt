@@ -27,6 +27,9 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import android.Manifest
+
+
 
 class ContainerActivity : AppCompatActivity() {
 
@@ -110,7 +113,23 @@ class ContainerActivity : AppCompatActivity() {
             fastestInterval = 5000 // Fastest update interval in milliseconds
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
-
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
         fusedLocationClient.requestLocationUpdates(
             locationRequest,
             locationCallback,
@@ -119,9 +138,8 @@ class ContainerActivity : AppCompatActivity() {
     }
 
     private val locationCallback = object : LocationCallback() {
-
-        override fun onLocationResult(locationResult: LocationResult?) {
-            locationResult ?: return
+        override fun onLocationResult(locationResult: LocationResult) {
+            // Your implementation here
             for (location in locationResult.locations) {
                 // Handle location updates
             }
