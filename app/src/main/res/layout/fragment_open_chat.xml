@@ -24,7 +24,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="@string/write_a_comment"
+            android:hint="@string/write_a_message"
             android:textColor="@color/primary_text"
             android:textColorHint="@color/primary_text" />
 
