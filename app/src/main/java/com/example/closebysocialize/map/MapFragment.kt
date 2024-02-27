@@ -58,7 +58,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-
+        //longlat for sthlm
+        val initialLocation = LatLng(59.3293, 18.0686)
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 6f))
     }
 
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
@@ -66,7 +68,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val newPos = LatLng(location.latitude, location.longitude)
         googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(newPos, 15f))
     }
-
 
     override fun onResume() {
         super.onResume()
