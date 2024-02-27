@@ -17,17 +17,19 @@ import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
 
 object FirestoreUtils {
-    // save user data to Firestore
+    // save user data to users
     fun saveUserToFirestore(firebaseUser: FirebaseUser, context: Context) {
         val userRef = FirebaseFirestore.getInstance().collection("users").document(firebaseUser.uid)
         userRef.get().addOnSuccessListener { document ->
             if (!document.exists()) {
+                val uniqueId = UUID.randomUUID().toString()
                 val userInfo = hashMapOf(
-                    "id" to firebaseUser.uid,
+                    "id" to uniqueId,
                     "name" to firebaseUser.displayName,
                     "email" to firebaseUser.email,
                     "profileImageUrl" to (firebaseUser.photoUrl?.toString() ?: "defaultUrl")
                 )
+
                 userRef.set(userInfo)
                     .addOnSuccessListener {
                         Toast.makeText(context, "Your information has been saved to Firestore.", Toast.LENGTH_SHORT).show()
@@ -37,13 +39,12 @@ object FirestoreUtils {
                     }
             } else {
                 Toast.makeText(context, "User information already exists in Firestore.", Toast.LENGTH_SHORT).show()
+
             }
         }.addOnFailureListener { e ->
             Toast.makeText(context, "Error when checking if the profile exists: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
-
-
 
     // for any specific data class
     fun <T> fetchDataFromFirestore(collectionPath: String, clazz: Class<T>, onSuccess: (List<T>) -> Unit, onFailure: (Exception) -> Unit) {
