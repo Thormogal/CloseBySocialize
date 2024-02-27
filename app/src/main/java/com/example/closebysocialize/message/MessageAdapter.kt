@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.R
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class MessageAdapter(private val messages: MutableList<Message>, private val currentUserId: String) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -45,17 +47,20 @@ class MessageAdapter(private val messages: MutableList<Message>, private val cur
 
     inner class SentMessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val messageText: TextView = view.findViewById(R.id.senderText)
+        private val messageTimestamp: TextView = view.findViewById(R.id.messageSenderTimestamp)
 
         fun bind(message: Message) {
             messageText.text = message.content
+            messageTimestamp.text = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(message.timestamp.toDate())
         }
     }
 
     inner class ReceivedMessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val messageText: TextView = view.findViewById(R.id.receivedText)
-
+        private val messageTimestamp: TextView = view.findViewById(R.id.messageReceivedTimestamp)
         fun bind(message: Message) {
             messageText.text = message.content
+            messageTimestamp.text = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(message.timestamp.toDate())
         }
     }
     fun updateMessages(newMessages: List<Message>) {

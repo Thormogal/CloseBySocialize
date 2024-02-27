@@ -36,6 +36,14 @@
                 android:layout_height="wrap_content"
                 android:text="@string/author_comment"
                 android:textColor="@color/primary_text" />
+
+            <TextView
+                android:id="@+id/messageSenderTimestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary_text"
+                android:textSize="12sp" />
+
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 </LinearLayout>
