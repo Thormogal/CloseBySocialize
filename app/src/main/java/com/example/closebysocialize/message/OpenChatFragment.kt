@@ -147,6 +147,7 @@ class OpenChatFragment : Fragment() {
             .collection("conversations")
             .document(conversationId)
             .collection("messages")
+            .orderBy("timestamp")
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
                     Log.e("OpenChatFragment", "Listen failed.", e)
@@ -156,9 +157,12 @@ class OpenChatFragment : Fragment() {
                     document.toObject(Message::class.java)
                 }?.toMutableList() ?: mutableListOf()
                 messageAdapter.updateMessages(messagesList)
-                recyclerView.scrollToPosition(messagesList.size - 1)
+                if (messagesList.isNotEmpty()) {
+                    recyclerView.scrollToPosition(messagesList.size - 1)
+                }
             }
     }
+
 
 
     private fun fetchConversations() {
@@ -167,7 +171,6 @@ class OpenChatFragment : Fragment() {
             Log.e("OpenChatFragment", "Friend ID is null")
             return
         }
-
         FirebaseFirestore.getInstance()
             .collection("conversations")
             .whereArrayContains("participants", currentUserId)

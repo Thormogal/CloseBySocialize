@@ -5,7 +5,8 @@ data class Friend(
     val email: String = "",
     val profileImageUrl: String? = null,
     val name: String? = null,
-
-
+    val isRequest: Boolean = false,
+    val requestId: String = "",
+    val user: Users = Users()
 
 )
