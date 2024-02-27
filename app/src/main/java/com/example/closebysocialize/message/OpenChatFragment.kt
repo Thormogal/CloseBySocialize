@@ -43,7 +43,6 @@ class OpenChatFragment : Fragment() {
             val args = Bundle().apply {
                 putString(ARG_CONVERSATION_ID, conversationId)
                 putString(ARG_FRIEND_ID, friendId)
-
             }
             fragment.arguments = args
             return fragment
@@ -114,7 +113,6 @@ class OpenChatFragment : Fragment() {
             }
         }
     }
-
 
     private fun postComment(conversationId: String, senderId: String, commentText: String) {
         val newMessage = hashMapOf(
