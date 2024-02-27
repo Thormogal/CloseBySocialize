@@ -44,7 +44,6 @@ class AddFriendFragment : Fragment() {
         userAdapter.onItemClick = { user ->
             addUserAsFriend(user)
         }
-
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 searchUsers(s.toString())
@@ -73,8 +72,6 @@ class AddFriendFragment : Fragment() {
             .addOnFailureListener {
             }
     }
-
-
 
     private fun addUserAsFriend(user: Users) {
         val currentUser = FirebaseAuth.getInstance().currentUser ?: return

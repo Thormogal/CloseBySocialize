@@ -1,8 +1,8 @@
 package com.example.closebysocialize.dataClass
-import com.google.firebase.Timestamp
+import java.util.Date
 
 data class Message(
     val senderId: String = "",
     val content: String = "",
-    val timestamp: Timestamp = Timestamp.now()
+    val timestamp: Date = Date()
 )

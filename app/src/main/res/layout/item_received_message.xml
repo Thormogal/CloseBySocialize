@@ -3,46 +3,60 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="8dp"
-    android:gravity="start">
+    android:orientation="vertical"
+    android:padding="1dp">
 
-
-    <ImageView
-        android:id="@+id/receivedProfilePicture"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/profile_top_bar_avatar"
-        android:scaleType="centerCrop"
-        android:background="@drawable/profile_image_round" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="4dp"
-        app:cardCornerRadius="16dp"
-        app:cardBackgroundColor="#DAD9D9"
-        style="?attr/materialCardViewStyle">
+        android:gravity="center_horizontal">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/messageReceivedTimestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:textColor="@color/primary_text"
+            android:textSize="12sp" />
+    </LinearLayout>
 
-            <TextView
-                android:id="@+id/receivedText"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:gravity="start"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/receivedProfilePicture"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/profile_image_round"
+            android:scaleType="centerCrop"
+            android:src="@drawable/profile_top_bar_avatar" />
+
+        <com.google.android.material.card.MaterialCardView
+            style="?attr/materialCardViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/primary_background"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="12dp">
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/author_comment"
-                android:textColor="@color/primary_text" />
-            <TextView
-                android:id="@+id/messageReceivedTimestamp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/primary_text"
-                android:textSize="12sp" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/receivedText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/author_comment"
+                    android:textColor="@color/primary_text" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
 </LinearLayout>
