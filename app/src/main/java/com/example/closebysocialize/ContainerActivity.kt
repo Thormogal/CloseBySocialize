@@ -2,14 +2,18 @@ package com.example.closebysocialize
 
 import FriendsFragment
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.closebysocialize.message.MessageFragment
 import com.example.closebysocialize.events.EventsFragment
 import com.example.closebysocialize.login.LoginActivity
@@ -18,12 +22,31 @@ import com.example.closebysocialize.profile.EditProfileFragment
 import com.example.closebysocialize.profile.ProfileFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.example.closebysocialize.utils.FragmentUtils
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 
 class ContainerActivity : AppCompatActivity() {
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_container)
 
+        // Initialize FusedLocationProviderClient
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        // Check and request location permissions if needed
+        if (hasLocationPermission()) {
+            startLocationUpdates()
+        } else {
+            requestLocationPermission()
+        }
+
+        // Setup toolbar and bottom navigation
         val toolbar: Toolbar = findViewById(R.id.topAppBar)
         setSupportActionBar(toolbar)
 
@@ -65,6 +88,46 @@ class ContainerActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    private fun hasLocationPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestLocationPermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            LOCATION_PERMISSION_REQUEST_CODE
+        )
+    }
+
+    private fun startLocationUpdates() {
+        val locationRequest = LocationRequest.create().apply {
+            interval = 10000 // Update interval in milliseconds
+            fastestInterval = 5000 // Fastest update interval in milliseconds
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+    }
+
+    private val locationCallback = object : LocationCallback() {
+
+        override fun onLocationResult(locationResult: LocationResult?) {
+            locationResult ?: return
+            for (location in locationResult.locations) {
+                // Handle location updates
+            }
+        }
+    }
+
     private fun showProfileMenu() {
         val view = findViewById<View>(R.id.profile_button) ?: return
         val popup = PopupMenu(this, view)
@@ -101,5 +164,9 @@ class ContainerActivity : AppCompatActivity() {
             }
         }
         popup.show()
+    }
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
     }
 }
