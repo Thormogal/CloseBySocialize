@@ -8,7 +8,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.R
-import com.example.closebysocialize.dataClass.MessageItem
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
