@@ -4,18 +4,21 @@ import AuthUtil
 import UserDetailsFetcher
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.NumberPicker
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
@@ -32,6 +35,12 @@ class AddEventFragment : Fragment() {
     private var chosenDay: String? = null
     private var chosenDate: String? = null
     private var chosenTime: String? = null
+    private val PLACE_SEARCH_REQUEST_CODE = 1
+    private val CITY_SEARCH_REQUEST_CODE = 2
+    private var eventPlaceCoordinates: LatLng? = null
+    private var eventCityCoordinates: LatLng? = null
+    private lateinit var eventPlace: EditText
+    private lateinit var cityTextView: EditText
 
     private lateinit var firestore: FirebaseFirestore
 
@@ -55,18 +64,37 @@ class AddEventFragment : Fragment() {
     }
 
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val gridLayout = view.findViewById<GridLayout>(R.id.gridLayout)
         var selectedImageView: ImageView? = null
         var selectedCategory: String? = null
+        eventPlace = view.findViewById(R.id.eventPlace)
+        cityTextView = view.findViewById(R.id.cityTextView)
+
+        
+
         val numberPicker = view.findViewById<NumberPicker>(R.id.spotPicker)
         numberPicker.maxValue = 20
         numberPicker.minValue = 1
         numberPicker.value = 4
 
-        for (i in 0 until gridLayout.childCount) {
+        eventPlace.setOnClickListener {
+            val intent = Intent(context, EventMapSearch::class.java)
+            startActivityForResult(intent, PLACE_SEARCH_REQUEST_CODE)
+        }
+
+        cityTextView.setOnClickListener {
+            val intent = Intent(context, EventMapSearch::class.java)
+            startActivityForResult(intent, CITY_SEARCH_REQUEST_CODE)
+        }
+
+
+
+    for (i in 0 until gridLayout.childCount) {
             val child = gridLayout.getChildAt(i)
             if (child is ImageView) {
                 child.tag = child.contentDescription
@@ -114,7 +142,9 @@ class AddEventFragment : Fragment() {
                     }
                 }
             }
-        }
+            }
+
+
 
 
         val eventDateEditText = view.findViewById<TextInputEditText>(R.id.eventDate)
@@ -219,8 +249,10 @@ class AddEventFragment : Fragment() {
 
                 val event = hashMapOf(
                     "title" to eventName,
-                    "location" to place,
-                    "city" to city,
+                    "location" to eventPlace.text.toString(),
+                    "place_coordinates" to eventPlaceCoordinates,
+                    "city" to cityTextView.text.toString(),
+                    "city_coordinates" to eventCityCoordinates,
                     "day" to chosenDay,
                     "date" to chosenDate,
                     "time" to chosenTime,
@@ -239,7 +271,7 @@ class AddEventFragment : Fragment() {
                         eventNameTextView.text = null
                         eventPlace.text = null
                         eventDate.text = null
-                        //        eventGuests.text = null
+                        // eventGuests.text = null
                         eventDescription.text = null
                         selectedCategory = null
                         selectedImageView?.setBackgroundColor(

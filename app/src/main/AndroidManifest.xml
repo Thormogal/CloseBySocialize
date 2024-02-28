@@ -18,6 +18,8 @@
         android:theme="@style/Theme.CloseBySocialize"
         tools:targetApi="31">
 
+        <activity android:name=".EventMapSearch" />
+
         <service
             android:name=".message.ReceiveNotificationMessage"
             android:enabled="true"
