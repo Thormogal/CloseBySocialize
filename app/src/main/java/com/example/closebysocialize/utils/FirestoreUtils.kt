@@ -12,12 +12,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
 
 object FirestoreUtils {
-    // save user data to users
     fun saveUserToFirestore(firebaseUser: FirebaseUser, context: Context) {
         val userRef = FirebaseFirestore.getInstance().collection("users").document(firebaseUser.uid)
         userRef.get().addOnSuccessListener { document ->
@@ -45,21 +45,6 @@ object FirestoreUtils {
             Toast.makeText(context, "Error when checking if the profile exists: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
-
-    // for any specific data class
-    fun <T> fetchDataFromFirestore(collectionPath: String, clazz: Class<T>, onSuccess: (List<T>) -> Unit, onFailure: (Exception) -> Unit) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection(collectionPath)
-            .get()
-            .addOnSuccessListener { snapshot ->
-                val dataList = snapshot.documents.mapNotNull { it.toObject(clazz) }
-                onSuccess(dataList)
-            }
-            .addOnFailureListener { exception ->
-                onFailure(exception)
-            }
-    }
-
 
     // fetch events created by user
     fun fetchUserEvents(userId: String?, onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit) {
@@ -120,6 +105,7 @@ object FirestoreUtils {
     fun fetchAllEvents(onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit) {
         val db = FirebaseFirestore.getInstance()
         db.collection("events")
+            .orderBy("createdAt", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { snapshot ->
                 val eventsList = snapshot.documents.mapNotNull { document ->

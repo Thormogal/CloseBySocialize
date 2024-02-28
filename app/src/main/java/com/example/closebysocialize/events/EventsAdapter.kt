@@ -1,6 +1,7 @@
 package com.example.closebysocialize.events
 
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +34,6 @@ class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: Mut
         val attendButtonTextView: Button = view.findViewById(R.id.attendElevatedButton)
         val openSpotsTextView: TextView = view.findViewById(R.id.openSpotsTextView)
         val chatImageView: ImageView = view.findViewById(R.id.chatImageView)
-        val editImageView: ImageView = view.findViewById(R.id.editImageView)
         val deleteImageView: ImageView = view.findViewById(R.id.deleteImageView)
         val savedImageView: ImageView = view.findViewById(R.id.savedImageView)
     }
@@ -45,6 +45,19 @@ class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: Mut
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val event = eventsList[position]
+        updateAttendButtonAndSpotsUI(holder, event)
+
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val currentUserId = currentUser?.uid
+        val userProfileUrl = currentUser?.photoUrl.toString()
+
+
+
+        val isEventCreator = event.authorId == currentUserId
+        val isCurrentlyAttending = event.attendedPeopleProfilePictureUrls.contains(userProfileUrl) || isEventCreator
+        holder.attendButtonTextView.text = if (isCurrentlyAttending) holder.itemView.context.getString(R.string.event_withdraw) else holder.itemView.context.getString(R.string.event_attend)
+        holder.deleteImageView.visibility = if (isEventCreator) View.VISIBLE else View.GONE
+
         val isSaved = savedEventsIds.contains(event.id)
         Log.d("EventsAdapter", "Event ID at position $position: '${event.id}'")
         holder.savedImageView.setImageResource(if (isSaved) R.drawable.icon_heart_filled else R.drawable.icon_heart)
@@ -83,39 +96,40 @@ class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: Mut
         holder.chatImageView.setOnClickListener {
             chatImageViewClickListener?.invoke(event.id)
         }
-
+        holder.deleteImageView.setOnClickListener {
+            deleteEvent(event.id, position)
+        }
         holder.attendButtonTextView.setOnClickListener {
-            val isAttending = holder.attendButtonTextView.text.toString().equals(holder.itemView.context.getString(R.string.event_withdraw), ignoreCase = true)
+            val isAttending = holder.attendButtonTextView.text.toString() == holder.itemView.context.getString(R.string.event_withdraw)
             val eventRef = FirebaseFirestore.getInstance().collection("events").document(event.id)
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            val userProfileUrl = currentUser?.photoUrl.toString()
             if (isAttending) {
-                eventRef.update("currentAttendeesCount", FieldValue.increment(-1)).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        holder.attendButtonTextView.text = holder.itemView.context.getString(R.string.event_attend)
-                        event.currentAttendeesCount = event.currentAttendeesCount - 1
-                        holder.openSpotsTextView.text = "${event.spots - event.currentAttendeesCount} ${holder.itemView.context.getString(R.string.spots)}"
-                    } else {
-                    }
+                val updatedCount = event.currentAttendeesCount - 1
+                event.currentAttendeesCount = updatedCount
+                event.attendedPeopleProfilePictureUrls = event.attendedPeopleProfilePictureUrls.filter { it != userProfileUrl }.toMutableList()
+                eventRef.update(mapOf(
+                    "currentAttendeesCount" to updatedCount,
+                    "attendedPeopleProfilePictureUrls" to event.attendedPeopleProfilePictureUrls
+                )).addOnSuccessListener {
+                    holder.openSpotsTextView.text = "${event.spots - updatedCount} ${holder.itemView.context.getString(R.string.spots)}"
+                    holder.attendButtonTextView.text = holder.itemView.context.getString(R.string.event_attend)
+                    refreshAttendedPeopleLinearLayout(holder, event.attendedPeopleProfilePictureUrls)
                 }
             } else {
-                eventRef.update("currentAttendeesCount", FieldValue.increment(1)).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        holder.attendButtonTextView.text = holder.itemView.context.getString(R.string.event_withdraw)
-                        event.currentAttendeesCount = event.currentAttendeesCount + 1
-                        holder.openSpotsTextView.text = "${event.spots - event.currentAttendeesCount} ${holder.itemView.context.getString(R.string.spots)}"
-                    } else {
-                    }
+                val updatedCount = event.currentAttendeesCount + 1
+                event.currentAttendeesCount = updatedCount
+                event.attendedPeopleProfilePictureUrls.add(userProfileUrl)
+                eventRef.update(mapOf(
+                    "currentAttendeesCount" to updatedCount,
+                    "attendedPeopleProfilePictureUrls" to event.attendedPeopleProfilePictureUrls
+                )).addOnSuccessListener {
+                    holder.openSpotsTextView.text = "${event.spots - updatedCount} ${holder.itemView.context.getString(R.string.spots)}"
+                    holder.attendButtonTextView.text = holder.itemView.context.getString(R.string.event_withdraw)
+                    refreshAttendedPeopleLinearLayout(holder, event.attendedPeopleProfilePictureUrls)
+                    updateAttendButtonAndSpotsUI(holder, event)
                 }
             }
-        }
-
-
-        val currentUserId = AuthUtil.getCurrentUserId()
-        if (event.authorId == currentUserId && currentUserId != null) {
-            holder.editImageView.visibility = View.VISIBLE
-            holder.deleteImageView.visibility = View.VISIBLE
-        } else {
-            holder.editImageView.visibility = View.GONE
-            holder.deleteImageView.visibility = View.GONE
         }
 
         val attendedPeopleLinearLayout = holder.itemView.findViewById<LinearLayout>(R.id.attendedPeopleLinearLayout)
@@ -132,6 +146,7 @@ class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: Mut
                 if (url != null && url.isNotEmpty()) {
                     Glide.with(holder.itemView.context)
                         .load(url)
+                        .circleCrop()
                         .into(this)
                 } else {
                     setImageResource(R.drawable.profile_top_bar_avatar)
@@ -150,6 +165,65 @@ class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: Mut
 
     fun View.dpToPx(dp: Int): Int {
         return (dp * context.resources.displayMetrics.density).toInt()
+    }
+
+    private fun deleteEvent(eventId: String, position: Int) {
+        FirebaseFirestore.getInstance().collection("events").document(eventId)
+            .delete()
+            .addOnSuccessListener {
+                eventsList = eventsList.toMutableList().also { it.removeAt(position) }
+                notifyItemRemoved(position)
+                Log.d("EventsAdapter", "Event successfully deleted")
+            }
+            .addOnFailureListener { e ->
+                Log.w("EventsAdapter", "Error deleting event", e)
+            }
+    }
+
+    private fun updateAttendButtonAndSpotsUI(holder: ViewHolder, event: Event) {
+        val availableSpots = event.spots - event.currentAttendeesCount
+        if (availableSpots <= 0) {
+            holder.openSpotsTextView.text = holder.itemView.context.getString(R.string.event_full)
+            holder.attendButtonTextView.visibility = if (event.attendedPeopleProfilePictureUrls.contains(FirebaseAuth.getInstance().currentUser?.photoUrl.toString())) View.VISIBLE else View.GONE
+        } else {
+            holder.openSpotsTextView.text = "${availableSpots} ${holder.itemView.context.getString(R.string.spots)}"
+            holder.attendButtonTextView.visibility = View.VISIBLE
+        }
+    }
+
+
+    private fun refreshAttendedPeopleLinearLayout(holder: ViewHolder, profilePictureUrls: List<String>) {
+        val attendedPeopleLinearLayout = holder.itemView.findViewById<LinearLayout>(R.id.attendedPeopleLinearLayout)
+        attendedPeopleLinearLayout.removeAllViews()
+        val maxProfilesToShow = 3
+        val profilesToShow = profilePictureUrls.take(maxProfilesToShow)
+        profilesToShow.forEach { url ->
+            val imageView = ImageView(holder.itemView.context).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    holder.itemView.dpToPx(40),
+                    holder.itemView.dpToPx(40)
+                ).apply {
+                    marginEnd = holder.itemView.dpToPx(8)
+                }
+                scaleType = ImageView.ScaleType.CENTER_CROP
+                Glide.with(holder.itemView.context)
+                    .load(url)
+                    .placeholder(R.drawable.profile_image_round)
+                    .circleCrop()
+                    .into(this)
+            }
+            attendedPeopleLinearLayout.addView(imageView)
+        }
+        if (profilePictureUrls.size > maxProfilesToShow) {  // TODO what to show??
+            val moreAttendeesTextView = TextView(holder.itemView.context).apply {
+                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                text = "...."
+                textSize = 16f
+                gravity = Gravity.CENTER_VERTICAL
+            }
+            attendedPeopleLinearLayout.addView(moreAttendeesTextView)
+        }
+
     }
 
     private fun toggleSavedEvent(eventId: String, isSaved: Boolean) {

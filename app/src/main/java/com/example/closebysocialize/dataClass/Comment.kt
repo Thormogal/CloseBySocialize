@@ -1,4 +1,4 @@
-package com.example.closebysocialize.chat
+package com.example.closebysocialize.dataClass
 
 import java.util.Date
 
@@ -11,7 +11,7 @@ data class Comment(
     val timestamp: Date = Date(),
     val parentId: String? = null,
     var replies: MutableList<Comment> = mutableListOf(),
-    var likes: Int = 0
-
+    var likes: Int = 0,
+    var isLiked: Boolean = false
 
 )

@@ -94,6 +94,7 @@
         android:layout_marginTop="4dp"
         android:textColor="@color/primary_text"
         android:textSize="12sp"
+        android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/likedAmountTextView"
         app:layout_constraintTop_toBottomOf="@+id/materialCardView"
         app:srcCompat="@drawable/icon_like" />

@@ -1,9 +1,12 @@
 package com.example.closebysocialize.events
+import android.health.connect.datatypes.ExerciseRoute
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -14,18 +17,27 @@ import com.example.closebysocialize.R
 import com.example.closebysocialize.chat.ChatFragment
 import com.example.closebysocialize.dataClass.Event
 import com.example.closebysocialize.utils.FirestoreUtils
+import com.example.closebysocialize.utils.FirestoreUtils.fetchAllEvents
 import com.example.closebysocialize.utils.FragmentUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.type.LatLng
+import android.location.Location
+
 
 
 class EventsFragment : Fragment() {
+    private var userLat: Double = 0.0
+    private var userLng: Double = 0.0
     private lateinit var recyclerView: RecyclerView
     private var eventsAdapter = EventsAdapter(emptyList())
     private lateinit var savedTextView: TextView
     private lateinit var allTextView: TextView
     private lateinit var attendedTextView: TextView
+    private lateinit var filterImageView: ImageView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -37,7 +49,7 @@ class EventsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_events, container, false)
-
+        filterImageView = view.findViewById(R.id.filterImageView)
         savedTextView = view.findViewById(R.id.savedTextView)
         allTextView = view.findViewById(R.id.allTextView)
         attendedTextView = view.findViewById(R.id.attendedTextView)
@@ -53,7 +65,6 @@ class EventsFragment : Fragment() {
         eventsAdapter.chatImageViewClickListener = { event ->
             val containerId = R.id.fragment_container
             val args = Bundle().apply {
-            // TODO not working    putString("eventId", event.id)
             }
             activity?.let {
                 if (it is AppCompatActivity) {
@@ -63,10 +74,8 @@ class EventsFragment : Fragment() {
         }
         val floatingActionButton: FloatingActionButton = view.findViewById(R.id.floatingActionButton)
         floatingActionButton.setOnClickListener {
-            // animation on click, can remove if you want
             floatingActionButton.animate().scaleX(0.7f).scaleY(0.7f).setDuration(200).withEndAction {
                 floatingActionButton.animate().scaleX(1f).scaleY(1f).setDuration(200).withEndAction {
-
                     FragmentUtils.switchFragment(
                         activity = activity as AppCompatActivity,
                         containerId = R.id.fragment_container,
@@ -105,6 +114,8 @@ class EventsFragment : Fragment() {
                 ?.addToBackStack(null)
                 ?.commit()
         }
+
+
         val showOnlyMyEvents = arguments?.getBoolean("showOnlyMyEvents", false) ?: false
         if (showOnlyMyEvents) {
             setAllFiltersToDefaultSize()
@@ -112,8 +123,10 @@ class EventsFragment : Fragment() {
             initializeDefaultSelection()
         }
         setFilterTextViewsListeners()
-        fetchDataFromFirestore()
+     //   fetchDataFromFirestore()
         fetchUserSavedEvents()
+
+      //  filterImageView.setOnClickListener { showFilterMenu(it) }
     }
 
     private fun setAllFiltersToDefaultSize() {
@@ -123,6 +136,78 @@ class EventsFragment : Fragment() {
         attendedTextView.textSize = defaultTextSize
     }
 
+    /*
+    private fun showFilterMenu(anchor: View) {
+        val popup = PopupMenu(requireContext(), anchor)
+        popup.menuInflater.inflate(R.menu.sort_by_menu, popup.menu)
+        popup.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.filter_time_created -> {
+                    fetchAllEvents(
+                        ::updateRecyclerView,
+                        ::handleError
+                    )
+                }
+
+                R.id.filter_event_time -> {
+                    fetchEventsByHappeningTime(::updateRecyclerView, ::handleError)
+                }
+
+                R.id.filter_distance -> {
+                    val userLocation = com.google.android.gms.maps.model.LatLng(userLat, userLng)
+                    fetchEventsByDistance(userLocation, ::updateRecyclerView, ::handleError)
+                }
+            }
+            true
+        }
+    }
+
+
+        fun fetchEventsByHappeningTime(onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("events")
+            .orderBy("eventTime", Query.Direction.ASCENDING) // Assuming 'eventTime' is your field
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val eventsList = snapshot.documents.mapNotNull { document ->
+                    val event = document.toObject(Event::class.java)
+                    event?.id = document.id
+                    event
+                }
+                onSuccess(eventsList)
+            }
+            .addOnFailureListener { exception ->
+                onFailure(exception)
+            }
+    }
+
+     */
+    /*
+    fun fetchEventsByDistance(userLocation: com.google.android.gms.maps.model.LatLng, onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit) {
+        fetchAllEvents({ eventsList ->
+            val sortedByDistance = eventsList.sortedBy { event ->
+                val eventLocation = event.place_coordinates
+                if (eventLocation != null) {
+                    val eventLatLng = com.google.android.gms.maps.model.LatLng(eventLocation.latitude, eventLocation.longitude)
+                    calculateDistance(userLocation, eventLatLng)
+                } else {
+
+                    Float.MAX_VALUE
+                }
+            }
+            onSuccess(sortedByDistance)
+        }, onFailure)
+    }
+
+
+    fun calculateDistance(userLocation: LatLng, eventLocation: LatLng): Float {
+        val results = FloatArray(1)
+        Location.distanceBetween(
+            userLocation.latitude, userLocation.longitude,
+            eventLocation.latitude, eventLocation.longitude,
+            results)
+        return results[0]
+    }
 
 
     private fun fetchDataFromFirestore() {
@@ -143,6 +228,8 @@ class EventsFragment : Fragment() {
             )
         }
     }
+
+     */
 
 
 

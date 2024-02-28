@@ -1,5 +1,7 @@
 package com.example.closebysocialize.dataClass
 
+import com.google.firebase.firestore.GeoPoint
+
 data class Event(
     var id: String = "",
     val city: String = "",
@@ -16,8 +18,10 @@ data class Event(
     val authorFirstName: String = "",
     val authorLastName: String = "",
     val authorId: String = "",
-    val attendedPeopleProfilePictureUrls: List<String> = listOf(),
+    var attendedPeopleProfilePictureUrls: MutableList<String> = mutableListOf(),
     var isSaved: Boolean = false,
-    var currentAttendeesCount: Int = 0
+    var currentAttendeesCount: Int = 0,
+    val createdAt: com.google.firebase.Timestamp? = null,
+  //  val place_coordinates: GeoPoint? = null
 
 )

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/filter_time_created"
+        android:title="@string/time_created" />
+    <item
+        android:id="@+id/filter_event_time"
+        android:title="@string/event_happening_time" />
+    <item
+        android:id="@+id/filter_distance"
+        android:title="@string/distance" />
+</menu>

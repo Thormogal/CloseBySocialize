@@ -38,6 +38,7 @@ class FriendsAdapter(private val context: Context, private var friends: List<Fri
             nameTextView.text = friend.name
             Glide.with(itemView.context)
                 .load(friend.profileImageUrl)
+                .circleCrop()
                 .into(profileImageView)
 
             if (showActions) {
