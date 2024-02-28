@@ -14,6 +14,7 @@ import com.example.closebysocialize.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 
 class ChatFragment : Fragment() {
@@ -68,18 +69,18 @@ class ChatFragment : Fragment() {
             val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
             val userName = FirebaseAuth.getInstance().currentUser?.displayName ?: "Anonymous"
             val userPhotoUrl = FirebaseAuth.getInstance().currentUser?.photoUrl.toString()
-
             val newComment = hashMapOf(
                 "userId" to userId,
                 "commentText" to commentText,
                 "displayName" to userName,
                 "profileImageUrl" to userPhotoUrl,
+                "timestamp" to FieldValue.serverTimestamp()
             )
             FirebaseFirestore.getInstance().collection("events").document(eventId!!)
                 .collection("comments").add(newComment)
                 .addOnSuccessListener {
                     Log.d("ChatFragment", "Comment added successfully.")
-                    editTextComment.setText("") // Clear the input field
+                    editTextComment.setText("")
                     fetchComments()
                 }
                 .addOnFailureListener { e ->
@@ -88,11 +89,13 @@ class ChatFragment : Fragment() {
         }
     }
 
+
     private fun fetchComments() {
         FirebaseFirestore.getInstance()
             .collection("events")
             .document(eventId!!)
             .collection("comments")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { documents ->
                 val commentsList = documents.mapNotNull { document ->
@@ -106,6 +109,7 @@ class ChatFragment : Fragment() {
                 Log.e("ChatFragment", "Error fetching comments", exception)
             }
     }
+
 
 
 }
