@@ -2,6 +2,7 @@ package com.example.closebysocialize
 
 import AuthUtil
 import UserDetailsFetcher
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
@@ -63,6 +64,24 @@ class AddEventFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_add_event, container, false)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            val placeName = data?.getStringExtra("place_name")
+            val placeCoordinates = data?.getParcelableExtra<LatLng>("place_coordinates")
+            when (requestCode) {
+                PLACE_SEARCH_REQUEST_CODE -> {
+                    eventPlace.setText(placeName)
+                    eventPlaceCoordinates = placeCoordinates
+                }
+                CITY_SEARCH_REQUEST_CODE -> {
+                    cityTextView.setText(placeName)
+                    eventCityCoordinates = placeCoordinates
+                }
+            }
+        }
+    }
+
 
 
 
@@ -75,7 +94,7 @@ class AddEventFragment : Fragment() {
         eventPlace = view.findViewById(R.id.eventPlace)
         cityTextView = view.findViewById(R.id.cityTextView)
 
-        
+
 
         val numberPicker = view.findViewById<NumberPicker>(R.id.spotPicker)
         numberPicker.maxValue = 20
@@ -150,6 +169,10 @@ class AddEventFragment : Fragment() {
         val eventDateEditText = view.findViewById<TextInputEditText>(R.id.eventDate)
         eventDateEditText.isFocusable = false
         eventDateEditText.isClickable = true
+        eventPlace.isFocusable = false
+        eventPlace.isClickable = true
+        cityTextView.isFocusable = false
+        cityTextView.isClickable = true
 
         eventDateEditText.setOnClickListener {
             val calendar = Calendar.getInstance()
