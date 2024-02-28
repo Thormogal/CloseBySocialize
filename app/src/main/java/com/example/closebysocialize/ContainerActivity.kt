@@ -43,12 +43,16 @@ class ContainerActivity : AppCompatActivity() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var placesClient: PlacesClient
-    private lateinit var mapSearchView: SearchView
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_container)
-
+        if (!Places.isInitialized()) {
+            Places.initialize(applicationContext, getString(R.string.google_maps_api_key))
+        }
+        placesClient = Places.createClient(this)
         // Initialize FusedLocationProviderClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -66,22 +70,7 @@ class ContainerActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.topAppBar)
         setSupportActionBar(toolbar)
 
-        // Initialize search bar and listen for user input
-        mapSearchView.findViewById<SearchView>(R.id.mapSearchView)
-        mapSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                // Perform search when user submits query
-                return false
-            }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                // Update autocomplete suggestions as user types
-                if (!newText.isNullOrBlank()) {
-                    startAutocompleteActivity(newText)
-                }
-                return true
-            }
-        })
 
         val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
         navView.setOnNavigationItemSelectedListener { item ->
@@ -127,12 +116,12 @@ class ContainerActivity : AppCompatActivity() {
         val intent = Autocomplete.IntentBuilder(
             AutocompleteActivityMode.FULLSCREEN, fields
         )
-            .setCountry("SE") // Optional: restrict results to a specific country
-            .setQuery(query)
+            .setCountry("SE")
             .build(this)
 
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -146,6 +135,7 @@ class ContainerActivity : AppCompatActivity() {
 
     companion object {
         private const val AUTOCOMPLETE_REQUEST_CODE = 1001
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
 
@@ -156,6 +146,8 @@ class ContainerActivity : AppCompatActivity() {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+
+
     private fun requestLocationPermission() {
         ActivityCompat.requestPermissions(
             this,
@@ -163,7 +155,16 @@ class ContainerActivity : AppCompatActivity() {
             LOCATION_PERMISSION_REQUEST_CODE
         )
     }
-
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startLocationUpdates()
+            } else {
+                // Handle the case where the user denies the location permission
+            }
+        }
+    }
     private fun startLocationUpdates() {
         val locationRequest = LocationRequest.create().apply {
             interval = 10000 // Update interval in milliseconds
@@ -241,4 +242,7 @@ class ContainerActivity : AppCompatActivity() {
         }
         popup.show()
     }
+
+
+
 }

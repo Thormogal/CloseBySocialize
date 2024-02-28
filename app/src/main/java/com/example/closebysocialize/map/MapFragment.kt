@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.annotation.RequiresApi
 import com.example.closebysocialize.R
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -45,6 +46,20 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         // Initialize the GoogleMap asynchronously
         mapView.getMapAsync(this)
+
+
+        val mapSearchView: SearchView = view.findViewById(R.id.mapSearchView)
+        mapSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // Implement search logic here
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // You can implement suggestions or search as user types, if needed
+                return true
+            }
+        })
 
         return view
     }
