@@ -1,3 +1,4 @@
+import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -5,19 +6,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.closebysocialize.R
 import com.example.closebysocialize.dataClass.Friend
+import com.example.closebysocialize.dataClass.Users
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
-class FriendsAdapter(private var friends: List<Friend>, private val showActions: Boolean = true) : RecyclerView.Adapter<FriendsAdapter.FriendViewHolder>() {
+class FriendsAdapter(private val context: Context, private var friends: List<Friend>, private val showActions: Boolean = true) : RecyclerView.Adapter<FriendsAdapter.FriendViewHolder>() {
 
     interface FriendClickListener {
         fun onMessageClick(friend: Friend)
         fun onBinClick(friend: Friend)
         fun onFriendClick(friend: Friend)
     }
+
+
 
     var listener: FriendClickListener? = null
 
@@ -41,21 +48,21 @@ class FriendsAdapter(private var friends: List<Friend>, private val showActions:
                 messageIcon.visibility = View.GONE
                 binIcon.visibility = View.GONE
             }
-
             itemView.setOnClickListener {
-                listener?.onMessageClick(friend)
+                    listener?.onMessageClick(friend)
+
             }
 
             binIcon.setOnClickListener {
                 listener?.onBinClick(friend)
             }
-            itemView.setOnClickListener {
-                listener?.onFriendClick(friend)
-            }
+
         }
     }
 
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
+
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_friend, parent, false)
         return FriendViewHolder(view)
     }

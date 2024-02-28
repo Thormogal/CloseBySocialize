@@ -126,5 +126,7 @@
     <string name="friends">Friends</string>
     <string name="add_friend">Add Friend</string>
 
+    // Message
+    <string name="write_a_message">Write a message…</string>
 
 </resources>

@@ -16,22 +16,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:gravity="center_vertical">
 
         <EditText
             android:id="@+id/commentEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="@string/write_a_comment"
+            android:hint="@string/write_a_message"
             android:textColor="@color/primary_text"
             android:textColorHint="@color/primary_text" />
+
         <Button
             android:id="@+id/postCommentButton"
             style="@style/Widget.Material3.Button.ElevatedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginStart="8dp"
             android:fontFamily="@font/poppins_font_family"
             android:text="@string/post"
             android:textColor="@color/primary_text"

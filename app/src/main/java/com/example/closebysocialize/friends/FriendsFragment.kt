@@ -51,13 +51,14 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
         }
 
         friendsRecyclerView = view.findViewById(R.id.friendsRecyclerView)
-        friendsAdapter = FriendsAdapter(listOf())
+        friendsAdapter = FriendsAdapter(requireContext(), listOf())
         friendsAdapter.listener = this
         friendsRecyclerView.adapter = friendsAdapter
         friendsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         loadFriends()
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -80,6 +81,7 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
     override fun onMessageClick(friend: Friend) {
     }
     override fun onFriendClick(friend: Friend) {
+
     }
     override fun onBinClick(friend: Friend) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
