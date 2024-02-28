@@ -15,8 +15,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.NumberPicker
 import android.widget.Toast
-import androidx.compose.ui.graphics.Color
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.closebysocialize.R
 import com.google.firebase.auth.FirebaseAuth
@@ -26,25 +24,25 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class EditProfileFragment : Fragment() {
 
-    lateinit var goBackButtonImageView: ImageView
-    lateinit var editImage: ImageView
-    lateinit var profileSaveButton: Button
-    lateinit var editName: EditText
-    lateinit var birthYearPicker: NumberPicker
-    lateinit var aboutMeEditText: EditText
+    private lateinit var goBackButtonImageView: ImageView
+    private lateinit var editImage: ImageView
+    private lateinit var profileSaveButton: Button
+    private lateinit var editName: EditText
+    private lateinit var birthYearPicker: NumberPicker
+    private lateinit var aboutMeEditText: EditText
 
-    lateinit var dogImageView: ImageView
-    lateinit var airplaneImageView: ImageView
-    lateinit var bookImageView: ImageView
-    lateinit var cookingImageView: ImageView
-    lateinit var gardenImageView: ImageView
-    lateinit var cinemaImageView: ImageView
-    lateinit var restaurantImageView: ImageView
-    lateinit var sportImageView: ImageView
-    lateinit var coffeeImageView: ImageView
-    lateinit var gameImageView: ImageView
-    lateinit var theatreImageView: ImageView
-    lateinit var strollerImageView: ImageView
+    private lateinit var dogImageView: ImageView
+    private lateinit var airplaneImageView: ImageView
+    private lateinit var bookImageView: ImageView
+    private lateinit var cookingImageView: ImageView
+    private lateinit var gardenImageView: ImageView
+    private lateinit var cinemaImageView: ImageView
+    private lateinit var restaurantImageView: ImageView
+    private lateinit var sportImageView: ImageView
+    private lateinit var coffeeImageView: ImageView
+    private lateinit var gameImageView: ImageView
+    private lateinit var theatreImageView: ImageView
+    private lateinit var strollerImageView: ImageView
 
     private val selectedInterests = mutableListOf<String>()
 
@@ -60,7 +58,7 @@ class EditProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_edit_profile, container, false)
+        val view = inflater.inflate(R.layout.fragment_profile_edit, container, false)
 
         goBackButtonImageView = view.findViewById(R.id.goBackButtonImageView)
         editImage = view.findViewById(R.id.editPictureImageView)
@@ -103,11 +101,11 @@ class EditProfileFragment : Fragment() {
             val interest = view.tag as? String
             interest?.let {
                 if (selectedInterests.contains(interest)) {
-                    // Om intresset redan är valt, ta bort det från listan och återställ knappens animation
+                    // If an interest is marked, remove it from the list and reset button animation
                     selectedInterests.remove(interest)
                     view.isSelected = false
                 } else {
-                    // Om intresset inte är valt, lägg till det i listan och tillämpa nedtryckningsanimationen
+                    // If an interest isn't marked, add it to the list and start button animation
                     selectedInterests.add(interest)
                     view.isSelected = true
                 }
@@ -116,16 +114,14 @@ class EditProfileFragment : Fragment() {
 
         interestImageViews.forEach { imageView ->
             imageView.setOnClickListener(interestClickListener)
-            imageView.setBackgroundResource(R.drawable.unselected_button_background)// Ange standardbakgrund
+            imageView.setBackgroundResource(R.drawable.unselected_button_background)// define standard background
 
 
         }
 
-//kallar på funktionerna, clicklis
-
 
         goBackButtonImageView.setOnClickListener {
-            //tillbaka till fragmentet profile fragment
+            //back to profile fragment
         }
         editImage.setOnClickListener {
             val galleryIntent =
@@ -149,14 +145,14 @@ class EditProfileFragment : Fragment() {
 
         val userRef = db.collection("users").document(userId)
 
-        // Uppdatera flera fält samtidigt i databasen
+        // Edit the user's information and save to database
         userRef.update(
             mapOf(
                 "aboutMe" to aboutMeText,
                 "name" to name,
                 "birthYear" to birthYear,
                 "profileImage" to profileImageURI
-                // Lägg till fler fält här om det behövs
+                // add more fields if needed
             )
         )
             .addOnSuccessListener {

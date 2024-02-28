@@ -20,15 +20,30 @@
     <string name="my_events">My events</string>
 
 
-    // profile page
-    <string name="interests">Interests</string>
-    <string name="about_me">About me</string>
+    // profile- and profile edit page
+    <string name="interests">Interests:</string>
+    <string name="name">Name:</string>
+    <string name="about_me">About me:</string>
     <string name="report_bugs">Report bugs</string>
+    <string name="go_back">Back to previous page</string>
+    <string name="profile_pic_explain">Your profile picture</string>
+    <string name="year_pic_explain">Your date of birth</string>
     <string name="language">Language</string>
-    <string name="darkmode">Darkmode</string>
-
-    //Profile edit page
-
+    <string name="darkMode">Dark Mode</string>
+    <string name="airplane">Airplane image</string>
+    <string name="cooking">Cooking image</string>
+    <string name="cinema">Cinema image</string>
+    <string name="dog">DogWalks image</string>
+    <string name="book">Book image</string>
+    <string name="garden">Garden image</string>
+    <string name="stroller">Stroller image</string>
+    <string name="coffee">Coffee image</string>
+    <string name="restaurant">Restaurant image</string>
+    <string name="sport">Sport image</string>
+    <string name="game">Game image</string>
+    <string name="theatre">Theatre image</string>
+    <string name="birth_year">Select birth year:</string>
+    <string name="save_all">Save all</string>
 
     // events
     <string name="saved">Saved</string>
