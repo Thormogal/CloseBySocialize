@@ -136,8 +136,6 @@ class OpenChatFragment : Fragment() {
             }
     }
 
-
-
     private fun fetchMessages() {
         val conversationId = this.conversationId ?: run {
             Log.e("OpenChatFragment", "Conversation ID is null")
@@ -162,8 +160,6 @@ class OpenChatFragment : Fragment() {
                 }
             }
     }
-
-
 
     private fun fetchConversations() {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return

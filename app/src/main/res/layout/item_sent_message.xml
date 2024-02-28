@@ -30,7 +30,7 @@
             style="?attr/materialCardViewStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="#DCDCDC"
+            app:cardBackgroundColor="#F3F3F3"
             app:cardCornerRadius="16dp"
             app:cardElevation="12dp">
 
