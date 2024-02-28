@@ -110,31 +110,8 @@ class ContainerActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-    private fun startAutocompleteActivity(query: String) {
-        val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
-
-        val intent = Autocomplete.IntentBuilder(
-            AutocompleteActivityMode.FULLSCREEN, fields
-        )
-            .setCountry("SE")
-            .build(this)
-
-        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == AUTOCOMPLETE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val place = Autocomplete.getPlaceFromIntent(data!!)
-            // Use the selected place (e.g., move camera to the selected location)
-            // Example: googleMap.moveCamera(CameraUpdateFactory.newLatLng(place.latLng))
-        }
-
-    }
 
     companion object {
-        private const val AUTOCOMPLETE_REQUEST_CODE = 1001
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
