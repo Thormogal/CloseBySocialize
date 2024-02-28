@@ -1,19 +1,20 @@
 package com.example.closebysocialize.profile
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import com.example.closebysocialize.R
 import android.app.AlertDialog
+import android.content.res.Configuration
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SwitchCompat
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,12 +23,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 class ProfileFragment : Fragment() {
     private lateinit var profileImageView: ImageView
     private lateinit var nameTextView: TextView
-    private lateinit var reportBugs: ImageView
-    private lateinit var language: ImageView
-    private lateinit var darkModeSwitch: Switch
+    private lateinit var reportBugs: TextView
+    private lateinit var language: TextView
+    private lateinit var darkModeSwitch: SwitchCompat
     private lateinit var aboutMeTextView: TextView
 
-    val languageOptions = arrayOf("Swedish", "English")
+    private val languageOptions = arrayOf("Swedish", "English")
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,31 +43,34 @@ class ProfileFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
-        reportBugs = view.findViewById(R.id.reportBugsButtonImageView)
-        language = view.findViewById(R.id.languageButtonImageView)
+        reportBugs = view.findViewById(R.id.reportBugTextView)
+        language = view.findViewById(R.id.languageTextView)
         darkModeSwitch = view.findViewById(R.id.darkModeSwitch)
-        profileImageView = view.findViewById(R.id.profileimageView)
+        profileImageView = view.findViewById(R.id.profileImageView)
         nameTextView = view.findViewById(R.id.nameTextView)
         aboutMeTextView = view.findViewById(R.id.aboutMeTextView)
 
         return view
     }
 
+    @SuppressLint("SuspiciousIndentation")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //kallar på funktionerna, clicklis
+        //calls the functions, clickList
 
         fetchUserInfo()
 
         reportBugs.setOnClickListener {
-            //Ska man komma vidare till någon sida här?
+            //Show a dialogue in order to report bugs to the developers
         }
         language.setOnClickListener {
             showLanguagePicker()
         }
-        
 
-            darkModeSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+        val currentNightMode = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)
+        darkModeSwitch.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
+
+            darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                 } else {
@@ -76,8 +80,6 @@ class ProfileFragment : Fragment() {
             }
         }
 
-
-        //Funktioner
 
     private fun fetchUserInfo() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
@@ -98,7 +100,7 @@ class ProfileFragment : Fragment() {
                     Log.e("!!!", "Failed to fetch user name", exception)
                 }
         } else {
-            // Användaren är inte inloggad
+            // The user is not logged in
         }
     }
 
@@ -134,7 +136,7 @@ class ProfileFragment : Fragment() {
         }
 
         private fun loadImage(imageUrl: String?) {
-            if (imageUrl != null && imageUrl.isNotEmpty()) {
+            if (!imageUrl.isNullOrEmpty()) {
                 Glide.with(requireContext())
                     .load(imageUrl)
                     .into(profileImageView)

@@ -43,7 +43,7 @@
             android:layout_height="30dp"
             android:contentDescription="Café"
             android:layout_columnWeight="1"
-            app:srcCompat="@drawable/interests_coffeemug" />
+            app:srcCompat="@drawable/interests_coffee_mug" />
 
         <ImageView
             android:id="@+id/cookingImageView"
@@ -75,7 +75,7 @@
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_columnWeight="1"
-            app:srcCompat="@drawable/interests_gamingcontroller" />
+            app:srcCompat="@drawable/interests_gaming_controller" />
 
         <ImageView
             android:id="@+id/cinemaImageView"
@@ -107,7 +107,7 @@
             android:contentDescription="Theatre"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
-            app:srcCompat="@drawable/interests_theatermask" />
+            app:srcCompat="@drawable/interests_theatre_mask" />
 
         <ImageView
             android:id="@+id/gardenImageView"
@@ -115,7 +115,7 @@
             android:layout_width="0dp"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
-            app:srcCompat="@drawable/intrerests_garden" />
+            app:srcCompat="@drawable/interests_garden" />
 
         <ImageView
             android:id="@+id/airPlaneImageView"
