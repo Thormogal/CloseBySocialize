@@ -28,15 +28,22 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import android.Manifest
+import android.app.Activity
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.LatLng
+import androidx.appcompat.widget.SearchView
+import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 
 
 class ContainerActivity : AppCompatActivity() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var placesClient: PlacesClient
+    private lateinit var mapSearchView: SearchView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +51,9 @@ class ContainerActivity : AppCompatActivity() {
 
         // Initialize FusedLocationProviderClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        placesClient = Places.createClient(this)
+        Places.initialize(applicationContext, getString(R.string.google_maps_api_key))
 
         // Check and request location permissions if needed
         if (hasLocationPermission()) {
@@ -55,6 +65,23 @@ class ContainerActivity : AppCompatActivity() {
         // Setup toolbar and bottom navigation
         val toolbar: Toolbar = findViewById(R.id.topAppBar)
         setSupportActionBar(toolbar)
+
+        // Initialize search bar and listen for user input
+        mapSearchView.findViewById<SearchView>(R.id.mapSearchView)
+        mapSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // Perform search when user submits query
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // Update autocomplete suggestions as user types
+                if (!newText.isNullOrBlank()) {
+                    startAutocompleteActivity(newText)
+                }
+                return true
+            }
+        })
 
         val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
         navView.setOnNavigationItemSelectedListener { item ->
@@ -94,6 +121,33 @@ class ContainerActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+    private fun startAutocompleteActivity(query: String) {
+        val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+
+        val intent = Autocomplete.IntentBuilder(
+            AutocompleteActivityMode.FULLSCREEN, fields
+        )
+            .setCountry("SE") // Optional: restrict results to a specific country
+            .setQuery(query)
+            .build(this)
+
+        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            val place = Autocomplete.getPlaceFromIntent(data!!)
+            // Use the selected place (e.g., move camera to the selected location)
+            // Example: googleMap.moveCamera(CameraUpdateFactory.newLatLng(place.latLng))
+        }
+
+    }
+
+    companion object {
+        private const val AUTOCOMPLETE_REQUEST_CODE = 1001
+    }
+
 
     private fun hasLocationPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
@@ -150,9 +204,6 @@ class ContainerActivity : AppCompatActivity() {
             }
         }
     }
-
-
-
     private fun showProfileMenu() {
         val view = findViewById<View>(R.id.profile_button) ?: return
         val popup = PopupMenu(this, view)
@@ -189,9 +240,5 @@ class ContainerActivity : AppCompatActivity() {
             }
         }
         popup.show()
-    }
-
-    companion object {
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
     }
 }

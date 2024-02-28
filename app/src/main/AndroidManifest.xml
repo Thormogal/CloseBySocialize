@@ -22,6 +22,7 @@
             android:name=".message.ReceiveNotificationMessage"
             android:enabled="true"
             android:exported="true"></service>
+
         <service
             android:name=".message.FireBaseMessagingService"
             android:exported="true">
@@ -64,6 +65,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"

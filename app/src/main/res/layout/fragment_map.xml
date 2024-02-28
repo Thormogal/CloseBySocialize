@@ -11,6 +11,12 @@
         android:contentDescription="Maps for Google"
         android:layout_weight="1" />
 
+    <SearchView
+        android:id="@+id/mapSearchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+
     <!-- Other views if needed -->
 
 </LinearLayout>

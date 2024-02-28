@@ -56,6 +56,7 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging:23.4.1")
     implementation("com.google.ai.client.generativeai:generativeai:0.2.0")
     implementation("com.google.android.gms:play-services-maps:18.0.0")
+    implementation("com.google.android.libraries.places:places:2.4.0")
     implementation("com.google.android.gms:play-services-location:21.1.0")
     testImplementation("junit:junit:4.13.2")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
