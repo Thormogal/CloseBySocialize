@@ -294,6 +294,8 @@ class AddEventFragment : Fragment() {
                         eventNameTextView.text = null
                         eventPlace.text = null
                         eventDate.text = null
+                        cityTextView.text = null
+                        eventPlace.text = null
                         // eventGuests.text = null
                         eventDescription.text = null
                         selectedCategory = null
