@@ -41,7 +41,7 @@
             android:id="@+id/coffeeImageView"
             android:layout_width="0dp"
             android:layout_height="30dp"
-            android:layout_columnWeight="1
+            android:layout_columnWeight="1"
             android:contentDescription="Café"
             app:srcCompat="@drawable/interests_coffee_mug" />
 
