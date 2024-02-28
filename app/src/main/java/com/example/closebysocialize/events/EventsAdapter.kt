@@ -148,8 +148,6 @@ class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: Mut
         notifyDataSetChanged()
     }
 
-
-
     fun View.dpToPx(dp: Int): Int {
         return (dp * context.resources.displayMetrics.density).toInt()
     }

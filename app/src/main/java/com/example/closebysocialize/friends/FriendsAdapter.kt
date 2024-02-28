@@ -30,8 +30,7 @@ class FriendsAdapter(private val context: Context, private var friends: List<Fri
 
     inner class FriendViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val nameTextView: TextView = view.findViewById(R.id.nameTextView)
-        private val profileImageView: ImageView =
-            view.findViewById(R.id.friendProfilePictureImageView)
+        private val profileImageView: ImageView = view.findViewById(R.id.friendProfilePictureImageView)
         private val messageIcon: ImageView = view.findViewById(R.id.messageIcon)
         private val binIcon: ImageView = view.findViewById(R.id.binIcon)
 
@@ -49,8 +48,7 @@ class FriendsAdapter(private val context: Context, private var friends: List<Fri
                 binIcon.visibility = View.GONE
             }
             itemView.setOnClickListener {
-                    listener?.onMessageClick(friend)
-
+                listener?.onFriendClick(friend)
             }
 
             binIcon.setOnClickListener {
@@ -59,8 +57,6 @@ class FriendsAdapter(private val context: Context, private var friends: List<Fri
 
         }
     }
-
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_friend, parent, false)
