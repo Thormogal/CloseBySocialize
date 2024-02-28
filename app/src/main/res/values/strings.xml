@@ -138,29 +138,34 @@
     // chat
     <string name="just_now">Just now</string>
     <string name="date_unknown">Date unknown</string>
+    <string name="like">Like</string>
+    <string name="reply">Reply</string>
+    <string name="reply_hint">Comment as</string>
+    <string name="cancel">Cancel</string>
+
     <plurals name="years_ago">
-        <item quantity="one">%d year ago</item>
-        <item quantity="other">%d years ago</item>
+        <item quantity="one">%d y</item>
+        <item quantity="other">%d y</item>
     </plurals>
     <plurals name="months_ago">
-        <item quantity="one">%d month ago</item>
-        <item quantity="other">%d months ago</item>
+        <item quantity="one">%d m</item>
+        <item quantity="other">%d m</item>
     </plurals>
     <plurals name="weeks_ago">
-        <item quantity="one">%d week ago</item>
-        <item quantity="other">%d weeks ago</item>
+        <item quantity="one">%d w</item>
+        <item quantity="other">%d w</item>
     </plurals>
     <plurals name="days_ago">
-        <item quantity="one">%d day ago</item>
-        <item quantity="other">%d days ago</item>
+        <item quantity="one">%d d</item>
+        <item quantity="other">%d d</item>
     </plurals>
     <plurals name="hours_ago">
-        <item quantity="one">%d hour ago</item>
-        <item quantity="other">%d hours ago</item>
+        <item quantity="one">%d h</item>
+        <item quantity="other">%d h</item>
     </plurals>
     <plurals name="minutes_ago">
-        <item quantity="one">%d minute ago</item>
-        <item quantity="other">%d minutes ago</item>
+        <item quantity="one">%d m</item>
+        <item quantity="other">%d m</item>
     </plurals>
 
 

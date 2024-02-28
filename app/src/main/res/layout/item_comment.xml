@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="8dp">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    android:padding="4dp">
 
     <ImageView
         android:id="@+id/commentsProfilePicture"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/profile_top_bar_avatar"
+        android:background="@drawable/profile_image_round"
         android:scaleType="centerCrop"
-        android:background="@drawable/profile_image_round" />
+        android:src="@drawable/profile_top_bar_avatar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/materialCardView"
         style="?attr/materialCardViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
         app:cardBackgroundColor="@color/primary_background"
         app:cardCornerRadius="16dp"
-        app:cardElevation="12dp">
+        app:cardElevation="12dp"
+        app:layout_constraintStart_toEndOf="@+id/commentsProfilePicture"
+        app:layout_constraintTop_toTopOf="@+id/commentsProfilePicture">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -50,13 +50,61 @@
                 android:textColor="@color/primary_text" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
-    </LinearLayout>
+
     <TextView
         android:id="@+id/commentsTimestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="1dp"
+        android:textColor="@color/primary_text"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@+id/materialCardView"
+        app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
+
+    <TextView
+        android:id="@+id/likeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="1dp"
+        android:text="@string/like"
+        android:textColor="@color/primary_text"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@+id/commentsTimestamp"
+        app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
+
+    <TextView
+        android:id="@+id/replyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="1dp"
+        android:text="@string/reply"
+        android:textColor="@color/primary_text"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@+id/likeTextView"
+        app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
+
+    <ImageView
+        android:id="@+id/likedImageView"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginStart="2dp"
         android:layout_marginTop="4dp"
         android:textColor="@color/primary_text"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@+id/likedAmountTextView"
+        app:layout_constraintTop_toBottomOf="@+id/materialCardView"
+        app:srcCompat="@drawable/icon_like" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/likedAmountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="1dp"
+        app:layout_constraintStart_toEndOf="@+id/replyTextView"
+        app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
