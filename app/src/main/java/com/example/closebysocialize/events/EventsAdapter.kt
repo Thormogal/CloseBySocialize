@@ -49,7 +49,6 @@ class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: Mut
         Log.d("EventsAdapter", "Event ID at position $position: '${event.id}'")
         holder.savedImageView.setImageResource(if (isSaved) R.drawable.icon_heart_filled else R.drawable.icon_heart)
         holder.savedImageView.setOnClickListener {
-
             val eventId = event.id
             val currentlySaved = savedEventsIds.contains(eventId)
             if (eventId.isEmpty()) {
@@ -79,19 +78,36 @@ class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: Mut
         holder.dateTextView.text = event.date
         holder.usernameTextView.text = event.authorFirstName
         holder.descriptionTextView.text = event.description
-        holder.openSpotsTextView.text = "${event.spots} ${holder.itemView.context.getString(R.string.spots)}"
+        val availableSpots = event.spots - event.currentAttendeesCount
+        holder.openSpotsTextView.text = "${availableSpots} ${holder.itemView.context.getString(R.string.spots)}"
         holder.chatImageView.setOnClickListener {
             chatImageViewClickListener?.invoke(event.id)
         }
 
         holder.attendButtonTextView.setOnClickListener {
-            val attendText = holder.itemView.context.getString(R.string.event_attend)
-            if (holder.attendButtonTextView.text.toString().equals(attendText, ignoreCase = true)) {
-                holder.attendButtonTextView.text = holder.itemView.context.getString(R.string.event_withdraw)
+            val isAttending = holder.attendButtonTextView.text.toString().equals(holder.itemView.context.getString(R.string.event_withdraw), ignoreCase = true)
+            val eventRef = FirebaseFirestore.getInstance().collection("events").document(event.id)
+            if (isAttending) {
+                eventRef.update("currentAttendeesCount", FieldValue.increment(-1)).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        holder.attendButtonTextView.text = holder.itemView.context.getString(R.string.event_attend)
+                        event.currentAttendeesCount = event.currentAttendeesCount - 1
+                        holder.openSpotsTextView.text = "${event.spots - event.currentAttendeesCount} ${holder.itemView.context.getString(R.string.spots)}"
+                    } else {
+                    }
+                }
             } else {
-                holder.attendButtonTextView.text = attendText
+                eventRef.update("currentAttendeesCount", FieldValue.increment(1)).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        holder.attendButtonTextView.text = holder.itemView.context.getString(R.string.event_withdraw)
+                        event.currentAttendeesCount = event.currentAttendeesCount + 1
+                        holder.openSpotsTextView.text = "${event.spots - event.currentAttendeesCount} ${holder.itemView.context.getString(R.string.spots)}"
+                    } else {
+                    }
+                }
             }
         }
+
 
         val currentUserId = AuthUtil.getCurrentUserId()
         if (event.authorId == currentUserId && currentUserId != null) {

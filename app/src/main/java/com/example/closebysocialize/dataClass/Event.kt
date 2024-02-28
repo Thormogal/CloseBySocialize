@@ -10,12 +10,14 @@ data class Event(
     val time: String = "",
     val date: String = "",
     val description: String = "",
-    val attended: String = "",
-    val spots: String = "",
+    var attended: Int = 0,
+    var spots: Int = 0,
     val authorProfileImageUrl: String = "",
     val authorFirstName: String = "",
     val authorLastName: String = "",
     val authorId: String = "",
     val attendedPeopleProfilePictureUrls: List<String> = listOf(),
     var isSaved: Boolean = false,
+    var currentAttendeesCount: Int = 0
+
 )
