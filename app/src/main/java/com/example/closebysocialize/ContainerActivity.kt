@@ -29,20 +29,29 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import android.Manifest
 import android.app.Activity
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.appcompat.widget.SearchView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.example.closebysocialize.dataClass.Users
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.bumptech.glide.request.transition.Transition
 
 
 class ContainerActivity : AppCompatActivity() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var placesClient: PlacesClient
+    private var profileMenuItem: MenuItem? = null
 
 
 
@@ -97,9 +106,13 @@ class ContainerActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.top_app_bar, menu)
+        profileMenuItem = menu?.findItem(R.id.profile_button)
+        loadUserProfile()
         return true
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -219,7 +232,37 @@ class ContainerActivity : AppCompatActivity() {
         }
         popup.show()
     }
+    private fun loadUserProfile() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            val db = FirebaseFirestore.getInstance()
+            db.collection("users").document(userId).get()
+                .addOnSuccessListener { documentSnapshot ->
+                    val user = documentSnapshot.toObject(Users::class.java)
+                    user?.profileImageUrl?.let {
+                        showProfileImage(it)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("ContainerActivity", "Error fetching user profile", e)
+                }
+        }
+    }
 
+    private fun showProfileImage(profileImageUrl: String) {
+        Glide.with(this)
+            .asBitmap()
+            .load(profileImageUrl)
+            .circleCrop()
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    val drawable = BitmapDrawable(resources, resource)
+                    profileMenuItem?.icon = drawable
+                }
+                override fun onLoadCleared(placeholder: Drawable?) {
+                }
+            })
+    }
 
 
 }

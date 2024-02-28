@@ -12,11 +12,12 @@ import android.widget.EditText
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.R
+import com.example.closebysocialize.dataClass.Comment
+import com.example.closebysocialize.message.FireBaseMessagingService.Companion.TAG
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import java.util.Date
 
 
 class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
@@ -63,14 +64,20 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        commentAdapter = CommentAdapter(mutableListOf(), this).also {
+        commentAdapter = CommentAdapter(mutableListOf(), this, eventId).also {
             it.listener = this
         }
+
         recyclerView.adapter = commentAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        fetchComments()
+        if (::commentAdapter.isInitialized) {
+            fetchComments()
+        } else {
+            Log.e("ChatFragment", "CommentAdapter is not initialized")
+        }
     }
+
 
     override fun onReply(commentId: String) {
         val inflater = requireActivity().layoutInflater
@@ -140,10 +147,8 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
             }
     }
 
-
-
-
     private fun fetchComments() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         FirebaseFirestore.getInstance()
             .collection("events")
             .document(eventId!!)
@@ -154,6 +159,9 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
                 val fetchedComments = documents.mapNotNull { document ->
                     val comment = document.toObject(Comment::class.java)
                     comment.id = document.id
+                    val likes = document.getLong("likes") ?: 0
+                    comment.likes = likes.toInt()
+                    comment.isLiked = document.getBoolean("likes.$userId") ?: false
                     comment
                 }
 
@@ -161,9 +169,11 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
                 commentAdapter.updateComments(organizedComments)
             }
             .addOnFailureListener { exception ->
-                Log.e("ChatFragment", "Error fetching comments", exception)
+                Log.e(TAG, "Error fetching comments", exception)
             }
     }
+
+
 
 
 
