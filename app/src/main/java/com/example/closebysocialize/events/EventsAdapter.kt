@@ -19,7 +19,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: MutableSet<String> = mutableSetOf()) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
     var chatImageViewClickListener: ((String) -> Unit)? = null
+    var eventInteractionListener: EventInteractionListener? = null
+    var listener: EventInteractionListener? = null
 
+    interface EventInteractionListener {
+        fun onToggleSaveEvent(eventId: String, isCurrentlySaved: Boolean)
+    }
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val authorProfilePictureImageView: ImageView = view.findViewById(R.id.authorProfilePictureImageView)
         val cityTextView: TextView = view.findViewById(R.id.cityTextView)
@@ -36,6 +41,7 @@ class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: Mut
         val chatImageView: ImageView = view.findViewById(R.id.chatImageView)
         val deleteImageView: ImageView = view.findViewById(R.id.deleteImageView)
         val savedImageView: ImageView = view.findViewById(R.id.savedImageView)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -51,21 +57,22 @@ class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: Mut
         val currentUserId = currentUser?.uid
         val userProfileUrl = currentUser?.photoUrl.toString()
 
-
-
         val isEventCreator = event.authorId == currentUserId
         val isCurrentlyAttending = event.attendedPeopleProfilePictureUrls.contains(userProfileUrl) || isEventCreator
         holder.attendButtonTextView.text = if (isCurrentlyAttending) holder.itemView.context.getString(R.string.event_withdraw) else holder.itemView.context.getString(R.string.event_attend)
         holder.deleteImageView.visibility = if (isEventCreator) View.VISIBLE else View.GONE
 
         val isSaved = savedEventsIds.contains(event.id)
-        Log.d("EventsAdapter", "Event ID at position $position: '${event.id}'")
         holder.savedImageView.setImageResource(if (isSaved) R.drawable.icon_heart_filled else R.drawable.icon_heart)
         holder.savedImageView.setOnClickListener {
             val eventId = event.id
             val currentlySaved = savedEventsIds.contains(eventId)
+            val listener: EventInteractionListener? = null
+            listener?.onToggleSaveEvent(eventId, currentlySaved)
+
+            val isCurrentlySaved = savedEventsIds.contains(event.id)
+            listener?.onToggleSaveEvent(event.id, isCurrentlySaved)
             if (eventId.isEmpty()) {
-                Log.e("EventsAdapter", "Event ID is empty for position $position. Skipping toggleSavedEvent.")
                 return@setOnClickListener
             }
             if (currentlySaved) {
@@ -78,6 +85,8 @@ class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: Mut
             }
             toggleSavedEvent(event.id, currentlySaved)
         }
+
+
         Glide.with(holder.itemView.context)
             .load(event.authorProfileImageUrl)
             .circleCrop()
