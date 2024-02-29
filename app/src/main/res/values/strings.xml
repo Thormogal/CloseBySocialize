@@ -6,6 +6,20 @@
 
     <string name="google_maps_api_key">AIzaSyCj1cLlJFyBL7gfgpURZzCSWw9B1evS-zE</string>
 
+    // top bar
+    <string name="page_title">Page title</string>
+    <string name="title_events">Events</string>
+    <string name="title_profile">Profile</string>
+    <string name="title_friends">Friends</string>
+    <string name="title_edit_profile">Edit Profile</string>
+    <string name="title_add_event">Add Event</string>
+    <string name="title_message">Conversations</string>
+    <string name="title_map">Map</string>
+    <string name="title_my_events">My events</string>
+
+
+
+
 
     // bottom nav
     <string name="events">Events</string>

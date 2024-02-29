@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.R
 import com.example.closebysocialize.dataClass.Friend
 import com.example.closebysocialize.friends.AddFriendFragment
+import com.example.closebysocialize.profile.ProfileFragment
 import com.example.closebysocialize.utils.FirestoreUtils
 import com.example.closebysocialize.utils.FragmentUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -65,6 +66,12 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
         loadFriends()
     }
 
+
+    private fun openUserProfile(userId: String) {
+        val profileFragment = ProfileFragment.newInstance(userId)
+        fragmentManager?.beginTransaction()?.replace(R.id.fragment_container, profileFragment)?.addToBackStack(null)?.commit()
+    }
+
     private fun loadFriends() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         FirestoreUtils.loadFriends(
@@ -81,7 +88,7 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
     override fun onMessageClick(friend: Friend) {
     }
     override fun onFriendClick(friend: Friend) {
-
+        openUserProfile(friend.id)
     }
     override fun onBinClick(friend: Friend) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return

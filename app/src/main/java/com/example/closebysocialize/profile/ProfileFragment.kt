@@ -30,6 +30,17 @@ class ProfileFragment : Fragment() {
 
     private val languageOptions = arrayOf("Swedish", "English")
 
+    companion object {
+        const val ARG_USER_ID = "userId"
+        fun newInstance(userId: String): ProfileFragment {
+            val fragment = ProfileFragment()
+            val args = Bundle().apply {
+                putString(ARG_USER_ID, userId)
+            }
+            fragment.arguments = args
+            return fragment
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +61,8 @@ class ProfileFragment : Fragment() {
         nameTextView = view.findViewById(R.id.nameTextView)
         aboutMeTextView = view.findViewById(R.id.aboutMeTextView)
 
+
+
         return view
     }
 
@@ -57,8 +70,6 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //calls the functions, clickList
-
-        fetchUserInfo()
 
         reportBugs.setOnClickListener {
             //Show a dialogue in order to report bugs to the developers
@@ -78,33 +89,32 @@ class ProfileFragment : Fragment() {
                 }
 
             }
+
+        val userId = arguments?.getString(ARG_USER_ID)
+        userId?.let {
+            fetchUserInfo(it)
+        }
         }
 
 
-    private fun fetchUserInfo() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        if (userId != null) {
-            val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
-            userRef.get()
-                .addOnSuccessListener { documentSnapshot ->
-                    if (documentSnapshot.exists()) {
-                        val userName = documentSnapshot.getString("name")
-                        val profileImageUrl = documentSnapshot.getString("profileImage")
-                        val aboutMe = documentSnapshot.getString("aboutMe")
-                        updateProfileUI(aboutMe, userName,profileImageUrl)
-                    } else {
-                        Log.d("!!!", "Document does not exist")
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    Log.e("!!!", "Failed to fetch user name", exception)
-                }
-        } else {
-            // The user is not logged in
+    private fun fetchUserInfo(userId: String) {
+        val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+        userRef.get().addOnSuccessListener { documentSnapshot ->
+            if (documentSnapshot.exists()) {
+                val userName = documentSnapshot.getString("name")
+                val profileImageUrl = documentSnapshot.getString("profileImage")
+                val aboutMe = documentSnapshot.getString("aboutMe")
+                updateProfileUI(aboutMe, userName, profileImageUrl)
+            } else {
+                Log.d("ProfileFragment", "Document does not exist")
+            }
+        }.addOnFailureListener { exception ->
+            Log.e("ProfileFragment", "Failed to fetch user name", exception)
         }
     }
 
-        private fun updateProfileUI(aboutMe: String?, userName: String?, profileImageUrl: String?) {
+
+    private fun updateProfileUI(aboutMe: String?, userName: String?, profileImageUrl: String?) {
             if (!userName.isNullOrEmpty()) {
                 nameTextView.text = userName
          }
