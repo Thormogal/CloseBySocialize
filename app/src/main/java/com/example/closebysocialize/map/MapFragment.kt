@@ -2,6 +2,7 @@ package com.example.closebysocialize.map
 
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -41,6 +42,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userHasInteracted = false
 
+    @SuppressLint("SuspiciousIndentation")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -58,7 +60,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         myPositionImageView = view.findViewById(R.id.myPositionImageView)
         fusedLocationClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity()) // Initialize fusedLocationClient
+            LocationServices.getFusedLocationProviderClient(requireActivity())
 
 
 
@@ -151,8 +153,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                 location?.let {
                     val currentLatLng = LatLng(it.latitude, it.longitude)
-                    googleMap.addMarker(MarkerOptions().position(currentLatLng).title("My Position"))
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
+                    googleMap.addMarker(MarkerOptions().position(currentLatLng).title(""))
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 10f))
                 }
             }
         } else {
@@ -165,7 +167,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     fun updateMapLocation(location: Location) {
         if (!userHasInteracted) {
             val newPos = LatLng(location.latitude, location.longitude)
-            googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(newPos, 12f))
+            googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(newPos, 10f))
         }
     }
 
@@ -173,6 +175,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val place = Autocomplete.getPlaceFromIntent(data!!)
+            userHasInteracted= true
             // Use the selected place (e.g., move camera to the selected location)
             googleMap?.moveCamera(CameraUpdateFactory.newLatLng(place.latLng))
         }
