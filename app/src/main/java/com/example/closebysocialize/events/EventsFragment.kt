@@ -4,7 +4,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,31 +18,34 @@ import com.example.closebysocialize.utils.FragmentUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.android.material.button.MaterialButtonToggleGroup
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 
 
-class EventsFragment : Fragment() {
+class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
     private lateinit var recyclerView: RecyclerView
     private var eventsAdapter = EventsAdapter(emptyList())
-    private lateinit var savedTextView: TextView
-    private lateinit var allTextView: TextView
-    private lateinit var attendedTextView: TextView
+  private lateinit var toggleGroup: MaterialButtonToggleGroup
+
+    private lateinit var filterImageView: ImageView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
         }
     }
+    override fun onToggleSaveEvent(eventId: String, isCurrentlySaved: Boolean) {
+        toggleSavedEvent(eventId, isCurrentlySaved)
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_events, container, false)
-
-        savedTextView = view.findViewById(R.id.savedTextView)
-        allTextView = view.findViewById(R.id.allTextView)
-        attendedTextView = view.findViewById(R.id.attendedTextView)
-
-        setFilterTextViewsListeners()
+        filterImageView = view.findViewById(R.id.filterImageView)
+        toggleGroup = view.findViewById(R.id.toggleButtonGroup)
 
         recyclerView = view.findViewById(R.id.eventsRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -53,7 +56,6 @@ class EventsFragment : Fragment() {
         eventsAdapter.chatImageViewClickListener = { event ->
             val containerId = R.id.fragment_container
             val args = Bundle().apply {
-            // TODO not working    putString("eventId", event.id)
             }
             activity?.let {
                 if (it is AppCompatActivity) {
@@ -63,10 +65,8 @@ class EventsFragment : Fragment() {
         }
         val floatingActionButton: FloatingActionButton = view.findViewById(R.id.floatingActionButton)
         floatingActionButton.setOnClickListener {
-            // animation on click, can remove if you want
             floatingActionButton.animate().scaleX(0.7f).scaleY(0.7f).setDuration(200).withEndAction {
                 floatingActionButton.animate().scaleX(1f).scaleY(1f).setDuration(200).withEndAction {
-
                     FragmentUtils.switchFragment(
                         activity = activity as AppCompatActivity,
                         containerId = R.id.fragment_container,
@@ -76,24 +76,31 @@ class EventsFragment : Fragment() {
                 }
             }
         }
+        setFilterButtonsListeners()
+
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        filterData("all")
 
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         FirestoreUtils.fetchSavedEventsByUser(userId, onSuccess = { savedEvents ->
             eventsAdapter.savedEventsIds.clear()
             eventsAdapter.savedEventsIds.addAll(savedEvents.map { it.id })
             eventsAdapter.notifyDataSetChanged()
+
+            eventsAdapter.eventInteractionListener = object : EventsAdapter.EventInteractionListener {
+                override fun onToggleSaveEvent(eventId: String, isCurrentlySaved: Boolean) {
+                    toggleSavedEvent(eventId, isCurrentlySaved)
+                }
+            }
         }, onFailure = { exception ->
             Log.e("EventsFragment", "Error fetching saved events", exception)
         })
 
-
-
-        initializeDefaultSelection()
+        toggleGroup.check(R.id.allButton)
         recyclerView = view.findViewById(R.id.eventsRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
         eventsAdapter = EventsAdapter(listOf())
@@ -105,103 +112,72 @@ class EventsFragment : Fragment() {
                 ?.addToBackStack(null)
                 ?.commit()
         }
-        val showOnlyMyEvents = arguments?.getBoolean("showOnlyMyEvents", false) ?: false
-        if (showOnlyMyEvents) {
-            setAllFiltersToDefaultSize()
-        } else {
-            initializeDefaultSelection()
-        }
-        setFilterTextViewsListeners()
-        fetchDataFromFirestore()
-        fetchUserSavedEvents()
+        eventsAdapter.listener = this
+
     }
-
-    private fun setAllFiltersToDefaultSize() {
-        val defaultTextSize = 14f
-        savedTextView.textSize = defaultTextSize
-        allTextView.textSize = defaultTextSize
-        attendedTextView.textSize = defaultTextSize
-    }
-
-
-
-    private fun fetchDataFromFirestore() {
-        val showOnlyMyEvents = this.arguments?.getBoolean("showOnlyMyEvents", false) ?: false
-        if (showOnlyMyEvents) {
-            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
-            if (currentUserId != null) {
-                FirestoreUtils.fetchUserEvents(
-                    userId = currentUserId,
-                    onSuccess = { eventsList -> updateRecyclerView(eventsList) },
-                    onFailure = { exception -> Log.d("EventsFragment", "Error fetching user's events: ", exception) }
-                )
-            }
-        } else {
-            FirestoreUtils.fetchAllEvents(
-                onSuccess = { eventsList -> updateRecyclerView(eventsList) },
-                onFailure = { exception -> Log.d("EventsFragment", "Error fetching events: ", exception) }
-            )
-        }
-    }
-
-
-
-
-    private fun updateRecyclerView(eventsList: List<Event>) {
-        eventsAdapter.updateData(eventsList)
-    }
-
-
-    private fun initializeDefaultSelection() {
-        val defaultTextSize = 14f
-        val selectedTextSize = 18f
-        resetTextViewsSize(defaultTextSize)
-        allTextView.textSize = selectedTextSize
-        filterData("all")
-    }
-
-    private fun setFilterTextViewsListeners() {
-        val defaultTextSize = 14f
-        val selectedTextSize = 18f
-        val clickListener = View.OnClickListener { view ->
-            resetTextViewsSize(defaultTextSize)
-            if (view is TextView) {
-                view.textSize = selectedTextSize
-                when (view.id) {
-                    R.id.savedTextView -> filterData("saved")
-                    R.id.allTextView -> filterData("all")
-                    R.id.attendedTextView -> filterData("attended")
+    private fun setFilterButtonsListeners() {
+        toggleGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (isChecked) {
+                when (checkedId) {
+                    R.id.savedButton -> filterData("saved")
+                    R.id.allButton -> filterData("all")
+                    R.id.attendedButton -> filterData("attending")
                 }
             }
         }
-        savedTextView.setOnClickListener(clickListener)
-        allTextView.setOnClickListener(clickListener)
-        attendedTextView.setOnClickListener(clickListener)
     }
-    private fun resetTextViewsSize(size: Float) {
-        savedTextView.textSize = size
-        allTextView.textSize = size
-        attendedTextView.textSize = size
-    }
+
     private fun filterData(filterType: String) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         when (filterType) {
             "all" -> FirestoreUtils.fetchAllEvents(::updateRecyclerView, ::handleError)
-            "saved" -> FirestoreUtils.fetchSavedEventsByUser(userId, ::updateRecyclerView, ::handleError)
-            "attending" -> FirestoreUtils.fetchAttendingEventsByUser(userId, ::updateRecyclerView, ::handleError)
+            "saved" -> {
+                FirestoreUtils.fetchSavedEventsByUser(userId, { savedEvents ->
+                    updateRecyclerView(savedEvents)
+                    eventsAdapter.savedEventsIds.clear()
+                    eventsAdapter.savedEventsIds.addAll(savedEvents.map { it.id })
+                    eventsAdapter.notifyDataSetChanged()
+                }, ::handleError)
+            }            "attending" -> FirestoreUtils.fetchAttendingEventsByUser(userId, ::updateRecyclerView, ::handleError)
         }
     }
 
-    private fun fetchUserSavedEvents() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        FirestoreUtils.fetchSavedEventsByUser(userId,
-            onSuccess = { events -> updateRecyclerView(events) },
-            onFailure = { exception -> Log.w("EventsFragment", "Error fetching saved events", exception) }
-        )
+    private fun updateRecyclerView(eventsList: List<Event>) {
+        eventsAdapter.updateData(eventsList)
+        recyclerView.scrollToPosition(0)
+        eventsAdapter.notifyDataSetChanged()
     }
+
     private fun handleError(exception: Exception) {
         Log.e("EventsFragment", "Error fetching data from Firestore", exception)
     }
+
+
+    private fun toggleSavedEvent(eventId: String, isCurrentlySaved: Boolean) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+
+        if (isCurrentlySaved) {
+            userRef.update("savedEvents", FieldValue.arrayRemove(eventId))
+                .addOnSuccessListener {
+                    eventsAdapter.savedEventsIds.remove(eventId)
+                    eventsAdapter.notifyDataSetChanged()
+                }
+                .addOnFailureListener { e ->
+                    Log.e("EventsFragment", "Error removing event from saved events", e)
+                }
+        } else {
+            userRef.update("savedEvents", FieldValue.arrayUnion(eventId))
+                .addOnSuccessListener {
+                    eventsAdapter.savedEventsIds.add(eventId)
+                    eventsAdapter.notifyDataSetChanged()
+                }
+                .addOnFailureListener { e ->
+                    Log.e("EventsFragment", "Error adding event to saved events", e)
+                }
+        }
+    }
+
 
 
 

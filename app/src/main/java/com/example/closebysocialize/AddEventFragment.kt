@@ -18,11 +18,15 @@ import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.NumberPicker
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.closebysocialize.events.EventsFragment
+import com.example.closebysocialize.utils.FragmentUtils
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
@@ -308,42 +312,42 @@ class AddEventFragment : Fragment() {
                             "authorFirstName" to userDetails.firstName,
                             "authorLastName" to userDetails.lastName,
                             "attendedPeopleProfilePictureUrls" to attendedPeopleProfilePictureUrls
+                            "createdAt" to FieldValue.serverTimestamp()
+
                         )
+              
+                firestore.collection("events").add(event)
+                    .addOnSuccessListener {
+                        eventNameTextView.text = null
+                        eventPlace.text = null
+                        eventDate.text = null
+                        cityTextView.text = null
+                        eventPlace.text = null
+                        // eventGuests.text = null
+                        eventDescription.text = null
+                        selectedCategory = null
+                        selectedImageView?.setBackgroundColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                android.R.color.transparent
+                            )
+                        )
+                        selectedImageView = null
+                        Toast.makeText(context, "Event added successfully", Toast.LENGTH_SHORT)
+                            .show()
+                        activity?.let {
+                            FragmentUtils.switchFragment(
+                                it as AppCompatActivity,
+                                R.id.fragment_container,
+                                EventsFragment::class.java
+                            )
+                        }
+                    }
 
-                        firestore.collection("events").add(event)
-                            .addOnSuccessListener {
-                                eventNameTextView.text = null
-                                eventPlace.text = null
-                                eventDate.text = null
-                                cityTextView.text = null
-                                eventPlace.text = null
-                                // eventGuests.text = null
-                                eventDescription.text = null
-                                selectedCategory = null
-                                selectedImageView?.setBackgroundColor(
-                                    ContextCompat.getColor(
-                                        requireContext(),
-                                        android.R.color.transparent
-                                    )
-                                )
 
-                                selectedImageView = null
-                                Toast.makeText(
-                                    context,
-                                    "Event added successfully",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                            }
+                      
 
-                            .addOnFailureListener { e ->
-                                Toast.makeText(
-                                    context,
-                                    "Error adding event: ${e.message}",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                            }
+                         
                     }
                 }
 

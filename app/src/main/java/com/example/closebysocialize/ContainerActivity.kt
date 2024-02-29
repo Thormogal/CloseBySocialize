@@ -29,20 +29,29 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import android.Manifest
 import android.app.Activity
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.appcompat.widget.SearchView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.example.closebysocialize.dataClass.Users
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.bumptech.glide.request.transition.Transition
 
 
 class ContainerActivity : AppCompatActivity() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var placesClient: PlacesClient
+    private var profileMenuItem: MenuItem? = null
 
 
 
@@ -94,12 +103,18 @@ class ContainerActivity : AppCompatActivity() {
         TODO change to the colors we want
          */
         navView.selectedItemId = R.id.navigation_events
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.top_app_bar, menu)
+        profileMenuItem = menu?.findItem(R.id.profile_button)
+        loadUserProfile()
         return true
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -110,31 +125,8 @@ class ContainerActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-    private fun startAutocompleteActivity(query: String) {
-        val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
-
-        val intent = Autocomplete.IntentBuilder(
-            AutocompleteActivityMode.FULLSCREEN, fields
-        )
-            .setCountry("SE")
-            .build(this)
-
-        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == AUTOCOMPLETE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val place = Autocomplete.getPlaceFromIntent(data!!)
-            // Use the selected place (e.g., move camera to the selected location)
-            // Example: googleMap.moveCamera(CameraUpdateFactory.newLatLng(place.latLng))
-        }
-
-    }
 
     companion object {
-        private const val AUTOCOMPLETE_REQUEST_CODE = 1001
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
@@ -168,7 +160,7 @@ class ContainerActivity : AppCompatActivity() {
     private fun startLocationUpdates() {
         val locationRequest = LocationRequest.create().apply {
             interval = 10000 // Update interval in milliseconds
-            fastestInterval = 5000 // Fastest update interval in milliseconds
+            fastestInterval = 1000 // Fastest update interval in milliseconds
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
         if (ActivityCompat.checkSelfPermission(
@@ -242,7 +234,49 @@ class ContainerActivity : AppCompatActivity() {
         }
         popup.show()
     }
+    private fun loadUserProfile() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            val db = FirebaseFirestore.getInstance()
+            db.collection("users").document(userId).get()
+                .addOnSuccessListener { documentSnapshot ->
+                    val user = documentSnapshot.toObject(Users::class.java)
+                    user?.profileImageUrl?.let {
+                        showProfileImage(it)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("ContainerActivity", "Error fetching user profile", e)
+                }
+        }
+    }
 
+    private fun showProfileImage(profileImageUrl: String) {
+        Glide.with(this)
+            .asBitmap()
+            .load(profileImageUrl)
+            .circleCrop()
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    val drawable = BitmapDrawable(resources, resource)
+                    profileMenuItem?.icon = drawable
+                }
+                override fun onLoadCleared(placeholder: Drawable?) {
+                }
+            })
+    }
+
+    fun setLocationUpdatesEnabled(enabled: Boolean) {
+        if (enabled) {
+            startLocationUpdates()
+        } else {
+            stopLocationUpdates()
+        }
+    }
+
+    private fun stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
 
 
 }

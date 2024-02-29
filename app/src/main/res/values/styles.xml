@@ -15,4 +15,5 @@
         <item name="android:textColorPrimary">@android:color/black</item>
         <item name="colorOnPrimary">@android:color/black</item>
     </style>
+
 </resources>
