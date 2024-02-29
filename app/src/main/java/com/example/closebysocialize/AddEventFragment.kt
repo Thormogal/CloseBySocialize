@@ -7,6 +7,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -27,9 +28,11 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.UUID
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -46,7 +49,8 @@ class AddEventFragment : Fragment() {
     private var eventCityCoordinates: LatLng? = null
     private lateinit var eventPlace: EditText
     private lateinit var cityTextView: EditText
-
+    private val PICK_IMAGE_REQUEST = 3
+    private var imageUri: Uri? = null
     private lateinit var firestore: FirebaseFirestore
 
 
@@ -71,22 +75,31 @@ class AddEventFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
-            val placeName = data?.getStringExtra("place_name")
-            val placeCoordinates = data?.getParcelableExtra<LatLng>("place_coordinates")
             when (requestCode) {
-                PLACE_SEARCH_REQUEST_CODE -> {
-                    eventPlace.setText(placeName)
-                    eventPlaceCoordinates = placeCoordinates
+                PLACE_SEARCH_REQUEST_CODE, CITY_SEARCH_REQUEST_CODE -> {
+                    val placeName = data?.getStringExtra("place_name")
+                    val placeCoordinates = data?.getParcelableExtra<LatLng>("place_coordinates")
+                    when (requestCode) {
+                        PLACE_SEARCH_REQUEST_CODE -> {
+                            eventPlace.setText(placeName)
+                            eventPlaceCoordinates = placeCoordinates
+                        }
+
+                        CITY_SEARCH_REQUEST_CODE -> {
+                            cityTextView.setText(placeName)
+                            eventCityCoordinates = placeCoordinates
+                        }
+                    }
                 }
-                CITY_SEARCH_REQUEST_CODE -> {
-                    cityTextView.setText(placeName)
-                    eventCityCoordinates = placeCoordinates
+
+                PICK_IMAGE_REQUEST -> {
+                    Log.d("AddEvent", "onActivityResult: data: $data")
+                    imageUri = data?.data
+                    Log.d("AddEvent", "onActivityResult: imageUri: $imageUri")
                 }
             }
         }
     }
-
-
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -97,7 +110,6 @@ class AddEventFragment : Fragment() {
         var selectedCategory: String? = null
         eventPlace = view.findViewById(R.id.eventPlace)
         cityTextView = view.findViewById(R.id.cityTextView)
-
 
 
         val numberPicker = view.findViewById<NumberPicker>(R.id.spotPicker)
@@ -115,9 +127,18 @@ class AddEventFragment : Fragment() {
             startActivityForResult(intent, CITY_SEARCH_REQUEST_CODE)
         }
 
+        val imageAdd = view.findViewById<ImageView>(R.id.imageAdd)
+        imageAdd.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            startActivityForResult(intent, PICK_IMAGE_REQUEST)
+        }
 
 
-    for (i in 0 until gridLayout.childCount) {
+
+
+
+        for (i in 0 until gridLayout.childCount) {
             val child = gridLayout.getChildAt(i)
             if (child is ImageView) {
                 child.tag = child.contentDescription
@@ -165,9 +186,7 @@ class AddEventFragment : Fragment() {
                     }
                 }
             }
-            }
-
-
+        }
 
 
         val eventDateEditText = view.findViewById<TextInputEditText>(R.id.eventDate)
@@ -273,27 +292,30 @@ class AddEventFragment : Fragment() {
                     return@fetchUserDetails
                 }
                 val attendedPeopleProfilePictureUrls = mutableListOf(userDetails.profileImageUrl)
+                if (imageUri != null) {
+                    uploadImage(imageUri!!) { imageUrl: String ->
+                        val event = hashMapOf(
+                            "title" to eventName,
+                            "location" to eventPlace.text.toString(),
+                            "place_coordinates" to eventPlaceCoordinates,
+                            "city" to cityTextView.text.toString(),
+                            "city_coordinates" to eventCityCoordinates,
+                            "day" to chosenDay,
+                            "imageUrl" to imageUrl,
+                            "date" to chosenDate,
+                            "time" to chosenTime,
+                            "spots" to spots,
+                            "description" to description,
+                            "eventType" to selectedCategory,
+                            "authorId" to currentUserId,
+                            "authorProfileImageUrl" to userDetails.profileImageUrl,
+                            "authorFirstName" to userDetails.firstName,
+                            "authorLastName" to userDetails.lastName,
+                            "attendedPeopleProfilePictureUrls" to attendedPeopleProfilePictureUrls
+                            "createdAt" to FieldValue.serverTimestamp()
 
-                val event = hashMapOf(
-                    "title" to eventName,
-                    "location" to eventPlace.text.toString(),
-                    "place_coordinates" to eventPlaceCoordinates,
-                    "city" to cityTextView.text.toString(),
-                    "city_coordinates" to eventCityCoordinates,
-                    "day" to chosenDay,
-                    "date" to chosenDate,
-                    "time" to chosenTime,
-                    "spots" to spots,
-                    "description" to description,
-                    "eventType" to selectedCategory,
-                    "authorId" to currentUserId,
-                    "authorProfileImageUrl" to userDetails.profileImageUrl,
-                    "authorFirstName" to userDetails.firstName,
-                    "authorLastName" to userDetails.lastName,
-                    "attendedPeopleProfilePictureUrls" to attendedPeopleProfilePictureUrls,
-                    "createdAt" to FieldValue.serverTimestamp()
-                )
-
+                        )
+              
                 firestore.collection("events").add(event)
                     .addOnSuccessListener {
                         eventNameTextView.text = null
@@ -322,17 +344,40 @@ class AddEventFragment : Fragment() {
                         }
                     }
 
-                    .addOnFailureListener { e ->
-                        Toast.makeText(
-                            context,
-                            "Error adding event: ${e.message}",
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
+
+                      
+
+                         
                     }
+                }
+
             }
         }
     }
+
+
+    private fun uploadImage(imageUri: Uri, onSuccess: ((imageUrl: String) -> Unit)? = null) {
+        val storageRef = FirebaseStorage.getInstance().reference
+        val imageRef = storageRef.child("images/${UUID.randomUUID()}")
+        imageRef.putFile(imageUri)
+            .addOnSuccessListener {
+                imageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                    Toast.makeText(
+                        context,
+                        "Image uploaded successfully: $downloadUri",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    onSuccess?.invoke(downloadUri.toString())
+                }
+            }.addOnFailureListener { exception ->
+                Toast.makeText(
+                    context,
+                    "Error uploading image: ${exception.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+    }
+
 
     companion object {
         @JvmStatic
