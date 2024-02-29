@@ -18,15 +18,11 @@ import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.NumberPicker
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.example.closebysocialize.events.EventsFragment
-import com.example.closebysocialize.utils.FragmentUtils
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
@@ -241,7 +237,7 @@ class AddEventFragment : Fragment() {
             datePickerDialog.show()
         }
 
-        val createEventButton = view.findViewById<MaterialButton>(R.id.materialButton)
+        val createEventButton = view.findViewById<MaterialButton>(R.id.materialSubmitButton)
 
         createEventButton.setOnClickListener {
             val eventNameTextView = view.findViewById<TextInputEditText>(R.id.eventNameTextView)
