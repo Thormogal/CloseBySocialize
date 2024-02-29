@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.SearchView
 import androidx.annotation.RequiresApi
 import com.example.closebysocialize.ContainerActivity
@@ -24,20 +25,14 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
-import com.google.common.io.Resources
+
 
 class MapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        arguments?.let {
-        }
-    }
+    private lateinit var myPositionImageView: ImageView
+    private var userHasInteracted = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,11 +45,15 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapView.onCreate(savedInstanceState)
         mapView.onResume()
 
+
         // Initialize the GoogleMap asynchronously
         mapView.getMapAsync(this)
 
+        myPositionImageView = view.findViewById(R.id.myPositionImageView)
+
 
         val mapSearchView: SearchView = view.findViewById(R.id.mapSearchView)
+
         mapSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 performSearch(query)
@@ -74,23 +73,40 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapSearchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 mapSearchView.isIconified = false
+                if (mapSearchView.query.isNullOrEmpty()){
+                    startPlaceAutocomplete()
+                }
             }
+        }
+
+        myPositionImageView.setOnClickListener{
+            userHasInteracted = false
+            recenterMapOnUserLocation()
         }
 
         return view
     }
 
     private fun performSearch(query: String?) {
-        // Check if the query is not null or empty
         if (!query.isNullOrBlank()) {
             // Perform search based on the query
             // For demonstration purposes, we'll just log the search query
             Log.d("PerformSearch", "Search query: $query")
+            controlLocationUpdates(true)
 
             // You can perform other actions here, such as displaying search results
         }
     }
 
+    fun controlLocationUpdates(enable: Boolean) {
+        (activity as? ContainerActivity)?.setLocationUpdatesEnabled(enable)
+    }
+
+    fun recenterMapOnUserLocation() {
+        // Possibly move camera to user's current location
+        // Then enable location updates
+        controlLocationUpdates(true)
+    }
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
@@ -107,12 +123,22 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         //longlat for sthlm
         val initialLocation = LatLng(59.3293, 18.0686)
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 6f))
+
+        googleMap.uiSettings.isZoomControlsEnabled = true
+
+        googleMap.setOnCameraMoveStartedListener { reason ->
+            if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+                userHasInteracted = true
+            }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun updateMapLocation(location: Location) {
-        val newPos = LatLng(location.latitude, location.longitude)
-        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(newPos, 15f))
+        if (!userHasInteracted) {
+            val newPos = LatLng(location.latitude, location.longitude)
+            googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(newPos, 12f))
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
