@@ -18,8 +18,10 @@ import android.widget.GridLayout
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
 import com.bumptech.glide.Glide
+import com.example.closebysocialize.ReportBugDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+
 
 
 class ProfileFragment : Fragment() {
@@ -74,7 +76,8 @@ class ProfileFragment : Fragment() {
 
 
         reportBugs.setOnClickListener {
-            //Show a dialogue in order to report bugs to the developers
+            val dialogFragment = ReportBugDialogFragment()
+            dialogFragment.show(parentFragmentManager, "ReportBugDialogFragment")
         }
         language.setOnClickListener {
             showLanguagePicker()
