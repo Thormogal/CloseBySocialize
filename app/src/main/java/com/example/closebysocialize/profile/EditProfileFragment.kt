@@ -21,7 +21,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 
-
 class EditProfileFragment : Fragment() {
 
     private lateinit var goBackButtonImageView: ImageView
@@ -31,28 +30,27 @@ class EditProfileFragment : Fragment() {
     private lateinit var birthYearPicker: NumberPicker
     private lateinit var aboutMeEditText: EditText
 
-    private lateinit var dogImageView: ImageView
-    private lateinit var airplaneImageView: ImageView
-    private lateinit var bookImageView: ImageView
-    private lateinit var cookingImageView: ImageView
-    private lateinit var gardenImageView: ImageView
-    private lateinit var cinemaImageView: ImageView
-    private lateinit var restaurantImageView: ImageView
-    private lateinit var sportImageView: ImageView
-    private lateinit var coffeeImageView: ImageView
-    private lateinit var gameImageView: ImageView
-    private lateinit var theatreImageView: ImageView
-    private lateinit var strollerImageView: ImageView
-
-    private val selectedInterests = mutableListOf<String>()
-
-    private val db = FirebaseFirestore.getInstance()
-    private val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+    private val selectedInterests = mutableSetOf<Int>()
     private val GALLERY_REQUEST_CODE = 100
     private var selectedImageUri: Uri? = null
 
+    private val db = FirebaseFirestore.getInstance()
+    private val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
-
+    private val interestToDrawableMap = mapOf(
+        R.id.dogImageView to R.drawable.interests_dogwalk,
+        R.id.airPlaneImageView to R.drawable.interests_airplane_takeoff,
+        R.id.bookImageView to R.drawable.interests_book,
+        R.id.cookingImageView to R.drawable.interests_cooking,
+        R.id.gardenImageView to R.drawable.interests_garden,
+        R.id.cinemaImageView to R.drawable.interests_movie,
+        R.id.restaurantImageView to R.drawable.interests_restaurant,
+        R.id.sportImageView to R.drawable.interests_football,
+        R.id.coffeeImageView to R.drawable.interests_coffee_mug,
+        R.id.gameImageView to R.drawable.interests_gaming_controller,
+        R.id.theatreImageView to R.drawable.interests_theatre_mask,
+        R.id.strollerImageView to R.drawable.interests_stroller
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,18 +64,6 @@ class EditProfileFragment : Fragment() {
         editName = view.findViewById(R.id.editNameEditText)
         birthYearPicker = view.findViewById(R.id.birthYearPicker)
         aboutMeEditText = view.findViewById(R.id.aboutMeEditText)
-        dogImageView = view.findViewById(R.id.dogImageView)
-        airplaneImageView = view.findViewById(R.id.airPlaneImageView)
-        bookImageView = view.findViewById(R.id.bookImageView)
-        cookingImageView = view.findViewById(R.id.cookingImageView)
-        gardenImageView = view.findViewById(R.id.gardenImageView)
-        cinemaImageView = view.findViewById(R.id.cinemaImageView)
-        restaurantImageView = view.findViewById(R.id.restaurantImageView)
-        sportImageView = view.findViewById(R.id.sportImageView)
-        coffeeImageView = view.findViewById(R.id.coffeeImageView)
-        gameImageView = view.findViewById(R.id.gameImageView)
-        theatreImageView = view.findViewById(R.id.theatreImageView)
-        strollerImageView = view.findViewById(R.id.strollerImageView)
 
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)
         birthYearPicker.minValue = 1900
@@ -91,75 +77,77 @@ class EditProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val interestImageViews = listOf(
-            dogImageView, airplaneImageView, bookImageView,
-            cookingImageView, gardenImageView, cinemaImageView, restaurantImageView, sportImageView,
-            coffeeImageView, gameImageView, theatreImageView, strollerImageView
-        )
 
-        val interestClickListener = View.OnClickListener { view ->
-            val interest = view.tag as? String
-            interest?.let {
-                if (selectedInterests.contains(interest)) {
-                    // If an interest is marked, remove it from the list and reset button animation
-                    selectedInterests.remove(interest)
-                    view.isSelected = false
-                } else {
-                    // If an interest isn't marked, add it to the list and start button animation
-                    selectedInterests.add(interest)
-                    view.isSelected = true
-                }
+        interestToDrawableMap.forEach { (imageViewId, drawableId) ->
+            val imageView = view.findViewById<ImageView>(imageViewId)
+            imageView.setOnClickListener {
+                handleInterestClick(imageView, drawableId)
             }
         }
-
-        interestImageViews.forEach { imageView ->
-            imageView.setOnClickListener(interestClickListener)
-            imageView.setBackgroundResource(R.drawable.unselected_button_background)// define standard background
-
-
-        }
-
 
         goBackButtonImageView.setOnClickListener {
             //back to profile fragment
         }
+
         editImage.setOnClickListener {
             val galleryIntent =
                 Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE)
         }
+
         birthYearPicker.setOnValueChangedListener { picker, oldVal, newVal ->
             val selectedYear = newVal
         }
+
         profileSaveButton.setOnClickListener {
             saveProfileDataToDatabase()
         }
+    }
 
+    private fun handleInterestClick(imageView: ImageView, drawableId: Int) {
+        if (selectedInterests.contains(drawableId)) {
+            selectedInterests.remove(drawableId)
+            imageView.isSelected = false
+        } else {
+            if (selectedInterests.size >= 4) {
+                Toast.makeText(context, "You can select up to 4 interests", Toast.LENGTH_SHORT).show()
+            } else {
+                selectedInterests.add(drawableId)
+                imageView.isSelected = true
+            }
+        }
     }
 
     private fun saveProfileDataToDatabase() {
         val aboutMeText = aboutMeEditText.text.toString()
         val name = editName.text.toString()
         val birthYear = birthYearPicker.value
-        val profileImageURI = selectedImageUri.toString()
+        val profileImageURI = selectedImageUri?.toString() ?: ""
+
+        val selectedInterestsAsString = selectedInterests.map { it.toString() }
 
         val userRef = db.collection("users").document(userId)
 
-        // Edit the user's information and save to database
-        userRef.update(
-            mapOf(
-                "aboutMe" to aboutMeText,
-                "name" to name,
-                "birthYear" to birthYear,
-                "profileImage" to profileImageURI
-                // add more fields if needed
-            )
+        val updates = hashMapOf<String, Any>(
+            "aboutMe" to aboutMeText,
+            "name" to name,
+            "birthYear" to birthYear,
+            "profileImage" to profileImageURI
         )
+
+        if (selectedInterestsAsString.isNotEmpty()) {
+            updates["selectedInterests"] = selectedInterestsAsString
+        }
+
+        userRef.update(updates)
             .addOnSuccessListener {
+                Toast.makeText(context, "Profile updated successfully", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
+                Toast.makeText(context, "Failed to update profile: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -181,11 +169,3 @@ class EditProfileFragment : Fragment() {
         }
     }
 }
-
-
-
-
-
-
-
-

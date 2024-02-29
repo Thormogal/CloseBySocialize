@@ -78,7 +78,7 @@
             android:id="@+id/profileGridLayout"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:columnCount="4"
             app:layout_constraintBottom_toTopOf="@id/bottomOfGridGuide"
             app:layout_constraintEnd_toEndOf="@id/profileVerticalGuideline2"

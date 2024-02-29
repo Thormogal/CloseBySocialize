@@ -160,7 +160,7 @@ class ContainerActivity : AppCompatActivity() {
     private fun startLocationUpdates() {
         val locationRequest = LocationRequest.create().apply {
             interval = 10000 // Update interval in milliseconds
-            fastestInterval = 5000 // Fastest update interval in milliseconds
+            fastestInterval = 1000 // Fastest update interval in milliseconds
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
         if (ActivityCompat.checkSelfPermission(
@@ -264,6 +264,18 @@ class ContainerActivity : AppCompatActivity() {
                 override fun onLoadCleared(placeholder: Drawable?) {
                 }
             })
+    }
+
+    fun setLocationUpdatesEnabled(enabled: Boolean) {
+        if (enabled) {
+            startLocationUpdates()
+        } else {
+            stopLocationUpdates()
+        }
+    }
+
+    private fun stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
 

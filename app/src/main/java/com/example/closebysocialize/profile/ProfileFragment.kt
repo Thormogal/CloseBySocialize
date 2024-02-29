@@ -11,8 +11,10 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.closebysocialize.R
 import android.app.AlertDialog
+import android.content.Context
 import android.content.res.Configuration
 import android.util.Log
+import android.widget.GridLayout
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
 import com.bumptech.glide.Glide
@@ -61,15 +63,16 @@ class ProfileFragment : Fragment() {
         nameTextView = view.findViewById(R.id.nameTextView)
         aboutMeTextView = view.findViewById(R.id.aboutMeTextView)
 
-
-
         return view
     }
 
     @SuppressLint("SuspiciousIndentation")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //calls the functions, clickList
+
+        fetchUserInfo()
+        showSelectedInterests()
+
 
         reportBugs.setOnClickListener {
             //Show a dialogue in order to report bugs to the developers
@@ -81,20 +84,20 @@ class ProfileFragment : Fragment() {
         val currentNightMode = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)
         darkModeSwitch.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
 
-            darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                } else {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                }
-
+        darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
 
         val userId = arguments?.getString(ARG_USER_ID)
         userId?.let {
             fetchUserInfo(it)
         }
+
         }
+    }
 
 
     private fun fetchUserInfo(userId: String) {
@@ -120,7 +123,74 @@ class ProfileFragment : Fragment() {
          }
             if (!aboutMe.isNullOrEmpty()) {
                aboutMeTextView.text = aboutMe
+
+  
+
+    private fun showSelectedInterests() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+        userRef.get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val selectedInterests =
+                        documentSnapshot.get("selectedInterests") as? List<String>
+                    updateInterestsUI(selectedInterests)
+                }
             }
+            .addOnFailureListener {
+            }
+    }
+
+    private fun updateInterestsUI(interests: List<String>?) {
+        val gridLayout = view?.findViewById<GridLayout>(R.id.profileGridLayout)
+        gridLayout?.removeAllViews()
+
+        interests?.mapNotNull { interestId ->
+            val drawableId = interestId.toIntOrNull()
+            drawableId?.let { createInterestImageView(it) }
+        }?.forEach { imageView ->
+            gridLayout?.addView(imageView)
+        }
+    }
+
+    private fun createInterestImageView(drawableId: Int): ImageView {
+        val imageView = ImageView(context)
+        imageView.setImageResource(drawableId)
+        val layoutParams = GridLayout.LayoutParams()
+
+        layoutParams.width = 0
+        layoutParams.height = GridLayout.LayoutParams.WRAP_CONTENT
+
+        layoutParams.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+        layoutParams.rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+
+        val marginInPixels = convertDpToPixel(4f, context)
+        layoutParams.setMargins(marginInPixels, marginInPixels, marginInPixels, marginInPixels)
+
+        imageView.layoutParams = layoutParams
+
+        imageView.scaleType = ImageView.ScaleType.CENTER_INSIDE
+
+        return imageView
+    }
+
+    private fun convertDpToPixel(dp: Float, context: Context?): Int {
+        return if (context != null) {
+            val metrics = context.resources.displayMetrics
+            (dp * metrics.density).toInt()
+        } else {
+            0
+        }
+    }
+
+    private fun updateProfileUI(aboutMe: String?, userName: String?, profileImageUrl: String?) {
+        if (!userName.isNullOrEmpty()) {
+            nameTextView.text = userName
+        }
+        if (!aboutMe.isNullOrEmpty()) {
+            aboutMeTextView.text = aboutMe
+        }
 
 
         if (!profileImageUrl.isNullOrEmpty()) {
@@ -128,30 +198,30 @@ class ProfileFragment : Fragment() {
         }
     }
 
-        private fun showLanguagePicker() {
-            val builder = AlertDialog.Builder(requireContext())
-            builder.setTitle("Select Language")
-                .setItems(languageOptions) { dialog, which ->
-                    val selectedLanguage = languageOptions[which]
-                    Toast.makeText(
-                        requireContext(),
-                        "Selected Language: $selectedLanguage",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    dialog.dismiss()
-                }
+    private fun showLanguagePicker() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Select Language")
+            .setItems(languageOptions) { dialog, which ->
+                val selectedLanguage = languageOptions[which]
+                Toast.makeText(
+                    requireContext(),
+                    "Selected Language: $selectedLanguage",
+                    Toast.LENGTH_SHORT
+                ).show()
+                dialog.dismiss()
+            }
 
-            val dialog = builder.create()
-            dialog.show()
-        }
+        val dialog = builder.create()
+        dialog.show()
+    }
 
-        private fun loadImage(imageUrl: String?) {
-            if (!imageUrl.isNullOrEmpty()) {
-                Glide.with(requireContext())
-                    .load(imageUrl)
-                    .into(profileImageView)
-            } else {
-                profileImageView.setImageResource(R.drawable.profile_top_bar_avatar)
+    private fun loadImage(imageUrl: String?) {
+        if (!imageUrl.isNullOrEmpty()) {
+            Glide.with(requireContext())
+                .load(imageUrl)
+                .into(profileImageView)
+        } else {
+            profileImageView.setImageResource(R.drawable.profile_top_bar_avatar)
         }
     }
 }
