@@ -70,7 +70,6 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        fetchUserInfo()
         showSelectedInterests()
 
 
@@ -90,13 +89,13 @@ class ProfileFragment : Fragment() {
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
-
+        }
         val userId = arguments?.getString(ARG_USER_ID)
         userId?.let {
             fetchUserInfo(it)
         }
 
-        }
+
     }
 
 
@@ -117,14 +116,7 @@ class ProfileFragment : Fragment() {
     }
 
 
-    private fun updateProfileUI(aboutMe: String?, userName: String?, profileImageUrl: String?) {
-            if (!userName.isNullOrEmpty()) {
-                nameTextView.text = userName
-         }
-            if (!aboutMe.isNullOrEmpty()) {
-               aboutMeTextView.text = aboutMe
 
-  
 
     private fun showSelectedInterests() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
@@ -191,8 +183,6 @@ class ProfileFragment : Fragment() {
         if (!aboutMe.isNullOrEmpty()) {
             aboutMeTextView.text = aboutMe
         }
-
-
         if (!profileImageUrl.isNullOrEmpty()) {
             loadImage(profileImageUrl)
         }
