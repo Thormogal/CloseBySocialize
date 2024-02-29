@@ -8,6 +8,17 @@
     ]
   },
   {
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "on"
+      },
+      {
+        "weight": 4
+      }
+    ]
+  },
+  {
     "elementType": "labels.text.fill",
     "stylers": [
       {

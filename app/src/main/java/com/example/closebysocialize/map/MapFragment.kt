@@ -1,8 +1,10 @@
 package com.example.closebysocialize.map
 
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.location.Location
 import android.os.Bundle
@@ -14,14 +16,18 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SearchView
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import com.example.closebysocialize.ContainerActivity
 import com.example.closebysocialize.R
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
@@ -32,11 +38,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
     private lateinit var myPositionImageView: ImageView
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userHasInteracted = false
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
 
         val view = inflater.inflate(R.layout.fragment_map, container, false)
@@ -45,14 +51,18 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapView.onCreate(savedInstanceState)
         mapView.onResume()
 
-
         // Initialize the GoogleMap asynchronously
         mapView.getMapAsync(this)
 
+
+
         myPositionImageView = view.findViewById(R.id.myPositionImageView)
+        fusedLocationClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity()) // Initialize fusedLocationClient
 
 
-        val mapSearchView: SearchView = view.findViewById(R.id.mapSearchView)
+
+    val mapSearchView: SearchView = view.findViewById(R.id.mapSearchView)
 
         mapSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -82,6 +92,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         myPositionImageView.setOnClickListener{
             userHasInteracted = false
             recenterMapOnUserLocation()
+
         }
 
         return view
@@ -119,6 +130,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        addCurrentLocationMarker()
 
         //longlat for sthlm
         val initialLocation = LatLng(59.3293, 18.0686)
@@ -130,6 +142,22 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
                 userHasInteracted = true
             }
+        }
+
+    }
+
+    private fun addCurrentLocationMarker() {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                location?.let {
+                    val currentLatLng = LatLng(it.latitude, it.longitude)
+                    googleMap.addMarker(MarkerOptions().position(currentLatLng).title("My Position"))
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
+                }
+            }
+        } else {
+            // Since you're handling permissions in the ContainerActivity, you might log or inform the user differently here
+            Log.d("MapFragment", "Location permission not granted")
         }
     }
 
