@@ -19,9 +19,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.android.material.button.MaterialButtonToggleGroup
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 
 
-class EventsFragment : Fragment() {
+class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
     private lateinit var recyclerView: RecyclerView
     private var eventsAdapter = EventsAdapter(emptyList())
   private lateinit var toggleGroup: MaterialButtonToggleGroup
@@ -32,6 +34,10 @@ class EventsFragment : Fragment() {
         arguments?.let {
         }
     }
+    override fun onToggleSaveEvent(eventId: String, isCurrentlySaved: Boolean) {
+        toggleSavedEvent(eventId, isCurrentlySaved)
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -77,12 +83,19 @@ class EventsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        filterData("all")
 
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         FirestoreUtils.fetchSavedEventsByUser(userId, onSuccess = { savedEvents ->
             eventsAdapter.savedEventsIds.clear()
             eventsAdapter.savedEventsIds.addAll(savedEvents.map { it.id })
             eventsAdapter.notifyDataSetChanged()
+
+            eventsAdapter.eventInteractionListener = object : EventsAdapter.EventInteractionListener {
+                override fun onToggleSaveEvent(eventId: String, isCurrentlySaved: Boolean) {
+                    toggleSavedEvent(eventId, isCurrentlySaved)
+                }
+            }
         }, onFailure = { exception ->
             Log.e("EventsFragment", "Error fetching saved events", exception)
         })
@@ -99,6 +112,7 @@ class EventsFragment : Fragment() {
                 ?.addToBackStack(null)
                 ?.commit()
         }
+        eventsAdapter.listener = this
 
     }
     private fun setFilterButtonsListeners() {
@@ -113,23 +127,57 @@ class EventsFragment : Fragment() {
         }
     }
 
-
-    private fun updateRecyclerView(eventsList: List<Event>) {
-        eventsAdapter.updateData(eventsList)
-    }
-
     private fun filterData(filterType: String) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         when (filterType) {
             "all" -> FirestoreUtils.fetchAllEvents(::updateRecyclerView, ::handleError)
-            "saved" -> FirestoreUtils.fetchSavedEventsByUser(userId, ::updateRecyclerView, ::handleError)
-            "attending" -> FirestoreUtils.fetchAttendingEventsByUser(userId, ::updateRecyclerView, ::handleError)
+            "saved" -> {
+                FirestoreUtils.fetchSavedEventsByUser(userId, { savedEvents ->
+                    updateRecyclerView(savedEvents)
+                    eventsAdapter.savedEventsIds.clear()
+                    eventsAdapter.savedEventsIds.addAll(savedEvents.map { it.id })
+                    eventsAdapter.notifyDataSetChanged()
+                }, ::handleError)
+            }            "attending" -> FirestoreUtils.fetchAttendingEventsByUser(userId, ::updateRecyclerView, ::handleError)
         }
+    }
+
+    private fun updateRecyclerView(eventsList: List<Event>) {
+        eventsAdapter.updateData(eventsList)
+        recyclerView.scrollToPosition(0)
+        eventsAdapter.notifyDataSetChanged()
     }
 
     private fun handleError(exception: Exception) {
         Log.e("EventsFragment", "Error fetching data from Firestore", exception)
     }
+
+
+    private fun toggleSavedEvent(eventId: String, isCurrentlySaved: Boolean) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+
+        if (isCurrentlySaved) {
+            userRef.update("savedEvents", FieldValue.arrayRemove(eventId))
+                .addOnSuccessListener {
+                    eventsAdapter.savedEventsIds.remove(eventId)
+                    eventsAdapter.notifyDataSetChanged()
+                }
+                .addOnFailureListener { e ->
+                    Log.e("EventsFragment", "Error removing event from saved events", e)
+                }
+        } else {
+            userRef.update("savedEvents", FieldValue.arrayUnion(eventId))
+                .addOnSuccessListener {
+                    eventsAdapter.savedEventsIds.add(eventId)
+                    eventsAdapter.notifyDataSetChanged()
+                }
+                .addOnFailureListener { e ->
+                    Log.e("EventsFragment", "Error adding event to saved events", e)
+                }
+        }
+    }
+
 
 
 

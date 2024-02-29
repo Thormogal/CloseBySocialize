@@ -22,6 +22,5 @@ data class Event(
     var isSaved: Boolean = false,
     var currentAttendeesCount: Int = 0,
     val createdAt: com.google.firebase.Timestamp? = null,
-  //  val place_coordinates: GeoPoint? = null
 
 )
