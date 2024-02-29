@@ -86,7 +86,8 @@ class OpenChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-        messageAdapter = MessageAdapter(mutableListOf(), currentUserId)
+        val adapterContext = requireContext()
+        messageAdapter = MessageAdapter(adapterContext, mutableListOf(), currentUserId)
         recyclerView.adapter = messageAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
         fetchMessages()

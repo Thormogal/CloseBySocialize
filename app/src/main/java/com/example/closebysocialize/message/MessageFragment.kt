@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.R
 import com.example.closebysocialize.dataClass.Friend
 import com.example.closebysocialize.utils.FirestoreUtils
-import com.example.closebysocialize.utils.FragmentUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -51,21 +50,25 @@ class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
     }
     override fun onFriendClick(friend: Friend) {
         checkForExistingConversation(friend.id) { conversationId ->
-            if (conversationId != null) {
-                val chatFragment = OpenChatFragment.newInstanceForConversation(conversationId, friend.id)
-                navigateToChatFragment(chatFragment)
+            val chatFragment = if (conversationId != null) {
+                OpenChatFragment.newInstanceForConversation(conversationId, friend.id)
             } else {
-                val chatFragment = OpenChatFragment.newInstanceForFriend(friend.id)
-                navigateToChatFragment(chatFragment)
+                OpenChatFragment.newInstanceForFriend(friend.id)
             }
+            navigateToChatFragment(chatFragment, friend.name ?: "Unknown")
         }
     }
-    private fun navigateToChatFragment(fragment: Fragment) {
+
+    private fun navigateToChatFragment(fragment: Fragment, friendName: String) {
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(null)
             .commit()
+
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = friendName
     }
+
+
     private fun checkForExistingConversation(friendId: String, callback: (String?) -> Unit) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val db = FirebaseFirestore.getInstance()

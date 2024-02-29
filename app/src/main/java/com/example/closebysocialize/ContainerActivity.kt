@@ -103,6 +103,8 @@ class ContainerActivity : AppCompatActivity() {
         TODO change to the colors we want
          */
         navView.selectedItemId = R.id.navigation_events
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

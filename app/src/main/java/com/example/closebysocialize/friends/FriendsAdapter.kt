@@ -7,12 +7,15 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.closebysocialize.R
 import com.example.closebysocialize.dataClass.Friend
 import com.example.closebysocialize.dataClass.Users
+import com.example.closebysocialize.message.OpenChatFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -29,6 +32,8 @@ class FriendsAdapter(private val context: Context, private var friends: List<Fri
     var listener: FriendClickListener? = null
 
     inner class FriendViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+
         private val nameTextView: TextView = view.findViewById(R.id.nameTextView)
         private val profileImageView: ImageView = view.findViewById(R.id.friendProfilePictureImageView)
         private val messageIcon: ImageView = view.findViewById(R.id.messageIcon)
@@ -55,9 +60,14 @@ class FriendsAdapter(private val context: Context, private var friends: List<Fri
             binIcon.setOnClickListener {
                 listener?.onBinClick(friend)
             }
+            messageIcon.setOnClickListener {
+
+            }
 
         }
     }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_friend, parent, false)
