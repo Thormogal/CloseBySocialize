@@ -32,6 +32,10 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
+
+
 
 
 class MapFragment : Fragment(), OnMapReadyCallback {
@@ -146,7 +150,31 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
         }
 
+        fetchPlacesAndDisplayOnMap()
+
     }
+
+    fun fetchPlacesAndDisplayOnMap() {
+    val db = FirebaseFirestore.getInstance()
+    db.collection("places")
+        .get()
+        .addOnSuccessListener { documents ->
+            for (document in documents) {
+                val place = document.toObject(Place::class.java)
+                //addMarkerForPlace(place)
+            }
+        }
+        .addOnFailureListener { exception ->
+            Log.d("Firestore", "Error getting documents: ", exception)
+        }
+}
+
+//    fun addMarkerForPlace(place: Place) {
+//        // Konvertera Firestore GeoPoint till LatLng
+//        val latLng = LatLng(place.place_coordinates.latitude, place.place_coordinates.longitude)
+//        googleMap.addMarker(MarkerOptions().position(latLng).title(place.name))
+//    }
+
 
     private fun addCurrentLocationMarker() {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {

@@ -33,6 +33,9 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.UUID
+import com.google.firebase.firestore.GeoPoint
+
+
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -239,6 +242,8 @@ class AddEventFragment : Fragment() {
             // val guests = eventGuests.text.toString()
             val eventDescription = view.findViewById<TextInputEditText>(R.id.eventDescription)
             val spots = numberPicker.value
+            val placeGeoPoint = eventPlaceCoordinates?.let { GeoPoint(it.latitude, it.longitude) }
+            val cityGeoPoint = eventCityCoordinates?.let { GeoPoint(it.latitude, it.longitude) }
 
 
             val eventName = eventNameTextView.text.toString()
@@ -284,9 +289,9 @@ class AddEventFragment : Fragment() {
                         val event = hashMapOf(
                             "title" to eventName,
                             "location" to eventPlace.text.toString(),
-                            "place_coordinates" to eventPlaceCoordinates,
+                            "place_coordinates" to placeGeoPoint,
                             "city" to cityTextView.text.toString(),
-                            "city_coordinates" to eventCityCoordinates,
+                            "city_coordinates" to cityGeoPoint,
                             "day" to chosenDay,
                             "imageUrl" to imageUrl,
                             "date" to chosenDate,
