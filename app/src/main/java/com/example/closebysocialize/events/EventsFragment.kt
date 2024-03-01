@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.AddEventFragment
 import com.example.closebysocialize.R
+import com.example.closebysocialize.chat.ChatFragment
 import com.example.closebysocialize.dataClass.Event
 import com.example.closebysocialize.utils.FirestoreUtils
 import com.example.closebysocialize.utils.FragmentUtils
@@ -31,6 +32,14 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
     private var allEventsList: List<Event> = emptyList()
     private var attendingEventsList: List<Event> = emptyList()
     private var savedEventsList: List<Event> = emptyList()
+    private var eventId: String? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            eventId = it.getString("eventId")
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_events, container, false)
@@ -47,8 +56,25 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
         val userId = FirebaseAuth.getInstance().currentUser?.uid.orEmpty()
         eventsAdapter = EventsAdapter(attendingEventsList, allEventsList, savedEventsList, userId, savedEventsIds, attendingEventsIds, this)
         recyclerView.adapter = eventsAdapter
+        eventsAdapter.chatImageViewClickListener = { eventId ->
+            openChatForEvent(eventId)
+        }
+
         filterData("all")
     }
+
+    private fun openChatForEvent(eventId: String) {
+        val args = Bundle().apply {
+            putString("eventId", eventId)
+        }
+        FragmentUtils.switchFragment(
+            activity = requireActivity() as AppCompatActivity,
+            containerId = R.id.fragment_container,
+            fragmentClass = ChatFragment::class.java,
+            args = args
+        )
+    }
+
 
     private fun initializeViews(view: View) {
         filterImageView = view.findViewById(R.id.filterImageView)

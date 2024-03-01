@@ -212,20 +212,6 @@ class EventsAdapter(
         })
     }
 
-    fun updateAllEvents(newEventsList: List<Event>) {
-        eventsList = newEventsList
-        notifyDataSetChanged()
-    }
-
-    fun updateAttendingEvents(newAttendingEventsList: List<Event>) {
-        attendingEventsList = newAttendingEventsList
-        notifyDataSetChanged()
-    }
-
-    fun updateSavedEvents(newSavedEventsList: List<Event>) {
-        savedEventsList = newSavedEventsList
-        notifyDataSetChanged()
-    }
     private fun refreshAttendedPeopleLinearLayout(holder: ViewHolder, profilePictureUrls: List<String>) {
         val attendedPeopleLinearLayout = holder.itemView.findViewById<LinearLayout>(R.id.attendedPeopleLinearLayout)
         attendedPeopleLinearLayout.removeAllViews()
