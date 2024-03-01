@@ -52,8 +52,7 @@ class AddEventFragment : Fragment() {
     private val PICK_IMAGE_REQUEST = 3
     private var imageUri: Uri? = null
     private lateinit var firestore: FirebaseFirestore
-
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -91,7 +90,6 @@ class AddEventFragment : Fragment() {
                         }
                     }
                 }
-
                 PICK_IMAGE_REQUEST -> {
                     Log.d("AddEvent", "onActivityResult: data: $data")
                     imageUri = data?.data
@@ -133,10 +131,6 @@ class AddEventFragment : Fragment() {
             intent.type = "image/*"
             startActivityForResult(intent, PICK_IMAGE_REQUEST)
         }
-
-
-
-
 
         for (i in 0 until gridLayout.childCount) {
             val child = gridLayout.getChildAt(i)
@@ -204,7 +198,6 @@ class AddEventFragment : Fragment() {
             val day = calendar.get(Calendar.DAY_OF_MONTH)
             val hour = calendar.get(Calendar.HOUR_OF_DAY)
             val minute = calendar.get(Calendar.MINUTE)
-
             val datePickerDialog = DatePickerDialog(
                 it.context,
                 R.style.DialogTheme,
@@ -377,7 +370,6 @@ class AddEventFragment : Fragment() {
                 ).show()
             }
     }
-
 
     companion object {
         @JvmStatic
