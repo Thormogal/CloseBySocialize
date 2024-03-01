@@ -301,42 +301,42 @@ class AddEventFragment : Fragment() {
                             "authorFirstName" to userDetails.firstName,
                             "authorLastName" to userDetails.lastName,
                             "attendedPeopleProfilePictureUrls" to attendedPeopleProfilePictureUrls
+                            "createdAt" to FieldValue.serverTimestamp()
+
                         )
+              
+                firestore.collection("events").add(event)
+                    .addOnSuccessListener {
+                        eventNameTextView.text = null
+                        eventPlace.text = null
+                        eventDate.text = null
+                        cityTextView.text = null
+                        eventPlace.text = null
+                        // eventGuests.text = null
+                        eventDescription.text = null
+                        selectedCategory = null
+                        selectedImageView?.setBackgroundColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                android.R.color.transparent
+                            )
+                        )
+                        selectedImageView = null
+                        Toast.makeText(context, "Event added successfully", Toast.LENGTH_SHORT)
+                            .show()
+                        activity?.let {
+                            FragmentUtils.switchFragment(
+                                it as AppCompatActivity,
+                                R.id.fragment_container,
+                                EventsFragment::class.java
+                            )
+                        }
+                    }
 
-                        firestore.collection("events").add(event)
-                            .addOnSuccessListener {
-                                eventNameTextView.text = null
-                                eventPlace.text = null
-                                eventDate.text = null
-                                cityTextView.text = null
-                                eventPlace.text = null
-                                // eventGuests.text = null
-                                eventDescription.text = null
-                                selectedCategory = null
-                                selectedImageView?.setBackgroundColor(
-                                    ContextCompat.getColor(
-                                        requireContext(),
-                                        android.R.color.transparent
-                                    )
-                                )
 
-                                selectedImageView = null
-                                Toast.makeText(
-                                    context,
-                                    "Event added successfully",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                            }
+                      
 
-                            .addOnFailureListener { e ->
-                                Toast.makeText(
-                                    context,
-                                    "Error adding event: ${e.message}",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                            }
+                         
                     }
                 }
 
