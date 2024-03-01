@@ -59,6 +59,7 @@ class AddFriendFragment : Fragment() {
         })
     }
 
+
     private fun searchUsers(query: String) {
         if (query.isEmpty()) return
         val searchQuery = query.split(" ").joinToString(" ") { it.capitalize() }
