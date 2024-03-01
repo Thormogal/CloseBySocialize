@@ -34,6 +34,7 @@ import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
+import com.example.closebysocialize.EventPlace
 
 
 
@@ -138,6 +139,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
         addCurrentLocationMarker()
 
+
         //longlat for sthlm
         val initialLocation = LatLng(59.3293, 18.0686)
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 6f))
@@ -152,16 +154,18 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         fetchPlacesAndDisplayOnMap()
 
+
     }
 
     fun fetchPlacesAndDisplayOnMap() {
     val db = FirebaseFirestore.getInstance()
-    db.collection("places")
+    db.collection("place_coordinates")
         .get()
         .addOnSuccessListener { documents ->
+            Log.d("Firestore", "Fetched ${documents.size()} documents")
             for (document in documents) {
-                val place = document.toObject(Place::class.java)
-                //addMarkerForPlace(place)
+                val eventPlace = document.toObject(EventPlace::class.java)
+                addMarkerForPlace(eventPlace)
             }
         }
         .addOnFailureListener { exception ->
@@ -169,11 +173,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
 }
 
-//    fun addMarkerForPlace(place: Place) {
-//        // Konvertera Firestore GeoPoint till LatLng
-//        val latLng = LatLng(place.place_coordinates.latitude, place.place_coordinates.longitude)
-//        googleMap.addMarker(MarkerOptions().position(latLng).title(place.name))
-//    }
+    fun addMarkerForPlace(eventPlace: EventPlace) {
+        // Konvertera Firestore GeoPoint till LatLng
+        val latLng = LatLng(eventPlace.place_coordinates.latitude, eventPlace.place_coordinates.longitude)
+        googleMap.addMarker(MarkerOptions().position(latLng).title("Custom Place"))
+
+    }
 
 
     private fun addCurrentLocationMarker() {
