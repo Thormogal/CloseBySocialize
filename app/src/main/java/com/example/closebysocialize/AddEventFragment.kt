@@ -85,12 +85,14 @@ class AddEventFragment : Fragment() {
                             eventPlace.setText(placeName)
                             eventPlaceCoordinates = placeCoordinates
                         }
+
                         CITY_SEARCH_REQUEST_CODE -> {
                             cityTextView.setText(placeName)
                             eventCityCoordinates = placeCoordinates
                         }
                     }
                 }
+
                 PICK_IMAGE_REQUEST -> {
                     Log.d("AddEvent", "onActivityResult: data: $data")
                     imageUri = data?.data
@@ -130,7 +132,7 @@ class AddEventFragment : Fragment() {
             intent.type = "image/*"
             startActivityForResult(intent, PICK_IMAGE_REQUEST)
         }
-        
+
         for (i in 0 until gridLayout.childCount) {
             val child = gridLayout.getChildAt(i)
             if (child is ImageView) {
@@ -306,40 +308,63 @@ class AddEventFragment : Fragment() {
                             "attendedPeopleProfilePictureUrls" to attendedPeopleProfilePictureUrls,
                             "createdAt" to FieldValue.serverTimestamp()
                         )
-              
-                firestore.collection("events").add(event)
-                    .addOnSuccessListener {
-                        eventNameTextView.text = null
-                        eventPlace.text = null
-                        eventDate.text = null
-                        cityTextView.text = null
-                        eventPlace.text = null
-                        // eventGuests.text = null
-                        eventDescription.text = null
-                        selectedCategory = null
-                        selectedImageView?.setBackgroundColor(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                android.R.color.transparent
-                            )
-                        )
-                        selectedImageView = null
-                        Toast.makeText(context, "Event added successfully", Toast.LENGTH_SHORT)
-                            .show()
-                        activity?.let {
-                            FragmentUtils.switchFragment(
-                                it as AppCompatActivity,
-                                R.id.fragment_container,
-                                EventsFragment::class.java
-                            )
-                        }
-                    }
+
+                        firestore.collection("events").add(event)
+                            .addOnSuccessListener { documentReference ->
+                                val eventId = documentReference.id!!
+                                if (currentUserId != null) {
+                                    addUserToEventAttendees(currentUserId, eventId)
+                                }
+
+                                eventNameTextView.text = null
+                                eventPlace.text = null
+                                eventDate.text = null
+                                cityTextView.text = null
+                                eventPlace.text = null
+                                // eventGuests.text = null
+                                eventDescription.text = null
+                                selectedCategory = null
+                                selectedImageView?.setBackgroundColor(
+                                    ContextCompat.getColor(
+                                        requireContext(),
+                                        android.R.color.transparent
+                                    )
+                                )
+                                selectedImageView = null
+                                Toast.makeText(
+                                    context,
+                                    "Event added successfully",
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
+                                activity?.let {
+                                    FragmentUtils.switchFragment(
+                                        it as AppCompatActivity,
+                                        R.id.fragment_container,
+                                        EventsFragment::class.java
+                                    )
+                                }
+                            }
                     }
                 }
             }
         }
     }
 
+    private fun addUserToEventAttendees(userId: String, eventId: String) {
+        val userRef = firestore.collection("users").document(userId)
+        firestore.runTransaction { transaction ->
+            val snapshot = transaction.get(userRef)
+            val currentAttendingEvents =
+                snapshot.get("attendingEvents") as? MutableList<String> ?: mutableListOf()
+            currentAttendingEvents.add(eventId)
+            transaction.update(userRef, "attendingEvents", currentAttendingEvents)
+        }.addOnSuccessListener {
+            Log.d("AddEvent", "User attending events updated successfully.")
+        }.addOnFailureListener { e ->
+            Log.e("AddEvent", "Error updating user attending events", e)
+        }
+    }
 
     private fun uploadImage(imageUri: Uri, onSuccess: ((imageUrl: String) -> Unit)? = null) {
         val storageRef = FirebaseStorage.getInstance().reference

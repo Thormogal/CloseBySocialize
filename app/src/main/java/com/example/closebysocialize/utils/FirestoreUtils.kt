@@ -81,16 +81,22 @@ object FirestoreUtils {
 
     fun fetchEventsByIds(ids: List<String>, onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit) {
         val db = FirebaseFirestore.getInstance()
-        val tasks = ids.chunked(10).map { batch ->
-            db.collection("events").whereIn(FieldPath.documentId(), batch).get()
-        }
-        Tasks.whenAllSuccess<QuerySnapshot>(tasks)
-            .addOnSuccessListener { querySnapshots ->
-                val events = querySnapshots.flatMap { snapshot -> snapshot.documents.mapNotNull { it.toObject(Event::class.java) } }
-                onSuccess(events)
+        val validIds = ids.filterNot { it.isBlank() }
+        if (validIds.isNotEmpty()) {
+            val tasks = validIds.chunked(10).map { batch ->
+                db.collection("events").whereIn(FieldPath.documentId(), batch).get()
             }
-            .addOnFailureListener(onFailure)
+            Tasks.whenAllSuccess<QuerySnapshot>(tasks)
+                .addOnSuccessListener { querySnapshots ->
+                    val events = querySnapshots.flatMap { snapshot -> snapshot.documents.mapNotNull { it.toObject(Event::class.java) } }
+                    onSuccess(events)
+                }
+                .addOnFailureListener(onFailure)
+        } else {
+            onFailure(IllegalArgumentException("No valid document IDs provided for querying."))
+        }
     }
+
 
     fun fetchAttendingEventsByUser(userId: String, onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit) {
         val db = FirebaseFirestore.getInstance()
