@@ -79,8 +79,6 @@ class ContainerActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.topAppBar)
         setSupportActionBar(toolbar)
 
-
-
         val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
         navView.setOnNavigationItemSelectedListener { item ->
             val fragmentClass = when (item.itemId) {
@@ -95,11 +93,7 @@ class ContainerActivity : AppCompatActivity() {
             } ?: false
         }
 
-
-
-
         navView.selectedItemId = R.id.navigation_events
-
         listenForNewMessages()
 
     }
@@ -112,9 +106,14 @@ class ContainerActivity : AppCompatActivity() {
         return true
     }
 
+
+
     private fun listenForNewMessages() {
+        Log.d("ContainerActivity", "Listening for new messages")
         val userId = FirebaseAuth.getInstance().currentUser?.uid
-        userId?.let {
+        Log.d("ContainerActivity", "Current user ID: $userId")
+
+        if (userId != null) {
             val db = FirebaseFirestore.getInstance()
             db.collection("messages")
                 .whereEqualTo("receiverId", userId)
@@ -126,25 +125,28 @@ class ContainerActivity : AppCompatActivity() {
                     }
 
                     val unreadMessagesCount = snapshots?.size() ?: 0
+                    Log.d("ContainerActivity", "Unread messages count: $unreadMessagesCount")
                     updateBottomNavigationBadge(unreadMessagesCount)
                 }
+        } else {
+            Log.d("ContainerActivity", "User ID is null, cannot listen for messages")
         }
     }
 
+
     private fun updateBottomNavigationBadge(count: Int) {
+        Log.d("ContainerActivity", "Updating badge count: $count")
         val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
         val menuItemId = R.id.navigation_message
         if (count > 0) {
             val badge = navView.getOrCreateBadge(menuItemId)
             badge.isVisible = true
             badge.number = count
-            /* TODO badge.backgroundColor = ContextCompat.getColor(this, R.color.primary_background)
-        badge.badgeTextColor = ContextCompat.getColor(this, R.color.primary_text)
-         */
         } else {
             navView.removeBadge(menuItemId)
         }
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
