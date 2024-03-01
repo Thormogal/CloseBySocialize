@@ -12,19 +12,29 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.closebysocialize.R
+import com.example.closebysocialize.dataClass.TabType
 import com.example.closebysocialize.dataClass.Event
+import com.example.closebysocialize.utils.FirestoreUtils
+import com.example.closebysocialize.utils.FirestoreUtils.toggleAttendingEvent
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
-class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: MutableSet<String> = mutableSetOf()) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
-    var chatImageViewClickListener: ((String) -> Unit)? = null
-    var eventInteractionListener: EventInteractionListener? = null
-    var listener: EventInteractionListener? = null
+class EventsAdapter(
+    private var attendingEventsList: List<Event>,
+    private var eventsList: List<Event>,
+    private var savedEventsList: List<Event>,
+    private val userId: String,
+    var savedEventsIds: MutableSet<String>,
+    var attendingEventsIds: MutableSet<String>,
+    private val eventInteractionListener: EventInteractionListener
+
+) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {    var chatImageViewClickListener: ((String) -> Unit)? = null
+    private var currentTab: TabType = TabType.ALL_EVENTS
 
     interface EventInteractionListener {
         fun onToggleSaveEvent(eventId: String, isCurrentlySaved: Boolean)
     }
+
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val authorProfilePictureImageView: ImageView = view.findViewById(R.id.authorProfilePictureImageView)
         val cityTextView: TextView = view.findViewById(R.id.cityTextView)
@@ -49,8 +59,14 @@ class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: Mut
         return ViewHolder(view)
     }
 
+
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val event = eventsList[position]
+        val event = when (currentTab) {
+            TabType.ALL_EVENTS -> eventsList[position]
+            TabType.ATTENDING_EVENTS -> attendingEventsList[position]
+            TabType.SAVED_EVENTS -> savedEventsList[position]
+        }
         updateAttendButtonAndSpotsUI(holder, event)
 
         val currentUser = FirebaseAuth.getInstance().currentUser
@@ -63,29 +79,13 @@ class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: Mut
         holder.deleteImageView.visibility = if (isEventCreator) View.VISIBLE else View.GONE
 
         val isSaved = savedEventsIds.contains(event.id)
+
         holder.savedImageView.setImageResource(if (isSaved) R.drawable.icon_heart_filled else R.drawable.icon_heart)
         holder.savedImageView.setOnClickListener {
             val eventId = event.id
             val currentlySaved = savedEventsIds.contains(eventId)
-            val listener: EventInteractionListener? = null
-            listener?.onToggleSaveEvent(eventId, currentlySaved)
-
-            val isCurrentlySaved = savedEventsIds.contains(event.id)
-            listener?.onToggleSaveEvent(event.id, isCurrentlySaved)
-            if (eventId.isEmpty()) {
-                return@setOnClickListener
-            }
-            if (currentlySaved) {
-                savedEventsIds.remove(event.id)
-                holder.savedImageView.setImageResource(R.drawable.icon_heart)
-            } else {
-                savedEventsIds.add(event.id)
-                holder.savedImageView.setImageResource(R.drawable.icon_heart_filled)
-                // TODO TOO BIG
-            }
-            toggleSavedEvent(event.id, currentlySaved)
+            onToggleSaveEvent(eventId, currentlySaved)
         }
-
 
         Glide.with(holder.itemView.context)
             .load(event.authorProfileImageUrl)
@@ -110,35 +110,28 @@ class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: Mut
         }
         holder.attendButtonTextView.setOnClickListener {
             val isAttending = holder.attendButtonTextView.text.toString() == holder.itemView.context.getString(R.string.event_withdraw)
-            val eventRef = FirebaseFirestore.getInstance().collection("events").document(event.id)
+            val eventId = event.id
             val currentUser = FirebaseAuth.getInstance().currentUser
-            val userProfileUrl = currentUser?.photoUrl.toString()
-            if (isAttending) {
-                val updatedCount = event.currentAttendeesCount - 1
-                event.currentAttendeesCount = updatedCount
-                event.attendedPeopleProfilePictureUrls = event.attendedPeopleProfilePictureUrls.filter { it != userProfileUrl }.toMutableList()
-                eventRef.update(mapOf(
-                    "currentAttendeesCount" to updatedCount,
-                    "attendedPeopleProfilePictureUrls" to event.attendedPeopleProfilePictureUrls
-                )).addOnSuccessListener {
+            val userId = currentUser?.uid ?: return@setOnClickListener
+            val userProfileUrl = currentUser.photoUrl.toString()
+            toggleAttendingEvent(userId, eventId, isAttending,
+                onSuccess = {
+                    val updatedCount = if (isAttending) event.currentAttendeesCount - 1 else event.currentAttendeesCount + 1
+                    event.currentAttendeesCount = updatedCount
+                    event.attendedPeopleProfilePictureUrls = if (isAttending) {
+                        event.attendedPeopleProfilePictureUrls.filter { it != userProfileUrl }.toMutableList()
+                    } else {
+                        event.attendedPeopleProfilePictureUrls.toMutableList().apply { add(userProfileUrl) }
+                    }
                     holder.openSpotsTextView.text = "${event.spots - updatedCount} ${holder.itemView.context.getString(R.string.spots)}"
-                    holder.attendButtonTextView.text = holder.itemView.context.getString(R.string.event_attend)
-                    refreshAttendedPeopleLinearLayout(holder, event.attendedPeopleProfilePictureUrls)
-                }
-            } else {
-                val updatedCount = event.currentAttendeesCount + 1
-                event.currentAttendeesCount = updatedCount
-                event.attendedPeopleProfilePictureUrls.add(userProfileUrl)
-                eventRef.update(mapOf(
-                    "currentAttendeesCount" to updatedCount,
-                    "attendedPeopleProfilePictureUrls" to event.attendedPeopleProfilePictureUrls
-                )).addOnSuccessListener {
-                    holder.openSpotsTextView.text = "${event.spots - updatedCount} ${holder.itemView.context.getString(R.string.spots)}"
-                    holder.attendButtonTextView.text = holder.itemView.context.getString(R.string.event_withdraw)
+                    holder.attendButtonTextView.text = holder.itemView.context.getString(if (isAttending) R.string.event_attend else R.string.event_withdraw)
                     refreshAttendedPeopleLinearLayout(holder, event.attendedPeopleProfilePictureUrls)
                     updateAttendButtonAndSpotsUI(holder, event)
+                },
+                onFailure = { exception ->
+                    Log.e("EventsAdapter", "Error toggling attendance", exception)
                 }
-            }
+            )
         }
 
         val attendedPeopleLinearLayout = holder.itemView.findViewById<LinearLayout>(R.id.attendedPeopleLinearLayout)
@@ -164,8 +157,13 @@ class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: Mut
             attendedPeopleLinearLayout.addView(imageView)
         }
     }
-
-    override fun getItemCount() = eventsList.size
+    override fun getItemCount(): Int {
+        return when (currentTab) {
+            TabType.ALL_EVENTS -> eventsList.size
+            TabType.ATTENDING_EVENTS -> attendingEventsList.size
+            TabType.SAVED_EVENTS -> savedEventsList.size
+        }
+    }
 
     fun updateData(newEventsList: List<Event>) {
         eventsList = newEventsList
@@ -200,7 +198,34 @@ class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: Mut
         }
     }
 
+    private fun onToggleSaveEvent(eventId: String, isCurrentlySaved: Boolean) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirestoreUtils.toggleSavedEvent(userId, eventId, !isCurrentlySaved, onSuccess = {
+            if (isCurrentlySaved) {
+                savedEventsIds.remove(eventId)
+            } else {
+                savedEventsIds.add(eventId)
+            }
+            notifyDataSetChanged()
+        }, onFailure = { e ->
+            Log.e("EventsFragment", "Failed to toggle event save state", e)
+        })
+    }
 
+    fun updateAllEvents(newEventsList: List<Event>) {
+        eventsList = newEventsList
+        notifyDataSetChanged()
+    }
+
+    fun updateAttendingEvents(newAttendingEventsList: List<Event>) {
+        attendingEventsList = newAttendingEventsList
+        notifyDataSetChanged()
+    }
+
+    fun updateSavedEvents(newSavedEventsList: List<Event>) {
+        savedEventsList = newSavedEventsList
+        notifyDataSetChanged()
+    }
     private fun refreshAttendedPeopleLinearLayout(holder: ViewHolder, profilePictureUrls: List<String>) {
         val attendedPeopleLinearLayout = holder.itemView.findViewById<LinearLayout>(R.id.attendedPeopleLinearLayout)
         attendedPeopleLinearLayout.removeAllViews()
@@ -235,31 +260,7 @@ class EventsAdapter(private var eventsList: List<Event>, var savedEventsIds: Mut
 
     }
 
-    private fun toggleSavedEvent(eventId: String, isSaved: Boolean) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        val userRef = FirebaseFirestore.getInstance().collection("users").document(userId ?: return)
-        if (isSaved) {
-            userRef.update("savedEvents", FieldValue.arrayRemove(eventId))
-                .addOnSuccessListener {
-                    Log.d("EventsAdapter", "Saving event ID: $eventId")
-                    Log.d("EventsAdapter", "Event $eventId removed from saved events")
-                }
-                .addOnFailureListener { e ->
-                    Log.d("EventsAdapter", "Saving event ID: $eventId")
-                    Log.e("EventsAdapter", "Error removing event from saved events", e)
-                }
-        } else {
-            userRef.update("savedEvents", FieldValue.arrayUnion(eventId))
-                .addOnSuccessListener {
-                    Log.d("EventsAdapter", "Saving event ID: $eventId")
-                    Log.d("EventsAdapter", "Event $eventId added to saved events")
-                }
-                .addOnFailureListener { e ->
-                    Log.d("EventsAdapter", "Saving event ID: $eventId")
-                    Log.e("EventsAdapter", "Error adding event to saved events", e)
-                }
-        }
-    }
+
 
 
 

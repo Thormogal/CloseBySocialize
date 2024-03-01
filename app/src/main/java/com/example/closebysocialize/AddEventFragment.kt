@@ -18,11 +18,15 @@ import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.NumberPicker
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.closebysocialize.events.EventsFragment
+import com.example.closebysocialize.utils.FragmentUtils
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
@@ -49,7 +53,6 @@ class AddEventFragment : Fragment() {
     private var imageUri: Uri? = null
     private lateinit var firestore: FirebaseFirestore
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -59,7 +62,6 @@ class AddEventFragment : Fragment() {
         firestore = FirebaseFirestore.getInstance()
 
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,14 +82,12 @@ class AddEventFragment : Fragment() {
                             eventPlace.setText(placeName)
                             eventPlaceCoordinates = placeCoordinates
                         }
-
                         CITY_SEARCH_REQUEST_CODE -> {
                             cityTextView.setText(placeName)
                             eventCityCoordinates = placeCoordinates
                         }
                     }
                 }
-
                 PICK_IMAGE_REQUEST -> {
                     Log.d("AddEvent", "onActivityResult: data: $data")
                     imageUri = data?.data
@@ -97,7 +97,6 @@ class AddEventFragment : Fragment() {
         }
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -106,7 +105,6 @@ class AddEventFragment : Fragment() {
         var selectedCategory: String? = null
         eventPlace = view.findViewById(R.id.eventPlace)
         cityTextView = view.findViewById(R.id.cityTextView)
-
 
         val numberPicker = view.findViewById<NumberPicker>(R.id.spotPicker)
         numberPicker.maxValue = 20
@@ -129,11 +127,7 @@ class AddEventFragment : Fragment() {
             intent.type = "image/*"
             startActivityForResult(intent, PICK_IMAGE_REQUEST)
         }
-
-
-
-
-
+        
         for (i in 0 until gridLayout.childCount) {
             val child = gridLayout.getChildAt(i)
             if (child is ImageView) {
@@ -177,13 +171,10 @@ class AddEventFragment : Fragment() {
                         )
                         selectedImageView = it as ImageView
                         selectedCategory = it.tag as String
-
-
                     }
                 }
             }
         }
-
 
         val eventDateEditText = view.findViewById<TextInputEditText>(R.id.eventDate)
         eventDateEditText.isFocusable = false
@@ -307,9 +298,8 @@ class AddEventFragment : Fragment() {
                             "authorProfileImageUrl" to userDetails.profileImageUrl,
                             "authorFirstName" to userDetails.firstName,
                             "authorLastName" to userDetails.lastName,
-                            "attendedPeopleProfilePictureUrls" to attendedPeopleProfilePictureUrls
+                            "attendedPeopleProfilePictureUrls" to attendedPeopleProfilePictureUrls,
                             "createdAt" to FieldValue.serverTimestamp()
-
                         )
               
                 firestore.collection("events").add(event)
@@ -339,14 +329,8 @@ class AddEventFragment : Fragment() {
                             )
                         }
                     }
-
-
-                      
-
-                         
                     }
                 }
-
             }
         }
     }
@@ -384,7 +368,6 @@ class AddEventFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
-
     }
 
 }
