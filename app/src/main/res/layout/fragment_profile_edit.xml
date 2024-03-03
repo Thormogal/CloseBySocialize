@@ -50,8 +50,8 @@
 
     <ImageView
         android:id="@+id/editPictureImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         app:layout_constraintBottom_toTopOf="@id/editProfileTopGuideline"
         app:layout_constraintStart_toStartOf="@id/editProfileVerticalGuideline1"
         app:srcCompat="@drawable/profile_top_bar_avatar"
