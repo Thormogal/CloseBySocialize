@@ -7,6 +7,7 @@ import android.icu.util.Calendar
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import android.widget.ImageView
 import android.widget.NumberPicker
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.example.closebysocialize.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -35,7 +37,7 @@ class EditProfileFragment : Fragment() {
     private var selectedImageUri: Uri? = null
 
     private val db = FirebaseFirestore.getInstance()
-    private val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+    private val id = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
     private val interestToDrawableMap = mapOf(
         R.id.dogImageView to R.drawable.interests_dogwalk,
@@ -95,13 +97,15 @@ class EditProfileFragment : Fragment() {
             startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE)
         }
 
-        birthYearPicker.setOnValueChangedListener { picker, oldVal, newVal ->
+        birthYearPicker.setOnValueChangedListener { _, _, newVal ->
             val selectedYear = newVal
         }
 
         profileSaveButton.setOnClickListener {
             saveProfileDataToDatabase()
         }
+
+        fetchUserData()
     }
 
     private fun handleInterestClick(imageView: ImageView, drawableId: Int) {
@@ -110,7 +114,8 @@ class EditProfileFragment : Fragment() {
             imageView.isSelected = false
         } else {
             if (selectedInterests.size >= 4) {
-                Toast.makeText(context, "You can select up to 4 interests", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "You can select up to 4 interests", Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 selectedInterests.add(drawableId)
                 imageView.isSelected = true
@@ -126,7 +131,7 @@ class EditProfileFragment : Fragment() {
 
         val selectedInterestsAsString = selectedInterests.map { it.toString() }
 
-        val userRef = db.collection("users").document(userId)
+        val userRef = db.collection("users").document(id)
 
         val updates = hashMapOf<String, Any>(
             "aboutMe" to aboutMeText,
@@ -144,7 +149,11 @@ class EditProfileFragment : Fragment() {
                 Toast.makeText(context, "Profile updated successfully", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->
-                Toast.makeText(context, "Failed to update profile: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Failed to update profile: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
     }
 
@@ -158,14 +167,65 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun setProfileImage(imageUri: Uri?) {
-        if (imageUri != null) {
-            val bitmap = MediaStore.Images.Media.getBitmap(
-                requireContext().contentResolver,
-                imageUri
-            )
-            editImage.setImageBitmap(bitmap)
-        } else {
-            Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_SHORT).show()
+        try {
+            imageUri?.let {
+                if (it.toString().startsWith("content://")) {
+                    // local URI
+                    Glide.with(this)
+                        .load(it)
+                        .into(editImage)
+                } else {
+                    // URL from the internet
+                    Glide.with(this)
+                        .load(it.toString())
+                        .into(editImage)
+                }
+            } ?: run {
+                Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Log.e("EditProfileFragment", "Exception: ", e)
+            Toast.makeText(requireContext(), "Error setting image", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun fetchUserData() {
+        val userRef = db.collection("users").document(id)
+        userRef.get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                val name = document.getString("name")
+                val aboutMe = document.getString("aboutMe")
+                val birthYear = document.getLong("birthYear")?.toInt()
+                val profileImageUri = document.getString("profileImage")
+
+                editName.setText(name)
+                aboutMeEditText.setText(aboutMe)
+                birthYear?.let {
+                    birthYearPicker.value = it
+                }
+                profileImageUri?.let {
+                    selectedImageUri = Uri.parse(it)
+                    setProfileImage(selectedImageUri)
+                }
+                val selectedInterestsData = document.get("selectedInterests") as? List<String>
+                selectedInterestsData?.let {
+                    updateSelectedInterestsUI(it)
+                }
+            }
+        }.addOnFailureListener {
+            Log.e("EditProfileFragment", "Error fetching user data", it)
+        }
+    }
+
+    private fun updateSelectedInterestsUI(selectedInterestsData: List<String>) {
+        interestToDrawableMap.forEach { (imageViewId, drawableId) ->
+            val imageView = view?.findViewById<ImageView>(imageViewId)
+            if (selectedInterestsData.contains(drawableId.toString())) {
+                selectedInterests.add(drawableId)
+                imageView?.isSelected = true
+            } else {
+                imageView?.isSelected = false
+            }
         }
     }
 }
