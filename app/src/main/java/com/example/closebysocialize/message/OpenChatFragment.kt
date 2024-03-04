@@ -38,25 +38,16 @@ class OpenChatFragment : Fragment() {
         private const val ARG_CONVERSATION_ID = "conversationId"
         private const val ARG_FRIEND_ID = "friendId"
 
-        fun newInstanceForConversation(conversationId: String, friendId: String): OpenChatFragment {
-            val fragment = OpenChatFragment()
-            val args = Bundle().apply {
-                putString(ARG_CONVERSATION_ID, conversationId)
-                putString(ARG_FRIEND_ID, friendId)
+        fun newInstance(conversationId: String? = null, friendId: String): OpenChatFragment {
+            return OpenChatFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_CONVERSATION_ID, conversationId)
+                    putString(ARG_FRIEND_ID, friendId)
+                }
             }
-            fragment.arguments = args
-            return fragment
-        }
-
-        fun newInstanceForFriend(friendId: String): OpenChatFragment {
-            val fragment = OpenChatFragment()
-            val args = Bundle().apply {
-                putString(ARG_FRIEND_ID, friendId)
-            }
-            fragment.arguments = args
-            return fragment
         }
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -223,6 +214,5 @@ class OpenChatFragment : Fragment() {
                 }
             }
     }
-
 
 }

@@ -18,7 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
     private lateinit var messageRecyclerView: RecyclerView
-    private lateinit var messageAdapter: FriendsAdapter
+    private lateinit var displayFriendsAdapter: FriendsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,11 +32,11 @@ class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         messageRecyclerView = view.findViewById(R.id.messageRecyclerView)
-        messageAdapter = FriendsAdapter(requireContext(), listOf(), showActions = false)
-        messageRecyclerView.adapter = messageAdapter
+        displayFriendsAdapter = FriendsAdapter(requireContext(), listOf(), showActions = false)
+        messageRecyclerView.adapter = displayFriendsAdapter
         messageRecyclerView.layoutManager = LinearLayoutManager(context)
         loadFriends()
-        messageAdapter.listener = this
+        displayFriendsAdapter.listener = this
     }
 
     private fun loadFriends() {
@@ -44,7 +44,7 @@ class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
         FirestoreUtils.loadFriends(
             userId = userId,
             onSuccess = { friendsList ->
-                messageAdapter.updateData(friendsList)
+                displayFriendsAdapter.updateData(friendsList)
             },
             onFailure = { exception ->
                 Log.e("MessageFragment", "Error loading friends: ", exception)
@@ -54,11 +54,7 @@ class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
 
     override fun onFriendClick(friend: Friend) {
         checkForExistingConversation(friend.id) { conversationId ->
-            val chatFragment = if (conversationId != null) {
-                OpenChatFragment.newInstanceForConversation(conversationId, friend.id)
-            } else {
-                OpenChatFragment.newInstanceForFriend(friend.id)
-            }
+            val chatFragment = OpenChatFragment.newInstance(conversationId, friend.id)
             navigateToChatFragment(chatFragment, friend.name ?: "Unknown")
         }
     }
@@ -68,10 +64,8 @@ class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(null)
             .commit()
-
         (requireActivity() as AppCompatActivity).supportActionBar?.title = friendName
     }
-
 
     private fun checkForExistingConversation(friendId: String, callback: (String?) -> Unit) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
@@ -91,7 +85,6 @@ class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
                 callback(null)
             }
     }
-
 
     override fun onMessageClick(friend: Friend) {
     }
