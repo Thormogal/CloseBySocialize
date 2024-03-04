@@ -72,7 +72,7 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
         eventsAdapter.chatImageViewClickListener = { eventId ->
             openChatForEvent(eventId)
         }
-
+        toggleGroup.check(R.id.allButton)
         filterData("all")
     }
 
@@ -116,7 +116,11 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
     }
 
     private fun setFilterButtonsListeners() {
-        toggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+        toggleGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (!isChecked && group.checkedButtonId == View.NO_ID) {
+                group.check(checkedId)
+                return@addOnButtonCheckedListener
+            }
             if (isChecked) {
                 when (checkedId) {
                     R.id.savedButton -> filterData("saved")
@@ -126,6 +130,7 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
             }
         }
     }
+
 
     private fun filterData(filterType: String) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid.orEmpty()
