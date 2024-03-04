@@ -21,6 +21,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.android.material.button.MaterialButtonToggleGroup
+
 class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
     private lateinit var recyclerView: RecyclerView
     private lateinit var eventsAdapter: EventsAdapter
@@ -41,7 +42,11 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_events, container, false)
         initializeViews(view)
         progressBar = view.findViewById(R.id.progressBar)
@@ -54,12 +59,20 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val userId = FirebaseAuth.getInstance().currentUser?.uid.orEmpty()
-        eventsAdapter = EventsAdapter(attendingEventsList, allEventsList, savedEventsList, userId, savedEventsIds, attendingEventsIds, this)
+        eventsAdapter = EventsAdapter(
+            attendingEventsList,
+            allEventsList,
+            savedEventsList,
+            userId,
+            savedEventsIds,
+            attendingEventsIds,
+            this
+        )
         recyclerView.adapter = eventsAdapter
         eventsAdapter.chatImageViewClickListener = { eventId ->
             openChatForEvent(eventId)
         }
-
+        toggleGroup.check(R.id.allButton)
         filterData("all")
     }
 
@@ -75,7 +88,6 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
         )
     }
 
-
     private fun initializeViews(view: View) {
         filterImageView = view.findViewById(R.id.filterImageView)
         toggleGroup = view.findViewById(R.id.toggleButtonGroup)
@@ -88,20 +100,26 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
     }
 
     private fun setupFloatingActionButton(view: View) {
-        val floatingActionButton: FloatingActionButton = view.findViewById(R.id.floatingActionButton)
+        val floatingActionButton: FloatingActionButton =
+            view.findViewById(R.id.floatingActionButton)
         floatingActionButton.setOnClickListener {
-            floatingActionButton.animate().scaleX(0.7f).scaleY(0.7f).setDuration(200).withEndAction {
-                FragmentUtils.switchFragment(
-                    activity = activity as AppCompatActivity,
-                    containerId = R.id.fragment_container,
-                    fragmentClass = AddEventFragment::class.java
-                )
-            }
+            floatingActionButton.animate().scaleX(0.7f).scaleY(0.7f).setDuration(200)
+                .withEndAction {
+                    FragmentUtils.switchFragment(
+                        activity = activity as AppCompatActivity,
+                        containerId = R.id.fragment_container,
+                        fragmentClass = AddEventFragment::class.java
+                    )
+                }
         }
     }
 
     private fun setFilterButtonsListeners() {
-        toggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+        toggleGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (!isChecked && group.checkedButtonId == View.NO_ID) {
+                group.check(checkedId)
+                return@addOnButtonCheckedListener
+            }
             if (isChecked) {
                 when (checkedId) {
                     R.id.savedButton -> filterData("saved")
@@ -116,8 +134,17 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
         val userId = FirebaseAuth.getInstance().currentUser?.uid.orEmpty()
         when (filterType) {
             "all" -> FirestoreUtils.fetchAllEvents(::updateAllEventsList, ::handleError)
-            "saved" -> FirestoreUtils.fetchSavedEventsByUser(userId, ::updateSavedEventsList, ::handleError)
-            "attending" -> FirestoreUtils.fetchAttendingEventsByUser(userId, ::updateAttendingEventsList, ::handleError)
+            "saved" -> FirestoreUtils.fetchSavedEventsByUser(
+                userId,
+                ::updateSavedEventsList,
+                ::handleError
+            )
+
+            "attending" -> FirestoreUtils.fetchAttendingEventsByUser(
+                userId,
+                ::updateAttendingEventsList,
+                ::handleError
+            )
         }
     }
 

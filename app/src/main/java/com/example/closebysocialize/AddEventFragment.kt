@@ -9,6 +9,8 @@ import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,19 +23,25 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.closebysocialize.dataClass.Users
 import com.example.closebysocialize.events.EventsFragment
 import com.example.closebysocialize.utils.FragmentUtils
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.UUID
-import com.google.firebase.firestore.GeoPoint
 
 
 
@@ -54,7 +62,11 @@ class AddEventFragment : Fragment() {
     private lateinit var cityTextView: EditText
     private val PICK_IMAGE_REQUEST = 3
     private var imageUri: Uri? = null
+    private lateinit var userAdapter: UserAdapter
     private lateinit var firestore: FirebaseFirestore
+    private var taggedUsers = mutableListOf<String>()
+    private lateinit var recyclerViewFindUsers: RecyclerView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,8 +90,9 @@ class AddEventFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 PLACE_SEARCH_REQUEST_CODE, CITY_SEARCH_REQUEST_CODE -> {
-                    val placeName = data?.getStringExtra("place_name")
-                    val placeCoordinates = data?.getParcelableExtra<LatLng>("place_coordinates")
+                    val place = Autocomplete.getPlaceFromIntent(data!!)
+                    val placeName = place.name
+                    val placeCoordinates = place.latLng
                     when (requestCode) {
                         PLACE_SEARCH_REQUEST_CODE -> {
                             eventPlace.setText(placeName)
@@ -117,12 +130,18 @@ class AddEventFragment : Fragment() {
         numberPicker.value = 4
 
         eventPlace.setOnClickListener {
-            val intent = Intent(context, EventMapSearch::class.java)
+            val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                .setCountry("SE")
+                .build(requireContext())
             startActivityForResult(intent, PLACE_SEARCH_REQUEST_CODE)
         }
 
         cityTextView.setOnClickListener {
-            val intent = Intent(context, EventMapSearch::class.java)
+            val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                .setCountry("SE")
+                .build(requireContext())
             startActivityForResult(intent, CITY_SEARCH_REQUEST_CODE)
         }
 
@@ -132,6 +151,32 @@ class AddEventFragment : Fragment() {
             intent.type = "image/*"
             startActivityForResult(intent, PICK_IMAGE_REQUEST)
         }
+
+        val eventGuests = view.findViewById<TextInputEditText>(R.id.eventGuests)
+        userAdapter = UserAdapter(listOf(), taggedUsers, eventGuests)
+        recyclerViewFindUsers = view.findViewById(R.id.recyclerViewFindUsers)
+        recyclerViewFindUsers.adapter = userAdapter
+        recyclerViewFindUsers.layoutManager = LinearLayoutManager(context)
+
+        eventGuests.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val parts = s.toString().split(",")
+                val query = parts.last().trim()
+                searchUsers(query)
+                recyclerViewFindUsers.visibility = View.VISIBLE
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+
+        })
+
+
+
+
 
         for (i in 0 until gridLayout.childCount) {
             val child = gridLayout.getChildAt(i)
@@ -240,12 +285,15 @@ class AddEventFragment : Fragment() {
             val eventPlace = view.findViewById<TextInputEditText>(R.id.eventPlace)
             val eventDate = view.findViewById<TextInputEditText>(R.id.eventDate)
             val cityTextView = view.findViewById<TextInputEditText>(R.id.cityTextView)
-            //    val eventGuests = view.findViewById<TextInputEditText>(R.id.eventGuests)
-            // val guests = eventGuests.text.toString()
+            val eventGuests = view.findViewById<TextInputEditText>(R.id.eventGuests)
+
+            val guests = eventGuests.text.toString()
             val eventDescription = view.findViewById<TextInputEditText>(R.id.eventDescription)
             val spots = numberPicker.value
             val placeGeoPoint = eventPlaceCoordinates?.let { GeoPoint(it.latitude, it.longitude) }
             val cityGeoPoint = eventCityCoordinates?.let { GeoPoint(it.latitude, it.longitude) }
+
+
 
 
             val eventName = eventNameTextView.text.toString()
@@ -297,6 +345,7 @@ class AddEventFragment : Fragment() {
                             "day" to chosenDay,
                             "imageUrl" to imageUrl,
                             "date" to chosenDate,
+                            "taggedUsers" to taggedUsers,
                             "time" to chosenTime,
                             "spots" to spots,
                             "description" to description,
@@ -324,12 +373,14 @@ class AddEventFragment : Fragment() {
                                 // eventGuests.text = null
                                 eventDescription.text = null
                                 selectedCategory = null
+                                taggedUsers.clear()
                                 selectedImageView?.setBackgroundColor(
                                     ContextCompat.getColor(
                                         requireContext(),
                                         android.R.color.transparent
                                     )
                                 )
+
                                 selectedImageView = null
                                 Toast.makeText(
                                     context,
@@ -385,6 +436,25 @@ class AddEventFragment : Fragment() {
                     "Error uploading image: ${exception.message}",
                     Toast.LENGTH_SHORT
                 ).show()
+            }
+    }
+
+    private fun searchUsers(query: String) {
+        if (query.isEmpty()) return
+        val searchQuery = query.split(" ").joinToString(" ") { it.capitalize() }
+        val searchQueryStart = searchQuery
+        val searchQueryEnd = searchQuery + '\uf8ff'
+        val db = FirebaseFirestore.getInstance()
+        db.collection("users")
+            .orderBy("name")
+            .startAt(searchQueryStart)
+            .endAt(searchQueryEnd)
+            .get()
+            .addOnSuccessListener { documents ->
+                val userList = documents.mapNotNull { it.toObject(Users::class.java) }
+                userAdapter.updateData(userList)
+            }
+            .addOnFailureListener {
             }
     }
 

@@ -1,4 +1,5 @@
 package com.example.closebysocialize
+
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
@@ -19,7 +20,7 @@ class ReportBugDialogFragment : DialogFragment() {
             builder.setView(view)
                 .setPositiveButton("Submit") { dialog, id ->
                     val bugReport = editText.text.toString()
-                    // Hantera skickande av bugg rapport här
+                    // Handle raport here
                 }
                 .setNegativeButton("Cancel") { dialog, id ->
                     dialog.cancel()

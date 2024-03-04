@@ -38,17 +38,20 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val floatingActionButton: FloatingActionButton = view.findViewById(R.id.addFriendsFloatingActionButton)
+        val floatingActionButton: FloatingActionButton =
+            view.findViewById(R.id.addFriendsFloatingActionButton)
         floatingActionButton.setOnClickListener {
-            floatingActionButton.animate().scaleX(0.7f).scaleY(0.7f).setDuration(200).withEndAction {
-                floatingActionButton.animate().scaleX(1f).scaleY(1f).setDuration(200).withEndAction {
-                    FragmentUtils.switchFragment(
-                        activity = requireActivity() as AppCompatActivity,
-                        containerId = R.id.fragment_container,
-                        fragmentClass = AddFriendFragment::class.java,
-                    )
+            floatingActionButton.animate().scaleX(0.7f).scaleY(0.7f).setDuration(200)
+                .withEndAction {
+                    floatingActionButton.animate().scaleX(1f).scaleY(1f).setDuration(200)
+                        .withEndAction {
+                            FragmentUtils.switchFragment(
+                                activity = requireActivity() as AppCompatActivity,
+                                containerId = R.id.fragment_container,
+                                fragmentClass = AddFriendFragment::class.java,
+                            )
+                        }
                 }
-            }
         }
 
         friendsRecyclerView = view.findViewById(R.id.friendsRecyclerView)
@@ -67,9 +70,11 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
     }
 
 
-    private fun openUserProfile(id: String) {
-        val profileFragment = ProfileFragment.newInstance(id)
-        fragmentManager?.beginTransaction()?.replace(R.id.fragment_container, profileFragment)?.addToBackStack(null)?.commit()
+    private fun openUserProfile(userId: String) {
+        val profileFragment = ProfileFragment.newInstance(userId)
+        fragmentManager?.beginTransaction()?.replace(R.id.fragment_container, profileFragment)
+            ?.addToBackStack(null)?.commit()
+
     }
 
     private fun loadFriends() {
@@ -87,9 +92,11 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
 
     override fun onMessageClick(friend: Friend) {
     }
+
     override fun onFriendClick(friend: Friend) {
         openUserProfile(friend.id)
     }
+
     override fun onBinClick(friend: Friend) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val friendDocumentPath = "users/$userId/friends/${friend.id}"

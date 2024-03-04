@@ -1,4 +1,5 @@
 package com.example.closebysocialize.dataClass
+
 import java.util.Date
 
 data class Message(

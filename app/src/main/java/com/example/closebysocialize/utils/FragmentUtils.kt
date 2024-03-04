@@ -34,7 +34,10 @@ object FragmentUtils {
         updateActionBarTitle(activity, fragmentClass)
     }
 
-    private fun updateActionBarTitle(activity: AppCompatActivity, fragmentClass: Class<out Fragment>) {
+    private fun updateActionBarTitle(
+        activity: AppCompatActivity,
+        fragmentClass: Class<out Fragment>
+    ) {
         val titleResId = when (fragmentClass) {
             EventsFragment::class.java -> R.string.title_events
             ProfileFragment::class.java -> R.string.title_profile
