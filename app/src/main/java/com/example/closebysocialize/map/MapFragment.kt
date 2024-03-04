@@ -46,7 +46,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userHasInteracted = false
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_map, container, false)
         mapView = view.findViewById(R.id.mapView)
         mapView.onCreate(savedInstanceState)
@@ -58,15 +62,15 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
 
         mapView = view.findViewById(R.id.mapView)
-            onCreate(savedInstanceState)
-            mapView.getMapAsync(this)
+        onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
 
 
         myPositionImageView = view.findViewById(R.id.myPositionImageView)
-            myPositionImageView.setOnClickListener {
-                userHasInteracted = false
-                recenterMapOnUserLocation()
-            }
+        myPositionImageView.setOnClickListener {
+            userHasInteracted = false
+            recenterMapOnUserLocation()
+        }
 
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -98,8 +102,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
         }
     }
-
-
 
 
     private fun performSearch(query: String?) {
@@ -154,7 +156,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     if (placeCoordinates != null) {
                         addMarkerForPlace(eventDocument.id, placeCoordinates)
                     } else {
-                        Log.d("Firestore", "No place_coordinates found for event ${eventDocument.id}")
+                        Log.d(
+                            "Firestore",
+                            "No place_coordinates found for event ${eventDocument.id}"
+                        )
                     }
                 }
             }
@@ -204,7 +209,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val place = Autocomplete.getPlaceFromIntent(data!!)
-            userHasInteracted= true
+            userHasInteracted = true
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(place.latLng))
         }
     }
