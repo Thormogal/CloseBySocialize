@@ -33,15 +33,6 @@
             app:layout_constraintStart_toEndOf="@+id/friendProfilePictureImageView"
             app:layout_constraintTop_toTopOf="@+id/friendProfilePictureImageView" />
 
-        <ImageView
-            android:id="@+id/messageIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="20dp"
-            android:src="@drawable/icon_message"
-            app:layout_constraintBottom_toBottomOf="@+id/friendProfilePictureImageView"
-            app:layout_constraintEnd_toStartOf="@+id/binIcon"
-            app:layout_constraintTop_toTopOf="@+id/friendProfilePictureImageView" />
 
         <ImageView
             android:id="@+id/binIcon"

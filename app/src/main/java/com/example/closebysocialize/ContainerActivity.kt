@@ -109,29 +109,40 @@ class ContainerActivity : AppCompatActivity() {
 
 
     private fun listenForNewMessages() {
-        Log.d("ContainerActivity", "Listening for new messages")
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         Log.d("ContainerActivity", "Current user ID: $userId")
 
         if (userId != null) {
             val db = FirebaseFirestore.getInstance()
-            db.collection("messages")
-                .whereEqualTo("receiverId", userId)
-                .whereEqualTo("isRead", false)
-                .addSnapshotListener { snapshots, e ->
-                    if (e != null) {
-                        Log.w("ContainerActivity", "Listen failed.", e)
-                        return@addSnapshotListener
-                    }
+            db.collection("conversations")
+                .whereArrayContains("participantIds", userId)
+                .get()
+                .addOnSuccessListener { conversationDocuments ->
+                    val conversationIds = conversationDocuments.documents.map { it.id }
+                    var totalUnreadMessages = 0
 
-                    val unreadMessagesCount = snapshots?.size() ?: 0
-                    Log.d("ContainerActivity", "Unread messages count: $unreadMessagesCount")
-                    updateBottomNavigationBadge(unreadMessagesCount)
+                    conversationIds.forEach { conversationId ->
+                        db.collection("conversations").document(conversationId)
+                            .collection("messages")
+                            .whereEqualTo("isRead", false)
+                            .whereEqualTo("receiverId", userId)
+                            .get()
+                            .addOnSuccessListener { messageDocuments ->
+                                val unreadMessagesCount = messageDocuments.size()
+                                totalUnreadMessages += unreadMessagesCount
+
+                                updateBottomNavigationBadge(totalUnreadMessages)
+                            }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.w("ContainerActivity", "Error fetching conversations", e)
                 }
         } else {
             Log.d("ContainerActivity", "User ID is null, cannot listen for messages")
         }
     }
+
 
 
     private fun updateBottomNavigationBadge(count: Int) {
