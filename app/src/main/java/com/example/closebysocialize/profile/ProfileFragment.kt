@@ -27,7 +27,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 
-
 class ProfileFragment : Fragment() {
     private lateinit var profileImageView: ImageView
     private lateinit var nameTextView: TextView
@@ -35,7 +34,9 @@ class ProfileFragment : Fragment() {
     private lateinit var language: TextView
     private lateinit var darkModeSwitch: SwitchCompat
     private lateinit var aboutMeTextView: TextView
-    val id = arguments?.getString(ARG_ID)
+    private var id: String? = null
+    private val shouldShowCurrentUserProfile: Boolean
+        get() = id == null
 
     private val languageOptions = arrayOf("Swedish", "English")
 
@@ -54,6 +55,7 @@ class ProfileFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+            id = it.getString(ARG_ID)
         }
     }
 
@@ -103,9 +105,11 @@ class ProfileFragment : Fragment() {
 
 
     private fun fetchUserInfo() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        if (userId != null) {
-            val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+        val idToUse = id ?: if (shouldShowCurrentUserProfile) FirebaseAuth.getInstance().currentUser?.uid else null
+        Log.d("ProfileFragment", "fetchUserInfo called with idToUse: $idToUse")
+        if (idToUse != null) {
+            val userRef =
+                FirebaseFirestore.getInstance().collection("users").document(idToUse)
             userRef.get().addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
                     val userName = documentSnapshot.getString("name")
@@ -113,11 +117,14 @@ class ProfileFragment : Fragment() {
                     val aboutMe = documentSnapshot.getString("aboutMe")
                     Log.d("ProfileFragment", "About Me: $aboutMe")
 
-                    Log.d("ProfileFragment", "Fetched user data: Name: $userName, Image URL: $profileImageUrl, About Me: $aboutMe")
+                    Log.d(
+                        "ProfileFragment",
+                        "Fetched user data: Name: $userName, Image URL: $profileImageUrl, About Me: $aboutMe"
+                    )
 
                     updateProfileUI(aboutMe, userName, profileImageUrl)
                 } else {
-                    Log.d("ProfileFragment", "Document does not exist")
+                    Log.d("ProfileFragment", "User ID is null, cannot fetch user info")
                 }
             }.addOnFailureListener { exception ->
                 Log.e("ProfileFragment", "Failed to fetch user info", exception)
@@ -128,14 +135,10 @@ class ProfileFragment : Fragment() {
     }
 
 
-
-
-
-
     private fun showSelectedInterests() {
-        val id = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
-        val userRef = FirebaseFirestore.getInstance().collection("users").document(id)
+        val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
         userRef.get()
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
@@ -191,7 +194,10 @@ class ProfileFragment : Fragment() {
     }
 
     private fun updateProfileUI(aboutMe: String?, userName: String?, profileImageUrl: String?) {
-        Log.d("ProfileFragment", "Updating UI. Name: $userName, About Me: $aboutMe, Image URL: $profileImageUrl")
+        Log.d(
+            "ProfileFragment",
+            "Updating UI. Name: $userName, About Me: $aboutMe, Image URL: $profileImageUrl"
+        )
 
 
         nameTextView.text = userName ?: "No name available"
@@ -202,12 +208,23 @@ class ProfileFragment : Fragment() {
                 .load(profileImageUrl)
                 .error(R.drawable.avatar_dark)
                 .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(e: GlideException?, model: Any?, target: com.bumptech.glide.request.target.Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
                         Log.e("ProfileFragment", "Failed to load image", e)
                         return false
                     }
 
-                    override fun onResourceReady(resource: Drawable?, model: Any?, target: com.bumptech.glide.request.target.Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
                         return false
                     }
                 })

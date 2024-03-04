@@ -61,14 +61,17 @@
         android:id="@+id/editNameEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
         android:hint="@string/name"
         android:inputType="text"
         android:minWidth="48dp"
         android:minHeight="48dp"
         android:textAlignment="center"
+        android:gravity="center_horizontal"
         app:layout_constraintTop_toTopOf="@id/editPictureImageView"
         app:layout_constraintBottom_toTopOf="@+id/editProfileTopGuideline"
         app:layout_constraintEnd_toEndOf="@+id/editProfileVerticalGuideline2"
+        app:layout_constraintStart_toStartOf="@id/editProfileVerticalGuideline1"
         android:autofillHints="" />
 
     <TextView

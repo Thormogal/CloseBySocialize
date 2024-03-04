@@ -67,8 +67,8 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
     }
 
 
-    private fun openUserProfile(userId: String) {
-        val profileFragment = ProfileFragment.newInstance(userId)
+    private fun openUserProfile(id: String) {
+        val profileFragment = ProfileFragment.newInstance(id)
         fragmentManager?.beginTransaction()?.replace(R.id.fragment_container, profileFragment)?.addToBackStack(null)?.commit()
     }
 
