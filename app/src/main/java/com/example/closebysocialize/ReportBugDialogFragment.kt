@@ -20,7 +20,7 @@ class ReportBugDialogFragment : DialogFragment() {
             builder.setView(view)
                 .setPositiveButton("Submit") { dialog, id ->
                     val bugReport = editText.text.toString()
-                    // Hantera skickande av bugg rapport här
+                    // Handle raport here
                 }
                 .setNegativeButton("Cancel") { dialog, id ->
                     dialog.cancel()

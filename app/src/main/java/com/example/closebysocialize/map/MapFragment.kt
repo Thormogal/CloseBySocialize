@@ -51,6 +51,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         val view = inflater.inflate(R.layout.fragment_map, container, false)
 
+
+
+
         mapView = view.findViewById(R.id.mapView)
         mapView.onCreate(savedInstanceState)
         mapView.onResume()
@@ -157,6 +160,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val latLng = LatLng(eventPlace.place_coordinates.latitude, eventPlace.place_coordinates.longitude)
         googleMap.addMarker(MarkerOptions().position(latLng).title("Custom Place"))
     }
+
     private fun addCurrentLocationMarker() {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
@@ -182,7 +186,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     fun updateMapLocation(location: Location) {
         if (!userHasInteracted) {
             val newPos = LatLng(location.latitude, location.longitude)
-            googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(newPos, 10f))
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newPos, 10f))
         }
     }
 
@@ -191,7 +195,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val place = Autocomplete.getPlaceFromIntent(data!!)
             userHasInteracted= true
-            googleMap?.moveCamera(CameraUpdateFactory.newLatLng(place.latLng))
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(place.latLng))
         }
     }
 
