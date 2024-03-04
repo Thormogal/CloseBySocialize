@@ -30,7 +30,12 @@ class AddFriendFragment : Fragment() {
         arguments?.let {
         }
     }
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_add_friend, container, false)
     }
 
@@ -52,8 +57,10 @@ class AddFriendFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 searchUsers(s.toString())
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
         })
@@ -110,7 +117,8 @@ class AddFriendFragment : Fragment() {
                         .document(user.id)
                         .set(friendData)
                         .addOnSuccessListener {
-                            Toast.makeText(context, "Friend added successfully", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Friend added successfully", Toast.LENGTH_SHORT)
+                                .show()
                             val conversationRef = db.collection("conversations").document()
                             conversationRef.collection("messages").add(messageData)
                                 .addOnSuccessListener {
@@ -121,18 +129,19 @@ class AddFriendFragment : Fragment() {
                                 }
                         }
                         .addOnFailureListener {
-                            Toast.makeText(context, "Failed to add friend", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Failed to add friend", Toast.LENGTH_SHORT)
+                                .show()
                         }
                 } else {
-                    Toast.makeText(context, "User is already your friend", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "User is already your friend", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
             .addOnFailureListener {
-                Toast.makeText(context, "Error checking existing friends", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Error checking existing friends", Toast.LENGTH_SHORT)
+                    .show()
             }
     }
-
-
 
 
 }

@@ -34,6 +34,7 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
             eventId = it.getString(ARG_EVENT_ID)
         }
     }
+
     companion object {
         private const val ARG_EVENT_ID = "eventId"
 
@@ -44,6 +45,7 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
                 }
             }
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -62,6 +64,7 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
 
         return view
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         commentAdapter = CommentAdapter(mutableListOf(), this, eventId).also {
@@ -97,6 +100,7 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
             .create()
             .show()
     }
+
     fun organizeCommentsWithReplies(comments: List<Comment>): List<Comment> {
         val organizedComments = mutableListOf<Comment>()
         val commentMap = comments.associateBy { it.id }
@@ -106,7 +110,10 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
             organizedComments.add(comment)
             addRepliesRecursively(comment, organizedComments, commentMap)
         }
-        Log.d("ChatFragment", "Organized Comments: ${organizedComments.map { "${it.id} - Parent: ${it.parentId}" }}")
+        Log.d(
+            "ChatFragment",
+            "Organized Comments: ${organizedComments.map { "${it.id} - Parent: ${it.parentId}" }}"
+        )
         return organizedComments
     }
 
@@ -172,10 +179,6 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
                 Log.e(TAG, "Error fetching comments", exception)
             }
     }
-
-
-
-
 
     private fun organizeComments(comments: List<Comment>): List<Comment> {
         val topLevelComments = mutableListOf<Comment>()

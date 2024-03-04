@@ -27,7 +27,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 
-
 class ProfileFragment : Fragment() {
     private lateinit var profileImageView: ImageView
     private lateinit var nameTextView: TextView
@@ -113,7 +112,10 @@ class ProfileFragment : Fragment() {
                     val aboutMe = documentSnapshot.getString("aboutMe")
                     Log.d("ProfileFragment", "About Me: $aboutMe")
 
-                    Log.d("ProfileFragment", "Fetched user data: Name: $userName, Image URL: $profileImageUrl, About Me: $aboutMe")
+                    Log.d(
+                        "ProfileFragment",
+                        "Fetched user data: Name: $userName, Image URL: $profileImageUrl, About Me: $aboutMe"
+                    )
 
                     updateProfileUI(aboutMe, userName, profileImageUrl)
                 } else {
@@ -126,10 +128,6 @@ class ProfileFragment : Fragment() {
             Log.d("ProfileFragment", "User ID is null")
         }
     }
-
-
-
-
 
 
     private fun showSelectedInterests() {
@@ -191,7 +189,10 @@ class ProfileFragment : Fragment() {
     }
 
     private fun updateProfileUI(aboutMe: String?, userName: String?, profileImageUrl: String?) {
-        Log.d("ProfileFragment", "Updating UI. Name: $userName, About Me: $aboutMe, Image URL: $profileImageUrl")
+        Log.d(
+            "ProfileFragment",
+            "Updating UI. Name: $userName, About Me: $aboutMe, Image URL: $profileImageUrl"
+        )
 
 
         nameTextView.text = userName ?: "No name available"
@@ -202,12 +203,23 @@ class ProfileFragment : Fragment() {
                 .load(profileImageUrl)
                 .error(R.drawable.avatar_dark)
                 .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(e: GlideException?, model: Any?, target: com.bumptech.glide.request.target.Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
                         Log.e("ProfileFragment", "Failed to load image", e)
                         return false
                     }
 
-                    override fun onResourceReady(resource: Drawable?, model: Any?, target: com.bumptech.glide.request.target.Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
                         return false
                     }
                 })

@@ -37,8 +37,6 @@ import com.google.firebase.firestore.GeoPoint
 import com.example.closebysocialize.EventPlace
 
 
-
-
 class MapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var mapView: MapView
@@ -47,7 +45,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userHasInteracted = false
 
-    @SuppressLint("SuspiciousIndentation")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -64,8 +61,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             LocationServices.getFusedLocationProviderClient(requireActivity())
 
 
-
-    val mapSearchView: SearchView = view.findViewById(R.id.mapSearchView)
+        val mapSearchView: SearchView = view.findViewById(R.id.mapSearchView)
 
         mapSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -74,7 +70,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (!newText.isNullOrBlank()){
+                if (!newText.isNullOrBlank()) {
                     startPlaceAutocomplete()
                 }
                 return true
@@ -84,13 +80,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapSearchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 mapSearchView.isIconified = false
-                if (mapSearchView.query.isNullOrEmpty()){
+                if (mapSearchView.query.isNullOrEmpty()) {
                     startPlaceAutocomplete()
                 }
             }
         }
 
-        myPositionImageView.setOnClickListener{
+        myPositionImageView.setOnClickListener {
             userHasInteracted = false
             recenterMapOnUserLocation()
 
@@ -128,12 +124,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
         addCurrentLocationMarker()
 
-
-        //longlat for sthlm
+        // longlat for sthlm
         val initialLocation = LatLng(59.3293, 18.0686)
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 6f))
         googleMap.uiSettings.isZoomControlsEnabled = true
-
         googleMap.setOnCameraMoveStartedListener { reason ->
             if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
                 userHasInteracted = true
@@ -143,20 +137,20 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     fun fetchPlacesAndDisplayOnMap() {
-    val db = FirebaseFirestore.getInstance()
-    db.collection("place_coordinates")
-        .get()
-        .addOnSuccessListener { documents ->
-            Log.d("Firestore", "Fetched ${documents.size()} documents")
-            for (document in documents) {
-                val eventPlace = document.toObject(EventPlace::class.java)
-                addMarkerForPlace(eventPlace)
+        val db = FirebaseFirestore.getInstance()
+        db.collection("place_coordinates")
+            .get()
+            .addOnSuccessListener { documents ->
+                Log.d("Firestore", "Fetched ${documents.size()} documents")
+                for (document in documents) {
+                    val eventPlace = document.toObject(EventPlace::class.java)
+                    addMarkerForPlace(eventPlace)
+                }
             }
-        }
-        .addOnFailureListener { exception ->
-            Log.d("Firestore", "Error getting documents: ", exception)
-        }
-}
+            .addOnFailureListener { exception ->
+                Log.d("Firestore", "Error getting documents: ", exception)
+            }
+    }
 
     fun addMarkerForPlace(eventPlace: EventPlace) {
         // Convert Firestore GeoPoint to LatLng
@@ -164,7 +158,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         googleMap.addMarker(MarkerOptions().position(latLng).title("Custom Place"))
     }
     private fun addCurrentLocationMarker() {
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                 location?.let {
                     val currentLatLng = LatLng(it.latitude, it.longitude)
@@ -193,9 +194,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             googleMap?.moveCamera(CameraUpdateFactory.newLatLng(place.latLng))
         }
     }
+
     companion object {
         private const val AUTOCOMPLETE_REQUEST_CODE = 1001
     }
+
     private fun startPlaceAutocomplete() {
         val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
 

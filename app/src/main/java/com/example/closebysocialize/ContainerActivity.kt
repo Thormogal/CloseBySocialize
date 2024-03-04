@@ -54,7 +54,6 @@ class ContainerActivity : AppCompatActivity() {
     private var profileMenuItem: MenuItem? = null
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_container)
@@ -107,7 +106,6 @@ class ContainerActivity : AppCompatActivity() {
     }
 
 
-
     private fun listenForNewMessages() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         Log.d("ContainerActivity", "Current user ID: $userId")
@@ -144,7 +142,6 @@ class ContainerActivity : AppCompatActivity() {
     }
 
 
-
     private fun updateBottomNavigationBadge(count: Int) {
         Log.d("ContainerActivity", "Updating badge count: $count")
         val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
@@ -165,6 +162,7 @@ class ContainerActivity : AppCompatActivity() {
                 showProfileMenu()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -182,7 +180,6 @@ class ContainerActivity : AppCompatActivity() {
     }
 
 
-
     private fun requestLocationPermission() {
         ActivityCompat.requestPermissions(
             this,
@@ -190,7 +187,12 @@ class ContainerActivity : AppCompatActivity() {
             LOCATION_PERMISSION_REQUEST_CODE
         )
     }
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -200,6 +202,7 @@ class ContainerActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun startLocationUpdates() {
         val locationRequest = LocationRequest.create().apply {
             interval = 10000 // Update interval in milliseconds
@@ -235,11 +238,13 @@ class ContainerActivity : AppCompatActivity() {
         @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
         override fun onLocationResult(locationResult: LocationResult) {
             for (location in locationResult.locations) {
-                val mapFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as? MapFragment
+                val mapFragment =
+                    supportFragmentManager.findFragmentById(R.id.fragment_container) as? MapFragment
                 mapFragment?.updateMapLocation(location)
             }
         }
     }
+
     private fun showProfileMenu() {
         val view = findViewById<View>(R.id.profile_button) ?: return
         val popup = PopupMenu(this, view)
@@ -250,33 +255,56 @@ class ContainerActivity : AppCompatActivity() {
                     val args = Bundle().apply {
                         putBoolean("showOnlyMyEvents", true)
                     }
-                    FragmentUtils.switchFragment(this, R.id.fragment_container, EventsFragment::class.java, args)
+                    FragmentUtils.switchFragment(
+                        this,
+                        R.id.fragment_container,
+                        EventsFragment::class.java,
+                        args
+                    )
                     true
                 }
+
                 R.id.menu_profile -> {
                     Log.d("!!!", "Profile opens")
-                    FragmentUtils.switchFragment(this, R.id.fragment_container, ProfileFragment::class.java)
+                    FragmentUtils.switchFragment(
+                        this,
+                        R.id.fragment_container,
+                        ProfileFragment::class.java
+                    )
                     true
                 }
+
                 R.id.menu_friends -> {
-                    FragmentUtils.switchFragment(this, R.id.fragment_container, FriendsFragment::class.java)
+                    FragmentUtils.switchFragment(
+                        this,
+                        R.id.fragment_container,
+                        FriendsFragment::class.java
+                    )
                     true
                 }
+
                 R.id.menu_edit_profile -> {
-                    FragmentUtils.switchFragment(this, R.id.fragment_container, EditProfileFragment::class.java)
+                    FragmentUtils.switchFragment(
+                        this,
+                        R.id.fragment_container,
+                        EditProfileFragment::class.java
+                    )
                     true
                 }
+
                 R.id.menu_logout -> {
                     val intent = Intent(this, LoginActivity::class.java)
                     startActivity(intent)
                     finishAffinity()
                     true
                 }
+
                 else -> false
             }
         }
         popup.show()
     }
+
     private fun loadUserProfile() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
@@ -304,6 +332,7 @@ class ContainerActivity : AppCompatActivity() {
                     val drawable = BitmapDrawable(resources, resource)
                     profileMenuItem?.icon = drawable
                 }
+
                 override fun onLoadCleared(placeholder: Drawable?) {
                 }
             })
