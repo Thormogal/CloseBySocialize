@@ -28,7 +28,8 @@ class EventsAdapter(
     var attendingEventsIds: MutableSet<String>,
     private val eventInteractionListener: EventInteractionListener
 
-) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {    var chatImageViewClickListener: ((String) -> Unit)? = null
+) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
+    var chatImageViewClickListener: ((String) -> Unit)? = null
     private var currentTab: TabType = TabType.ALL_EVENTS
 
     interface EventInteractionListener {
@@ -36,7 +37,8 @@ class EventsAdapter(
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val authorProfilePictureImageView: ImageView = view.findViewById(R.id.authorProfilePictureImageView)
+        val authorProfilePictureImageView: ImageView =
+            view.findViewById(R.id.authorProfilePictureImageView)
         val cityTextView: TextView = view.findViewById(R.id.cityTextView)
         val eventTypeTextView: TextView = view.findViewById(R.id.eventTypeTextView)
         val eventNameTextView: TextView = view.findViewById(R.id.eventNameTextView)
@@ -60,7 +62,6 @@ class EventsAdapter(
     }
 
 
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val event = when (currentTab) {
             TabType.ALL_EVENTS -> eventsList[position]
@@ -74,8 +75,12 @@ class EventsAdapter(
         val userProfileUrl = currentUser?.photoUrl.toString()
 
         val isEventCreator = event.authorId == currentUserId
-        val isCurrentlyAttending = event.attendedPeopleProfilePictureUrls.contains(userProfileUrl) || isEventCreator
-        holder.attendButtonTextView.text = if (isCurrentlyAttending) holder.itemView.context.getString(R.string.event_withdraw) else holder.itemView.context.getString(R.string.event_attend)
+        val isCurrentlyAttending =
+            event.attendedPeopleProfilePictureUrls.contains(userProfileUrl) || isEventCreator
+        holder.attendButtonTextView.text =
+            if (isCurrentlyAttending) holder.itemView.context.getString(R.string.event_withdraw) else holder.itemView.context.getString(
+                R.string.event_attend
+            )
         holder.deleteImageView.visibility = if (isEventCreator) View.VISIBLE else View.GONE
 
         val isSaved = savedEventsIds.contains(event.id)
@@ -101,7 +106,8 @@ class EventsAdapter(
         holder.usernameTextView.text = event.authorFirstName
         holder.descriptionTextView.text = event.description
         val availableSpots = event.spots - event.currentAttendeesCount
-        holder.openSpotsTextView.text = "${availableSpots} ${holder.itemView.context.getString(R.string.spots)}"
+        holder.openSpotsTextView.text =
+            "${availableSpots} ${holder.itemView.context.getString(R.string.spots)}"
         holder.chatImageView.setOnClickListener {
             chatImageViewClickListener?.invoke(event.id)
         }
@@ -109,23 +115,32 @@ class EventsAdapter(
             deleteEvent(event.id, position)
         }
         holder.attendButtonTextView.setOnClickListener {
-            val isAttending = holder.attendButtonTextView.text.toString() == holder.itemView.context.getString(R.string.event_withdraw)
+            val isAttending =
+                holder.attendButtonTextView.text.toString() == holder.itemView.context.getString(R.string.event_withdraw)
             val eventId = event.id
             val currentUser = FirebaseAuth.getInstance().currentUser
             val userId = currentUser?.uid ?: return@setOnClickListener
             val userProfileUrl = currentUser.photoUrl.toString()
             toggleAttendingEvent(userId, eventId, isAttending,
                 onSuccess = {
-                    val updatedCount = if (isAttending) event.currentAttendeesCount - 1 else event.currentAttendeesCount + 1
+                    val updatedCount =
+                        if (isAttending) event.currentAttendeesCount - 1 else event.currentAttendeesCount + 1
                     event.currentAttendeesCount = updatedCount
                     event.attendedPeopleProfilePictureUrls = if (isAttending) {
-                        event.attendedPeopleProfilePictureUrls.filter { it != userProfileUrl }.toMutableList()
+                        event.attendedPeopleProfilePictureUrls.filter { it != userProfileUrl }
+                            .toMutableList()
                     } else {
-                        event.attendedPeopleProfilePictureUrls.toMutableList().apply { add(userProfileUrl) }
+                        event.attendedPeopleProfilePictureUrls.toMutableList()
+                            .apply { add(userProfileUrl) }
                     }
-                    holder.openSpotsTextView.text = "${event.spots - updatedCount} ${holder.itemView.context.getString(R.string.spots)}"
-                    holder.attendButtonTextView.text = holder.itemView.context.getString(if (isAttending) R.string.event_attend else R.string.event_withdraw)
-                    refreshAttendedPeopleLinearLayout(holder, event.attendedPeopleProfilePictureUrls)
+                    holder.openSpotsTextView.text =
+                        "${event.spots - updatedCount} ${holder.itemView.context.getString(R.string.spots)}"
+                    holder.attendButtonTextView.text =
+                        holder.itemView.context.getString(if (isAttending) R.string.event_attend else R.string.event_withdraw)
+                    refreshAttendedPeopleLinearLayout(
+                        holder,
+                        event.attendedPeopleProfilePictureUrls
+                    )
                     updateAttendButtonAndSpotsUI(holder, event)
                 },
                 onFailure = { exception ->
@@ -134,7 +149,8 @@ class EventsAdapter(
             )
         }
 
-        val attendedPeopleLinearLayout = holder.itemView.findViewById<LinearLayout>(R.id.attendedPeopleLinearLayout)
+        val attendedPeopleLinearLayout =
+            holder.itemView.findViewById<LinearLayout>(R.id.attendedPeopleLinearLayout)
         attendedPeopleLinearLayout.removeAllViews()
         event.attendedPeopleProfilePictureUrls.forEach { url ->
             val imageView = ImageView(holder.itemView.context).apply {
@@ -157,6 +173,7 @@ class EventsAdapter(
             attendedPeopleLinearLayout.addView(imageView)
         }
     }
+
     override fun getItemCount(): Int {
         return when (currentTab) {
             TabType.ALL_EVENTS -> eventsList.size
@@ -191,9 +208,11 @@ class EventsAdapter(
         val availableSpots = event.spots - event.currentAttendeesCount
         if (availableSpots <= 0) {
             holder.openSpotsTextView.text = holder.itemView.context.getString(R.string.event_full)
-            holder.attendButtonTextView.visibility = if (event.attendedPeopleProfilePictureUrls.contains(FirebaseAuth.getInstance().currentUser?.photoUrl.toString())) View.VISIBLE else View.GONE
+            holder.attendButtonTextView.visibility =
+                if (event.attendedPeopleProfilePictureUrls.contains(FirebaseAuth.getInstance().currentUser?.photoUrl.toString())) View.VISIBLE else View.GONE
         } else {
-            holder.openSpotsTextView.text = "${availableSpots} ${holder.itemView.context.getString(R.string.spots)}"
+            holder.openSpotsTextView.text =
+                "${availableSpots} ${holder.itemView.context.getString(R.string.spots)}"
             holder.attendButtonTextView.visibility = View.VISIBLE
         }
     }
@@ -212,8 +231,12 @@ class EventsAdapter(
         })
     }
 
-    private fun refreshAttendedPeopleLinearLayout(holder: ViewHolder, profilePictureUrls: List<String>) {
-        val attendedPeopleLinearLayout = holder.itemView.findViewById<LinearLayout>(R.id.attendedPeopleLinearLayout)
+    private fun refreshAttendedPeopleLinearLayout(
+        holder: ViewHolder,
+        profilePictureUrls: List<String>
+    ) {
+        val attendedPeopleLinearLayout =
+            holder.itemView.findViewById<LinearLayout>(R.id.attendedPeopleLinearLayout)
         attendedPeopleLinearLayout.removeAllViews()
         val maxProfilesToShow = 3
         val profilesToShow = profilePictureUrls.take(maxProfilesToShow)
@@ -236,7 +259,10 @@ class EventsAdapter(
         }
         if (profilePictureUrls.size > maxProfilesToShow) {  // TODO what to show??
             val moreAttendeesTextView = TextView(holder.itemView.context).apply {
-                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
                 text = "...."
                 textSize = 16f
                 gravity = Gravity.CENTER_VERTICAL
@@ -245,12 +271,6 @@ class EventsAdapter(
         }
 
     }
-
-
-
-
-
-
 
 
 }

@@ -7,4 +7,4 @@ data class Friend(
     val name: String? = null,
 
 
-)
+    )

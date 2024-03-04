@@ -20,7 +20,11 @@ class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
     private lateinit var messageRecyclerView: RecyclerView
     private lateinit var messageAdapter: FriendsAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_message, container, false)
     }
 
@@ -48,6 +52,7 @@ class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
             }
         )
     }
+
     override fun onFriendClick(friend: Friend) {
         checkForExistingConversation(friend.id) { conversationId ->
             val chatFragment = if (conversationId != null) {
@@ -91,6 +96,7 @@ class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
 
     override fun onMessageClick(friend: Friend) {
     }
+
     override fun onBinClick(friend: Friend) {
     }
 }

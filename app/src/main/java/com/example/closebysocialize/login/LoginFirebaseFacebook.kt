@@ -20,21 +20,23 @@ class LoginFirebaseFacebook(private val activity: Activity) {
     private val firebaseAuth = FirebaseAuth.getInstance()
 
     fun startFacebookLogin() {
-        LoginManager.getInstance().logInWithReadPermissions(activity, listOf("email", "public_profile"))
-        LoginManager.getInstance().registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
-            override fun onSuccess(loginResult: LoginResult) {
-                Log.d("FacebookLogin", "Facebook onSuccess")
-                handleFacebookAccessToken(loginResult.accessToken)
-            }
+        LoginManager.getInstance()
+            .logInWithReadPermissions(activity, listOf("email", "public_profile"))
+        LoginManager.getInstance()
+            .registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+                override fun onSuccess(loginResult: LoginResult) {
+                    Log.d("FacebookLogin", "Facebook onSuccess")
+                    handleFacebookAccessToken(loginResult.accessToken)
+                }
 
-            override fun onCancel() {
-                Log.d("FacebookLogin", "Facebook onCancel")
-            }
+                override fun onCancel() {
+                    Log.d("FacebookLogin", "Facebook onCancel")
+                }
 
-            override fun onError(error: FacebookException) {
-                Log.e("FacebookLogin", "Facebook onError", error)
-            }
-        })
+                override fun onError(error: FacebookException) {
+                    Log.e("FacebookLogin", "Facebook onError", error)
+                }
+            })
     }
 
     fun handleActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -46,7 +48,8 @@ class LoginFirebaseFacebook(private val activity: Activity) {
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(activity) { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(activity, "Log in with Facebook succeeded.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, "Log in with Facebook succeeded.", Toast.LENGTH_SHORT)
+                        .show()
                     val firebaseUser = firebaseAuth.currentUser
                     firebaseUser?.let {
                         FirestoreUtils.saveUserToFirestore(it, activity)
@@ -56,7 +59,11 @@ class LoginFirebaseFacebook(private val activity: Activity) {
                     }
                 } else {
                     Log.e("FacebookLogin", "Firebase Authentication failed", task.exception)
-                    Toast.makeText(activity, "Authentication failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        activity,
+                        "Authentication failed: ${task.exception?.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
     }

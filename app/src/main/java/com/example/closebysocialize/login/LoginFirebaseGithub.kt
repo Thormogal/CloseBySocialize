@@ -20,7 +20,8 @@ class LoginFirebaseGithub(private val activity: Activity) {
                 handleSignInResult(authResult)
             }
             .addOnFailureListener {
-                Toast.makeText(activity, "Github sign-in failed: ${it.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, "Github sign-in failed: ${it.message}", Toast.LENGTH_LONG)
+                    .show()
             }
 
     }

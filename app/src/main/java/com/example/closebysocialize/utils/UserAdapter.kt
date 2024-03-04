@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.R
 import com.example.closebysocialize.dataClass.Users
 
-class UserAdapter(private var users: List<Users>) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
+class UserAdapter(private var users: List<Users>) :
+    RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
     var onItemClick: ((Users) -> Unit)? = null
-
 
 
     class UserViewHolder(view: View) : RecyclerView.ViewHolder(view) {
