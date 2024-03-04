@@ -57,11 +57,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapView = view.findViewById(R.id.mapView)
         mapView.onCreate(savedInstanceState)
         mapView.onResume()
-
-        // Initialize the GoogleMap asynchronously
         mapView.getMapAsync(this)
-
-
 
         myPositionImageView = view.findViewById(R.id.myPositionImageView)
         fusedLocationClient =
@@ -81,12 +77,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 if (!newText.isNullOrBlank()){
                     startPlaceAutocomplete()
                 }
-                // You can implement suggestions or search as user types, if needed
                 return true
             }
         })
 
-        // Set up a focus listener to expand the SearchView when it gains focus
         mapSearchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 mapSearchView.isIconified = false
@@ -107,12 +101,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private fun performSearch(query: String?) {
         if (!query.isNullOrBlank()) {
-            // Perform search based on the query
             // For demonstration purposes, we'll just log the search query
             Log.d("PerformSearch", "Search query: $query")
             controlLocationUpdates(true)
-
-            // You can perform other actions here, such as displaying search results
         }
     }
 
@@ -121,8 +112,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     fun recenterMapOnUserLocation() {
-        // Possibly move camera to user's current location
-        // Then enable location updates
         controlLocationUpdates(true)
     }
 
@@ -143,7 +132,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         //longlat for sthlm
         val initialLocation = LatLng(59.3293, 18.0686)
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 6f))
-
         googleMap.uiSettings.isZoomControlsEnabled = true
 
         googleMap.setOnCameraMoveStartedListener { reason ->
@@ -151,10 +139,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 userHasInteracted = true
             }
         }
-
         fetchPlacesAndDisplayOnMap()
-
-
     }
 
     fun fetchPlacesAndDisplayOnMap() {
@@ -174,13 +159,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 }
 
     fun addMarkerForPlace(eventPlace: EventPlace) {
-        // Konvertera Firestore GeoPoint till LatLng
+        // Convert Firestore GeoPoint to LatLng
         val latLng = LatLng(eventPlace.place_coordinates.latitude, eventPlace.place_coordinates.longitude)
         googleMap.addMarker(MarkerOptions().position(latLng).title("Custom Place"))
-
     }
-
-
     private fun addCurrentLocationMarker() {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
@@ -191,7 +173,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 }
             }
         } else {
-            // Since you're handling permissions in the ContainerActivity, you might log or inform the user differently here
             Log.d("MapFragment", "Location permission not granted")
         }
     }
@@ -209,17 +190,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val place = Autocomplete.getPlaceFromIntent(data!!)
             userHasInteracted= true
-            // Use the selected place (e.g., move camera to the selected location)
             googleMap?.moveCamera(CameraUpdateFactory.newLatLng(place.latLng))
         }
-
     }
     companion object {
         private const val AUTOCOMPLETE_REQUEST_CODE = 1001
     }
-
-
-
     private fun startPlaceAutocomplete() {
         val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
 
