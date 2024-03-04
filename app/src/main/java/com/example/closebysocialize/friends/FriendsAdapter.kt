@@ -36,7 +36,6 @@ class FriendsAdapter(private val context: Context, private var friends: List<Fri
 
         private val nameTextView: TextView = view.findViewById(R.id.nameTextView)
         private val profileImageView: ImageView = view.findViewById(R.id.friendProfilePictureImageView)
-        private val messageIcon: ImageView = view.findViewById(R.id.messageIcon)
         private val binIcon: ImageView = view.findViewById(R.id.binIcon)
 
         fun bind(friend: Friend) {
@@ -47,10 +46,8 @@ class FriendsAdapter(private val context: Context, private var friends: List<Fri
                 .into(profileImageView)
 
             if (showActions) {
-                messageIcon.visibility = View.VISIBLE
                 binIcon.visibility = View.VISIBLE
             } else {
-                messageIcon.visibility = View.GONE
                 binIcon.visibility = View.GONE
             }
             itemView.setOnClickListener {
@@ -59,9 +56,6 @@ class FriendsAdapter(private val context: Context, private var friends: List<Fri
 
             binIcon.setOnClickListener {
                 listener?.onBinClick(friend)
-            }
-            messageIcon.setOnClickListener {
-
             }
 
         }
