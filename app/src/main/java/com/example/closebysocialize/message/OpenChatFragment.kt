@@ -126,7 +126,6 @@ class OpenChatFragment : Fragment() {
             "isRead" to false,
             "messageStatus" to "sent"
         )
-
         FirebaseFirestore.getInstance()
             .collection("conversations")
             .document(conversationId)
@@ -192,6 +191,7 @@ class OpenChatFragment : Fragment() {
                 Log.e("OpenChatFragment", "Error fetching conversations", exception)
             }
     }
+
     private fun markMessagesAsRead() {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val conversationId = this.conversationId ?: return
