@@ -61,7 +61,7 @@ class ContainerActivity : AppCompatActivity() {
             Places.initialize(applicationContext, getString(R.string.google_maps_api_key))
         }
         placesClient = Places.createClient(this)
-        // Initialize FusedLocationProviderClient
+        
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         placesClient = Places.createClient(this)
