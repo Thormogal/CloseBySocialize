@@ -28,7 +28,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import android.Manifest
-import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -39,9 +38,6 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.example.closebysocialize.dataClass.Users
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.bumptech.glide.request.transition.Transition
@@ -74,7 +70,6 @@ class ContainerActivity : AppCompatActivity() {
             requestLocationPermission()
         }
 
-        // Setup toolbar and bottom navigation
         val toolbar: Toolbar = findViewById(R.id.topAppBar)
         setSupportActionBar(toolbar)
 
