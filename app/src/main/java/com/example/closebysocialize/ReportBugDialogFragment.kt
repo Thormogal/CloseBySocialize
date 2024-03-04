@@ -1,4 +1,5 @@
 package com.example.closebysocialize
+
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment

@@ -46,6 +46,7 @@ class ResetPasswordActivity : AppCompatActivity() {
                 }
             })
     }
+
     private fun navigateToLoginPage() {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)

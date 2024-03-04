@@ -101,15 +101,18 @@ class OpenChatFragment : Fragment() {
             postComment(conversationId!!, currentUserId, commentText)
         } else {
             val participants = listOf(currentUserId, friendId)
-            val newConversationData = hashMapOf("participants" to participants,"timestamp" to FieldValue.serverTimestamp()
+            val newConversationData = hashMapOf(
+                "participants" to participants, "timestamp" to FieldValue.serverTimestamp()
             )
-            val conversationsCollection = FirebaseFirestore.getInstance().collection("conversations")
+            val conversationsCollection =
+                FirebaseFirestore.getInstance().collection("conversations")
 
-            conversationsCollection.add(newConversationData).addOnSuccessListener { documentReference ->
-                val newConversationId = documentReference.id
-                this.conversationId = newConversationId
-                postComment(newConversationId, currentUserId, commentText)
-            }.addOnFailureListener { e ->
+            conversationsCollection.add(newConversationData)
+                .addOnSuccessListener { documentReference ->
+                    val newConversationId = documentReference.id
+                    this.conversationId = newConversationId
+                    postComment(newConversationId, currentUserId, commentText)
+                }.addOnFailureListener { e ->
                 Log.e("OpenChatFragment", "Failed to create conversation", e)
                 Toast.makeText(context, "Failed to start conversation", Toast.LENGTH_SHORT).show()
             }
@@ -182,7 +185,8 @@ class OpenChatFragment : Fragment() {
             .get()
             .addOnSuccessListener { documents ->
                 val filteredConversations = documents.filter { document ->
-                    val participants = document.get("participants") as? List<String> ?: return@filter false
+                    val participants =
+                        document.get("participants") as? List<String> ?: return@filter false
                     friendId in participants
                 }
                 // TODO: Use filteredConversations for whatever your logic requires
