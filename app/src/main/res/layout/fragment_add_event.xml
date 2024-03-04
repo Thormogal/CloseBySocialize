@@ -270,9 +270,17 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewFindUsers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/eventGuests" />
+
         <Space
             android:layout_width="match_parent"
             android:layout_height="8dp" />
+
 
 
         <com.google.android.material.textfield.TextInputLayout
@@ -351,5 +359,9 @@
 
 
 
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
 </ScrollView>
