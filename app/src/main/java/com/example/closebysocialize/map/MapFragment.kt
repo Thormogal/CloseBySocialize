@@ -2,11 +2,9 @@ package com.example.closebysocialize.map
 
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -16,7 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SearchView
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.example.closebysocialize.ContainerActivity
 import com.example.closebysocialize.R
@@ -32,9 +29,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.firebase.firestore.FirebaseFirestore
-import com.example.closebysocialize.EventPlace
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.firebase.firestore.GeoPoint
 
 
@@ -57,8 +52,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mapView = view.findViewById(R.id.mapView)
-        onCreate(savedInstanceState)
         mapView.getMapAsync(this)
 
 
@@ -77,7 +70,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val mapSearchView: SearchView = view.findViewById(R.id.mapSearchView)
         mapSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                performSearch(query)
                 return false
             }
 
@@ -99,17 +91,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-
-
-
-    private fun performSearch(query: String?) {
-        if (!query.isNullOrBlank()) {
-            // For demonstration purposes, we'll just log the search query
-            Log.d("PerformSearch", "Search query: $query")
-            controlLocationUpdates(true)
-        }
-    }
-
     fun controlLocationUpdates(enable: Boolean) {
         (activity as? ContainerActivity)?.setLocationUpdatesEnabled(enable)
     }
@@ -120,6 +101,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
+        controlLocationUpdates(true)
         try {
             googleMap.setMapStyle(
                 MapStyleOptions.loadRawResourceStyle(
@@ -131,9 +113,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
         addCurrentLocationMarker()
 
+
         // longlat for sthlm
-        val initialLocation = LatLng(59.3293, 18.0686)
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 6f))
+        //val initialLocation = LatLng(59.3293, 18.0686)
+        //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 6f))
+
         googleMap.uiSettings.isZoomControlsEnabled = true
         googleMap.setOnCameraMoveStartedListener { reason ->
             if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
@@ -183,7 +167,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                 location?.let {
                     val currentLatLng = LatLng(it.latitude, it.longitude)
-                    googleMap.addMarker(MarkerOptions().position(currentLatLng).title(""))
+                    googleMap.addMarker(MarkerOptions().position(currentLatLng).title("My location"))
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 10f))
                 }
             }
@@ -192,7 +176,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun updateMapLocation(location: Location) {
         if (!userHasInteracted) {
             val newPos = LatLng(location.latitude, location.longitude)
@@ -226,6 +209,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onResume() {
         super.onResume()
         mapView.onResume()
+        controlLocationUpdates(true)
     }
 
     override fun onStart() {
@@ -242,11 +226,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onPause() {
         super.onPause()
         mapView.onPause()
+        controlLocationUpdates(true)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mapView.onDestroy()
+
     }
 
     override fun onLowMemory() {
