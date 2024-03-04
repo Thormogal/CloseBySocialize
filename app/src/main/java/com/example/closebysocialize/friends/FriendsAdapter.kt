@@ -1,23 +1,13 @@
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.closebysocialize.R
 import com.example.closebysocialize.dataClass.Friend
-import com.example.closebysocialize.dataClass.Users
-import com.example.closebysocialize.message.OpenChatFragment
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 class FriendsAdapter(
     private val context: Context,

@@ -1,23 +1,17 @@
 package com.example.closebysocialize.utils
 
 import android.content.Context
-import android.util.Log
-import android.widget.ImageView
 import android.widget.Toast
-import com.bumptech.glide.Glide
 import com.example.closebysocialize.dataClass.Event
 import com.example.closebysocialize.dataClass.Friend
-import com.example.closebysocialize.dataClass.Users
+import com.example.closebysocialize.dataClass.User
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.auth.User
-import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
 
 object FirestoreUtils {
@@ -84,7 +78,6 @@ object FirestoreUtils {
             }
     }
 
-
     fun fetchSavedEventsByUser(
         userId: String,
         onSuccess: (List<Event>) -> Unit,
@@ -128,7 +121,6 @@ object FirestoreUtils {
             onFailure(IllegalArgumentException("No valid document IDs provided for querying."))
         }
     }
-
 
     fun fetchAttendingEventsByUser(
         userId: String,
@@ -197,7 +189,7 @@ object FirestoreUtils {
         userRef.get()
             .addOnSuccessListener { documentSnapshot ->
                 val savedEvents =
-                    documentSnapshot.toObject(Users::class.java)?.savedEvents ?: listOf()
+                    documentSnapshot.toObject(User::class.java)?.savedEvents ?: listOf()
 
                 if (isCurrentlySaved && savedEvents.contains(eventId)) {
                     userRef.update("savedEvents", FieldValue.arrayRemove(eventId))
@@ -225,7 +217,7 @@ object FirestoreUtils {
         userRef.get()
             .addOnSuccessListener { documentSnapshot ->
                 val attendingEvents =
-                    documentSnapshot.toObject(Users::class.java)?.attendingEvents ?: listOf()
+                    documentSnapshot.toObject(User::class.java)?.attendingEvents ?: listOf()
                 if (isCurrentlyAttending && attendingEvents.contains(eventId)) {
                     userRef.update("attendingEvents", FieldValue.arrayRemove(eventId))
                         .addOnSuccessListener { onSuccess() }
@@ -240,7 +232,6 @@ object FirestoreUtils {
             }
             .addOnFailureListener { exception -> onFailure(exception) }
     }
-
 
 }
 

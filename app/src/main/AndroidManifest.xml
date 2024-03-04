@@ -20,7 +20,7 @@
         tools:targetApi="31">
 
 
-        <activity android:name=".EventMapSearch" />
+        <activity android:name=".map.EventMapSearch" />
 
         <service
             android:name=".message.ReceiveNotificationMessage"

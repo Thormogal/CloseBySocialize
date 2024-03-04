@@ -1,4 +1,4 @@
-package com.example.closebysocialize
+package com.example.closebysocialize.dataClass
 
 import com.google.firebase.firestore.GeoPoint
 

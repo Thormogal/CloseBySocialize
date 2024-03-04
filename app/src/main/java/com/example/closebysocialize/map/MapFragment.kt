@@ -2,7 +2,6 @@ package com.example.closebysocialize.map
 
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SearchView
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.closebysocialize.ContainerActivity
 import com.example.closebysocialize.R
@@ -33,8 +33,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.GeoPoint
-import com.example.closebysocialize.EventPlace
+import com.example.closebysocialize.dataClass.EventPlace
 
 
 class MapFragment : Fragment(), OnMapReadyCallback {
@@ -48,7 +47,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-
         val view = inflater.inflate(R.layout.fragment_map, container, false)
 
         mapView = view.findViewById(R.id.mapView)
@@ -99,6 +97,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
 
         return view
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        (activity as? AppCompatActivity)?.supportActionBar?.title = getString(R.string.title_map)
     }
 
     private fun performSearch(query: String?) {

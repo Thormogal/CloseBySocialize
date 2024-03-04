@@ -2,6 +2,7 @@ package com.example.closebysocialize.utils
 
 import FriendsFragment
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.closebysocialize.AddEventFragment
@@ -14,7 +15,6 @@ import com.example.closebysocialize.profile.ProfileFragment
 import com.google.android.gms.maps.MapFragment
 
 object FragmentUtils {
-
 
     fun switchFragment(
         activity: AppCompatActivity,
@@ -48,6 +48,8 @@ object FragmentUtils {
             FriendsFragment::class.java -> R.string.title_friends
             else -> R.string.app_name
         }
+        Log.d("FragmentUtils", "Updating ActionBar Title for ${fragmentClass.simpleName} to resource ID $titleResId")
+
         activity.supportActionBar?.title = activity.getString(titleResId)
     }
 

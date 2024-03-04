@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.closebysocialize.events.EventsFragment
+import com.example.closebysocialize.map.EventMapSearch
 import com.example.closebysocialize.utils.FragmentUtils
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.button.MaterialButton

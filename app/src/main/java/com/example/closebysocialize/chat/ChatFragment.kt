@@ -81,7 +81,6 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
         }
     }
 
-
     override fun onReply(commentId: String) {
         val inflater = requireActivity().layoutInflater
         val view = inflater.inflate(R.layout.dialog_reply, null)
@@ -128,7 +127,6 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
         }
         organizedComments.addAll(replies)
     }
-
 
     private fun postComment(commentText: String, parentId: String? = null) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return

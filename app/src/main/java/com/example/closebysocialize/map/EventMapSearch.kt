@@ -1,10 +1,11 @@
-package com.example.closebysocialize;
+package com.example.closebysocialize.map;
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.example.closebysocialize.R
 import com.example.closebysocialize.message.FireBaseMessagingService.Companion.TAG
 import com.google.android.gms.common.api.Status
 import com.google.android.libraries.places.api.Places

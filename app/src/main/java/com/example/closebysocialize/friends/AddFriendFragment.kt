@@ -1,7 +1,5 @@
 package com.example.closebysocialize.friends
 
-import FriendsAdapter
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,8 +13,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.R
-import com.example.closebysocialize.dataClass.Users
-import com.example.closebysocialize.message.FireBaseMessagingService.Companion.TAG
+import com.example.closebysocialize.dataClass.User
 import com.example.closebysocialize.utils.UserAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -79,14 +76,14 @@ class AddFriendFragment : Fragment() {
             .endAt(searchQueryEnd)
             .get()
             .addOnSuccessListener { documents ->
-                val userList = documents.mapNotNull { it.toObject(Users::class.java) }
+                val userList = documents.mapNotNull { it.toObject(User::class.java) }
                 userAdapter.updateData(userList)
             }
             .addOnFailureListener {
             }
     }
 
-    private fun addUserAsFriend(user: Users) {
+    private fun addUserAsFriend(user: User) {
         val currentUser = FirebaseAuth.getInstance().currentUser ?: return
         if (user.id.isNullOrEmpty()) {
             Toast.makeText(context, "Invalid user ID", Toast.LENGTH_SHORT).show()

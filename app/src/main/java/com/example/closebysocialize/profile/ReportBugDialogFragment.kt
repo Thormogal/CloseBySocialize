@@ -1,11 +1,11 @@
-package com.example.closebysocialize
+package com.example.closebysocialize.profile
 
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import android.app.AlertDialog
 import android.widget.EditText
-import androidx.fragment.app.FragmentActivity
+import com.example.closebysocialize.R
 
 class ReportBugDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

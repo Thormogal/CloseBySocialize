@@ -28,7 +28,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import android.Manifest
-import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -36,12 +35,9 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
-import com.example.closebysocialize.dataClass.Users
+import com.example.closebysocialize.dataClass.User
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.bumptech.glide.request.transition.Transition
@@ -311,7 +307,7 @@ class ContainerActivity : AppCompatActivity() {
             val db = FirebaseFirestore.getInstance()
             db.collection("users").document(userId).get()
                 .addOnSuccessListener { documentSnapshot ->
-                    val user = documentSnapshot.toObject(Users::class.java)
+                    val user = documentSnapshot.toObject(User::class.java)
                     user?.profileImageUrl?.let {
                         showProfileImage(it)
                     }
