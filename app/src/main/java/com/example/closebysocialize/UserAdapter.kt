@@ -1,4 +1,3 @@
-
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,12 @@ import com.example.closebysocialize.dataClass.Users
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 
-class UserAdapter(private var users: List<Users>, private val taggedUsers: MutableList<String>, private val eventGuests: EditText, private val chipGroup: ChipGroup) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
+class UserAdapter(
+    private var users: List<Users>,
+    private val taggedUsers: MutableList<String>,
+    private val eventGuests: EditText,
+    private val chipGroup: ChipGroup
+) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
     fun updateData(newUsers: List<Users>) {
         users = newUsers
@@ -47,7 +51,12 @@ class UserAdapter(private var users: List<Users>, private val taggedUsers: Mutab
 
                 }
                 chipGroup.addView(chip)
-                holder.userName.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.primary_blue))
+                holder.userName.setBackgroundColor(
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        R.color.primary_blue
+                    )
+                )
             }
         }
     }

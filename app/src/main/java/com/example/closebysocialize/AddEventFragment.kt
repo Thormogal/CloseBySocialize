@@ -61,7 +61,6 @@ class AddEventFragment : Fragment() {
     private lateinit var recyclerViewFindUsers: RecyclerView
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -305,8 +304,6 @@ class AddEventFragment : Fragment() {
             val spots = numberPicker.value
 
 
-
-
             val eventName = eventNameTextView.text.toString()
             val place = eventPlace.text.toString()
             val date = eventDate.text.toString()
@@ -451,7 +448,6 @@ class AddEventFragment : Fragment() {
                 onSuccess(userList)
             }
             .addOnFailureListener {
-                // Handle failure here
             }
     }
 
