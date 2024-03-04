@@ -20,9 +20,8 @@ object FirestoreUtils {
         val userRef = FirebaseFirestore.getInstance().collection("users").document(firebaseUser.uid)
         userRef.get().addOnSuccessListener { document ->
             if (!document.exists()) {
-                val uniqueId = UUID.randomUUID().toString()
                 val userInfo = hashMapOf(
-                    "id" to uniqueId,
+                    "id" to firebaseUser.uid,
                     "name" to firebaseUser.displayName,
                     "email" to firebaseUser.email,
                     "profileImageUrl" to (firebaseUser.photoUrl?.toString() ?: "defaultUrl")
