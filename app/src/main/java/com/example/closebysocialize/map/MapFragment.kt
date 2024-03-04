@@ -35,6 +35,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.example.closebysocialize.EventPlace
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.firebase.firestore.GeoPoint
 
 
 class MapFragment : Fragment(), OnMapReadyCallback {
@@ -144,25 +145,31 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     fun fetchPlacesAndDisplayOnMap() {
         val db = FirebaseFirestore.getInstance()
-        db.collection("place_coordinates")
+        db.collection("events")
             .get()
-            .addOnSuccessListener { documents ->
-                Log.d("Firestore", "Fetched ${documents.size()} documents")
-                for (document in documents) {
-                    val eventPlace = document.toObject(EventPlace::class.java)
-                    addMarkerForPlace(eventPlace)
+            .addOnSuccessListener { eventDocuments ->
+                Log.d("Firestore", "Fetched ${eventDocuments.size()} event documents")
+                for (eventDocument in eventDocuments) {
+                    val placeCoordinates = eventDocument.getGeoPoint("place_coordinates")
+                    if (placeCoordinates != null) {
+                        addMarkerForPlace(eventDocument.id, placeCoordinates)
+                    } else {
+                        Log.d("Firestore", "No place_coordinates found for event ${eventDocument.id}")
+                    }
                 }
             }
             .addOnFailureListener { exception ->
-                Log.d("Firestore", "Error getting documents: ", exception)
+                Log.d("Firestore", "Error getting event documents: ", exception)
             }
     }
 
-    fun addMarkerForPlace(eventPlace: EventPlace) {
-        // Convert Firestore GeoPoint to LatLng
-        val latLng = LatLng(eventPlace.place_coordinates.latitude, eventPlace.place_coordinates.longitude)
-        googleMap.addMarker(MarkerOptions().position(latLng).title("Custom Place"))
+    fun addMarkerForPlace(eventId: String, geoPoint: GeoPoint) {
+        val markerOptions = MarkerOptions()
+            .position(LatLng(geoPoint.latitude, geoPoint.longitude))
+            .title("Event ID: $eventId")
+        googleMap.addMarker(markerOptions)
     }
+
 
     private fun addCurrentLocationMarker() {
         if (ActivityCompat.checkSelfPermission(
