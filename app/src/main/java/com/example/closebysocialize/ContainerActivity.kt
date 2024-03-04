@@ -234,6 +234,7 @@ class ContainerActivity : AppCompatActivity() {
         )
     }
 
+
     private val locationCallback = object : LocationCallback() {
         @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
         override fun onLocationResult(locationResult: LocationResult) {
