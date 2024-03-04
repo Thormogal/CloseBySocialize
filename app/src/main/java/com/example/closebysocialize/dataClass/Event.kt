@@ -1,6 +1,5 @@
 package com.example.closebysocialize.dataClass
 
-import com.google.firebase.firestore.GeoPoint
 
 data class Event(
     var id: String = "",
@@ -23,4 +22,4 @@ data class Event(
     var currentAttendeesCount: Int = 0,
     val createdAt: com.google.firebase.Timestamp? = null,
 
-)
+    )

@@ -19,7 +19,11 @@ import com.example.closebysocialize.message.OpenChatFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class FriendsAdapter(private val context: Context, private var friends: List<Friend>, private val showActions: Boolean = true) : RecyclerView.Adapter<FriendsAdapter.FriendViewHolder>() {
+class FriendsAdapter(
+    private val context: Context,
+    private var friends: List<Friend>,
+    private val showActions: Boolean = true
+) : RecyclerView.Adapter<FriendsAdapter.FriendViewHolder>() {
 
     interface FriendClickListener {
         fun onMessageClick(friend: Friend)
@@ -28,15 +32,14 @@ class FriendsAdapter(private val context: Context, private var friends: List<Fri
     }
 
 
-
     var listener: FriendClickListener? = null
 
     inner class FriendViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
 
         private val nameTextView: TextView = view.findViewById(R.id.nameTextView)
-        private val profileImageView: ImageView = view.findViewById(R.id.friendProfilePictureImageView)
-        private val messageIcon: ImageView = view.findViewById(R.id.messageIcon)
+        private val profileImageView: ImageView =
+            view.findViewById(R.id.friendProfilePictureImageView)
         private val binIcon: ImageView = view.findViewById(R.id.binIcon)
 
         fun bind(friend: Friend) {
@@ -47,10 +50,8 @@ class FriendsAdapter(private val context: Context, private var friends: List<Fri
                 .into(profileImageView)
 
             if (showActions) {
-                messageIcon.visibility = View.VISIBLE
                 binIcon.visibility = View.VISIBLE
             } else {
-                messageIcon.visibility = View.GONE
                 binIcon.visibility = View.GONE
             }
             itemView.setOnClickListener {
@@ -60,13 +61,9 @@ class FriendsAdapter(private val context: Context, private var friends: List<Fri
             binIcon.setOnClickListener {
                 listener?.onBinClick(friend)
             }
-            messageIcon.setOnClickListener {
-
-            }
 
         }
     }
-
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {

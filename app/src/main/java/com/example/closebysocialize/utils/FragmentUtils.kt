@@ -34,7 +34,10 @@ object FragmentUtils {
         updateActionBarTitle(activity, fragmentClass)
     }
 
-    private fun updateActionBarTitle(activity: AppCompatActivity, fragmentClass: Class<out Fragment>) {
+    private fun updateActionBarTitle(
+        activity: AppCompatActivity,
+        fragmentClass: Class<out Fragment>
+    ) {
         val titleResId = when (fragmentClass) {
             EventsFragment::class.java -> R.string.title_events
             ProfileFragment::class.java -> R.string.title_profile
@@ -48,9 +51,9 @@ object FragmentUtils {
         activity.supportActionBar?.title = activity.getString(titleResId)
     }
 
-    fun openUserProfile(activity: AppCompatActivity, userId: String) {
+    fun openUserProfile(activity: AppCompatActivity, id: String) {
         val args = Bundle().apply {
-            putString(ProfileFragment.ARG_USER_ID, userId)
+            putString(ProfileFragment.ARG_ID, id)
         }
         switchFragment(activity, R.id.fragment_container, ProfileFragment::class.java, args)
     }

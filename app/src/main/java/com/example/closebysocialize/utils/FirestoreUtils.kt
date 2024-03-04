@@ -7,13 +7,16 @@ import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.closebysocialize.dataClass.Event
 import com.example.closebysocialize.dataClass.Friend
+import com.example.closebysocialize.dataClass.Users
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.auth.User
 import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
 
@@ -32,22 +35,42 @@ object FirestoreUtils {
 
                 userRef.set(userInfo)
                     .addOnSuccessListener {
-                        Toast.makeText(context, "Your information has been saved to Firestore.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Your information has been saved to Firestore.",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                     .addOnFailureListener { e ->
-                        Toast.makeText(context, "Error with saving user information: ${e.message}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            context,
+                            "Error with saving user information: ${e.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
             } else {
-                Toast.makeText(context, "User information already exists in Firestore.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "User information already exists in Firestore.",
+                    Toast.LENGTH_SHORT
+                ).show()
 
             }
         }.addOnFailureListener { e ->
-            Toast.makeText(context, "Error when checking if the profile exists: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                "Error when checking if the profile exists: ${e.message}",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
     // fetch events created by user
-    fun fetchUserEvents(userId: String?, onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit) {
+    fun fetchUserEvents(
+        userId: String?,
+        onSuccess: (List<Event>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
         val db = FirebaseFirestore.getInstance()
         db.collection("events")
             .whereEqualTo("authorId", userId)
@@ -61,7 +84,12 @@ object FirestoreUtils {
             }
     }
 
-    fun fetchSavedEventsByUser(userId: String, onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit) {
+
+    fun fetchSavedEventsByUser(
+        userId: String,
+        onSuccess: (List<Event>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
         val db = FirebaseFirestore.getInstance()
         db.collection("users").document(userId).get()
             .addOnSuccessListener { documentSnapshot ->
@@ -75,24 +103,43 @@ object FirestoreUtils {
             .addOnFailureListener(onFailure)
     }
 
-    fun fetchEventsByIds(ids: List<String>, onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit) {
+    fun fetchEventsByIds(
+        ids: List<String>,
+        onSuccess: (List<Event>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
         val db = FirebaseFirestore.getInstance()
-        val tasks = ids.chunked(10).map { batch ->
-            db.collection("events").whereIn(FieldPath.documentId(), batch).get()
-        }
-        Tasks.whenAllSuccess<QuerySnapshot>(tasks)
-            .addOnSuccessListener { querySnapshots ->
-                val events = querySnapshots.flatMap { snapshot -> snapshot.documents.mapNotNull { it.toObject(Event::class.java) } }
-                onSuccess(events)
+        val validIds = ids.filterNot { it.isBlank() }
+        if (validIds.isNotEmpty()) {
+            val tasks = validIds.chunked(10).map { batch ->
+                db.collection("events").whereIn(FieldPath.documentId(), batch).get()
             }
-            .addOnFailureListener(onFailure)
+            Tasks.whenAllSuccess<QuerySnapshot>(tasks)
+                .addOnSuccessListener { querySnapshots ->
+                    val events = querySnapshots.flatMap { snapshot ->
+                        snapshot.documents.mapNotNull {
+                            it.toObject(Event::class.java)
+                        }
+                    }
+                    onSuccess(events)
+                }
+                .addOnFailureListener(onFailure)
+        } else {
+            onFailure(IllegalArgumentException("No valid document IDs provided for querying."))
+        }
     }
 
-    fun fetchAttendingEventsByUser(userId: String, onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit) {
+
+    fun fetchAttendingEventsByUser(
+        userId: String,
+        onSuccess: (List<Event>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
         val db = FirebaseFirestore.getInstance()
         db.collection("users").document(userId).get()
             .addOnSuccessListener { documentSnapshot ->
-                val attendingEventIds = documentSnapshot["attendingEvents"] as? List<String> ?: emptyList()
+                val attendingEventIds =
+                    documentSnapshot["attendingEvents"] as? List<String> ?: emptyList()
                 if (attendingEventIds.isNotEmpty()) {
                     fetchEventsByIds(attendingEventIds, onSuccess, onFailure)
                 } else {
@@ -120,7 +167,11 @@ object FirestoreUtils {
             }
     }
 
-    fun loadFriends(userId: String, onSuccess: (List<Friend>) -> Unit, onFailure: (Exception) -> Unit) {
+    fun loadFriends(
+        userId: String,
+        onSuccess: (List<Friend>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
         val db = FirebaseFirestore.getInstance()
         db.collection("users")
             .document(userId)
@@ -134,6 +185,64 @@ object FirestoreUtils {
                 onFailure(exception)
             }
     }
+
+    fun toggleSavedEvent(
+        userId: String,
+        eventId: String,
+        isCurrentlySaved: Boolean,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+        userRef.get()
+            .addOnSuccessListener { documentSnapshot ->
+                val savedEvents =
+                    documentSnapshot.toObject(Users::class.java)?.savedEvents ?: listOf()
+
+                if (isCurrentlySaved && savedEvents.contains(eventId)) {
+                    userRef.update("savedEvents", FieldValue.arrayRemove(eventId))
+                        .addOnSuccessListener { onSuccess() }
+                        .addOnFailureListener { exception -> onFailure(exception) }
+                } else if (!isCurrentlySaved && !savedEvents.contains(eventId)) {
+                    userRef.update("savedEvents", FieldValue.arrayUnion(eventId))
+                        .addOnSuccessListener { onSuccess() }
+                        .addOnFailureListener { exception -> onFailure(exception) }
+                } else {
+                    onSuccess()
+                }
+            }
+            .addOnFailureListener { exception -> onFailure(exception) }
+    }
+
+    fun toggleAttendingEvent(
+        userId: String,
+        eventId: String,
+        isCurrentlyAttending: Boolean,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+        userRef.get()
+            .addOnSuccessListener { documentSnapshot ->
+                val attendingEvents =
+                    documentSnapshot.toObject(Users::class.java)?.attendingEvents ?: listOf()
+                if (isCurrentlyAttending && attendingEvents.contains(eventId)) {
+                    userRef.update("attendingEvents", FieldValue.arrayRemove(eventId))
+                        .addOnSuccessListener { onSuccess() }
+                        .addOnFailureListener { exception -> onFailure(exception) }
+                } else if (!isCurrentlyAttending && !attendingEvents.contains(eventId)) {
+                    userRef.update("attendingEvents", FieldValue.arrayUnion(eventId))
+                        .addOnSuccessListener { onSuccess() }
+                        .addOnFailureListener { exception -> onFailure(exception) }
+                } else {
+                    onSuccess()
+                }
+            }
+            .addOnFailureListener { exception -> onFailure(exception) }
+    }
+
+
 }
+
 
 
