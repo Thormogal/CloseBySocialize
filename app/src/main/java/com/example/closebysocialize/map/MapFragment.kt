@@ -58,15 +58,15 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
 
         mapView = view.findViewById(R.id.mapView)
-            onCreate(savedInstanceState)
-            mapView.getMapAsync(this)
+        onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
 
 
         myPositionImageView = view.findViewById(R.id.myPositionImageView)
-            myPositionImageView.setOnClickListener {
-                userHasInteracted = false
-                recenterMapOnUserLocation()
-            }
+        myPositionImageView.setOnClickListener {
+            userHasInteracted = false
+            recenterMapOnUserLocation()
+        }
 
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
