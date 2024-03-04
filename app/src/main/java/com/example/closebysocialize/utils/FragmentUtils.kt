@@ -51,9 +51,9 @@ object FragmentUtils {
         activity.supportActionBar?.title = activity.getString(titleResId)
     }
 
-    fun openUserProfile(activity: AppCompatActivity, id: String) {
+    fun openUserProfile(activity: AppCompatActivity, userId: String) {
         val args = Bundle().apply {
-            putString(ProfileFragment.ARG_ID, id)
+            putString(ProfileFragment.ARG_ID, userId)
         }
         switchFragment(activity, R.id.fragment_container, ProfileFragment::class.java, args)
     }
