@@ -32,7 +32,6 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.GeoPoint
 import com.example.closebysocialize.EventPlace
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -55,17 +54,17 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mapView = view.findViewById(R.id.mapView).apply {
+        mapView = view.findViewById(R.id.mapView)
             onCreate(savedInstanceState)
-            getMapAsync(this@MapFragment)
-        }
+            mapView.getMapAsync(this)
 
-        myPositionImageView = view.findViewById(R.id.myPositionImageView).apply {
-            setOnClickListener {
+
+        myPositionImageView = view.findViewById(R.id.myPositionImageView)
+            myPositionImageView.setOnClickListener {
                 userHasInteracted = false
                 recenterMapOnUserLocation()
             }
-        }
+
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         setupSearchView(view)
@@ -215,22 +214,24 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
     override fun onResume() {
         super.onResume()
         mapView.onResume()
     }
 
-    override fun onPause() {
-        super.onPause()
-        mapView.onPause()
+    override fun onStart() {
+        super.onStart()
+        mapView.onStart()
     }
 
     override fun onStop() {
         super.onStop()
         mapView.onStop()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView.onPause()
     }
 
     override fun onDestroy() {
@@ -242,6 +243,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         super.onLowMemory()
         mapView.onLowMemory()
     }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
