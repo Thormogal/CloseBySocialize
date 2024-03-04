@@ -1,23 +1,13 @@
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.closebysocialize.R
 import com.example.closebysocialize.dataClass.Friend
-import com.example.closebysocialize.dataClass.Users
-import com.example.closebysocialize.message.OpenChatFragment
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.closebysocialize.utils.ImageUtils
 
 class FriendsAdapter(
     private val context: Context,
@@ -31,12 +21,9 @@ class FriendsAdapter(
         fun onFriendClick(friend: Friend)
     }
 
-
     var listener: FriendClickListener? = null
 
     inner class FriendViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-
         private val nameTextView: TextView = view.findViewById(R.id.nameTextView)
         private val profileImageView: ImageView =
             view.findViewById(R.id.friendProfilePictureImageView)
@@ -44,25 +31,16 @@ class FriendsAdapter(
 
         fun bind(friend: Friend) {
             nameTextView.text = friend.name
-            Glide.with(itemView.context)
-                .load(friend.profileImageUrl)
-                .circleCrop()
-                .into(profileImageView)
-
-            if (showActions) {
-                binIcon.visibility = View.VISIBLE
-            } else {
-                binIcon.visibility = View.GONE
-            }
+            ImageUtils.loadProfileImage(itemView.context, friend.profileImageUrl, profileImageView)
+            binIcon.visibility = if (showActions) View.VISIBLE else View.GONE
             itemView.setOnClickListener {
                 listener?.onFriendClick(friend)
             }
-
             binIcon.setOnClickListener {
                 listener?.onBinClick(friend)
             }
-
         }
+
     }
 
 

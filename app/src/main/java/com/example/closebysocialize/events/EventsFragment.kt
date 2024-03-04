@@ -88,7 +88,6 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
         )
     }
 
-
     private fun initializeViews(view: View) {
         filterImageView = view.findViewById(R.id.filterImageView)
         toggleGroup = view.findViewById(R.id.toggleButtonGroup)
@@ -130,7 +129,6 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
             }
         }
     }
-
 
     private fun filterData(filterType: String) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid.orEmpty()

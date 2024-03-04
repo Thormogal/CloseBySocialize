@@ -39,7 +39,6 @@ class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
         messageAdapter.listener = this
     }
 
-
     private fun loadFriends() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         FirestoreUtils.loadFriends(

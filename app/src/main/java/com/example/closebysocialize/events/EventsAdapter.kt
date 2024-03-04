@@ -10,12 +10,12 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.closebysocialize.R
 import com.example.closebysocialize.dataClass.TabType
 import com.example.closebysocialize.dataClass.Event
 import com.example.closebysocialize.utils.FirestoreUtils
 import com.example.closebysocialize.utils.FirestoreUtils.toggleAttendingEvent
+import com.example.closebysocialize.utils.ImageUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -53,14 +53,12 @@ class EventsAdapter(
         val chatImageView: ImageView = view.findViewById(R.id.chatImageView)
         val deleteImageView: ImageView = view.findViewById(R.id.deleteImageView)
         val savedImageView: ImageView = view.findViewById(R.id.savedImageView)
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event, parent, false)
         return ViewHolder(view)
     }
-
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val event = when (currentTab) {
@@ -91,11 +89,12 @@ class EventsAdapter(
             val currentlySaved = savedEventsIds.contains(eventId)
             onToggleSaveEvent(eventId, currentlySaved)
         }
+        ImageUtils.loadProfileImage(
+            holder.itemView.context,
+            event.authorProfileImageUrl,
+            holder.authorProfilePictureImageView
+        )
 
-        Glide.with(holder.itemView.context)
-            .load(event.authorProfileImageUrl)
-            .circleCrop()
-            .into(holder.authorProfilePictureImageView)
         holder.cityTextView.text = event.city
         holder.eventTypeTextView.text = event.eventType
         holder.eventNameTextView.text = event.title
@@ -161,17 +160,11 @@ class EventsAdapter(
                     marginEnd = holder.itemView.dpToPx(8)
                 }
                 scaleType = ImageView.ScaleType.CENTER_INSIDE
-                if (url != null && url.isNotEmpty()) {
-                    Glide.with(holder.itemView.context)
-                        .load(url)
-                        .circleCrop()
-                        .into(this)
-                } else {
-                    setImageResource(R.drawable.profile_top_bar_avatar)
-                }
             }
+            ImageUtils.loadProfileImage(holder.itemView.context, url, imageView)
             attendedPeopleLinearLayout.addView(imageView)
         }
+
     }
 
     override fun getItemCount(): Int {
@@ -249,29 +242,24 @@ class EventsAdapter(
                     marginEnd = holder.itemView.dpToPx(8)
                 }
                 scaleType = ImageView.ScaleType.CENTER_CROP
-                Glide.with(holder.itemView.context)
-                    .load(url)
-                    .placeholder(R.drawable.profile_image_round)
-                    .circleCrop()
-                    .into(this)
             }
+            ImageUtils.loadProfileImage(holder.itemView.context, url, imageView)
             attendedPeopleLinearLayout.addView(imageView)
         }
-        if (profilePictureUrls.size > maxProfilesToShow) {  // TODO what to show??
+        if (profilePictureUrls.size > maxProfilesToShow) {
+            val remainingAttendeesCount = profilePictureUrls.size - maxProfilesToShow
             val moreAttendeesTextView = TextView(holder.itemView.context).apply {
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
-                text = "...."
+                text = "+$remainingAttendeesCount more"
                 textSize = 16f
                 gravity = Gravity.CENTER_VERTICAL
             }
             attendedPeopleLinearLayout.addView(moreAttendeesTextView)
         }
-
     }
-
 
 }
 

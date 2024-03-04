@@ -1,23 +1,18 @@
 package com.example.closebysocialize.utils
 
 import android.content.Context
-import android.util.Log
-import android.widget.ImageView
 import android.widget.Toast
-import com.bumptech.glide.Glide
 import com.example.closebysocialize.dataClass.Event
 import com.example.closebysocialize.dataClass.Friend
 import com.example.closebysocialize.dataClass.Users
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.auth.User
-import com.google.firebase.storage.FirebaseStorage
+
 import java.util.UUID
 
 object FirestoreUtils {
@@ -65,26 +60,6 @@ object FirestoreUtils {
         }
     }
 
-    // fetch events created by user
-    fun fetchUserEvents(
-        userId: String?,
-        onSuccess: (List<Event>) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection("events")
-            .whereEqualTo("authorId", userId)
-            .get()
-            .addOnSuccessListener { snapshot ->
-                val eventsList = snapshot.documents.mapNotNull { it.toObject(Event::class.java) }
-                onSuccess(eventsList)
-            }
-            .addOnFailureListener { exception ->
-                onFailure(exception)
-            }
-    }
-
-
     fun fetchSavedEventsByUser(
         userId: String,
         onSuccess: (List<Event>) -> Unit,
@@ -103,7 +78,7 @@ object FirestoreUtils {
             .addOnFailureListener(onFailure)
     }
 
-    fun fetchEventsByIds(
+    private fun fetchEventsByIds(
         ids: List<String>,
         onSuccess: (List<Event>) -> Unit,
         onFailure: (Exception) -> Unit
@@ -128,7 +103,6 @@ object FirestoreUtils {
             onFailure(IllegalArgumentException("No valid document IDs provided for querying."))
         }
     }
-
 
     fun fetchAttendingEventsByUser(
         userId: String,
