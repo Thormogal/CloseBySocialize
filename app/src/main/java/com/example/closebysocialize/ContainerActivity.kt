@@ -108,7 +108,7 @@ class ContainerActivity : AppCompatActivity() {
         if (userId != null) {
             val db = FirebaseFirestore.getInstance()
             db.collection("conversations")
-                .whereArrayContains("participantIds", userId)
+                .whereArrayContains("participants", userId)
                 .get()
                 .addOnSuccessListener { conversationDocuments ->
                     val conversationIds = conversationDocuments.documents.map { it.id }

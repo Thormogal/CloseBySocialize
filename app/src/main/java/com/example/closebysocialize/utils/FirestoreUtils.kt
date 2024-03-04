@@ -60,6 +60,21 @@ object FirestoreUtils {
         }
     }
 
+    fun fetchProfileImageUrl(senderId: String, context: Context, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("users").document(senderId).get()
+            .addOnSuccessListener { document ->
+                val profileImageUrl = document.getString("profileImageUrl") ?: ""
+                onSuccess(profileImageUrl)
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(context, "Error fetching profile image: ${exception.message}", Toast.LENGTH_SHORT).show()
+                onFailure(exception)
+            }
+    }
+
+
+
     fun fetchSavedEventsByUser(
         userId: String,
         onSuccess: (List<Event>) -> Unit,

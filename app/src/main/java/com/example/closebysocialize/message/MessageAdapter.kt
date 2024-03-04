@@ -1,7 +1,6 @@
 package com.example.closebysocialize.message
 
 import android.content.Context
-import android.util.Log
 import com.example.closebysocialize.dataClass.Message
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +9,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.closebysocialize.R
+import com.example.closebysocialize.utils.FirestoreUtils
 import com.example.closebysocialize.utils.FragmentUtils
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.closebysocialize.utils.ImageUtils
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -50,7 +49,6 @@ class MessageAdapter(
             significantTimeGap(message.timestamp, previousMessage.timestamp) -> true
             else -> false
         }
-
         if (getItemViewType(position) == SENT_MESSAGE) {
             (holder as SentMessageViewHolder).bind(message, showTimestamp)
         } else {
@@ -61,7 +59,6 @@ class MessageAdapter(
             )
         }
     }
-
 
     override fun getItemCount() = messages.size
 
@@ -115,12 +112,10 @@ class MessageAdapter(
     inner class SentMessageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val messageText: TextView = view.findViewById(R.id.senderText)
         private val messageTimestamp: TextView = view.findViewById(R.id.messageSenderTimestamp)
-
         fun bind(message: Message, showTimestamp: Boolean) {
             messageText.text = message.content
             messageTimestamp.text = formatTimestamp(message.timestamp)
             messageTimestamp.visibility = if (showTimestamp) View.VISIBLE else View.GONE
-
             itemView.setOnClickListener {
                 messageTimestamp.visibility =
                     if (messageTimestamp.visibility == View.GONE) View.VISIBLE else View.GONE
@@ -132,43 +127,27 @@ class MessageAdapter(
         private val messageText: TextView = view.findViewById(R.id.receivedText)
         private val messageTimestamp: TextView = view.findViewById(R.id.messageReceivedTimestamp)
         private val profilePicture: ImageView = view.findViewById(R.id.receivedProfilePicture)
-
         fun bind(message: Message, showTimestamp: Boolean, showProfilePicture: Boolean) {
-            Log.d("MessageAdapter", "Binding message from senderId: ${message.senderId}")
-
             messageText.text = message.content
             messageTimestamp.text = formatTimestamp(message.timestamp)
             messageTimestamp.visibility = if (showTimestamp) View.VISIBLE else View.GONE
-            fetchProfileImageUrl(message.senderId) { profileImageUrl ->
-                if (profileImageUrl.isNotEmpty()) {
-                    Glide.with(context)
-                        .load(profileImageUrl)
-                        .circleCrop()
-                        .into(profilePicture)
-                } else {
-                    Glide.with(context)
-                        .load(R.drawable.avatar_dark)
-                        .circleCrop()
-                        .into(profilePicture)
-                }
-            }
+
+            FirestoreUtils.fetchProfileImageUrl(
+                message.senderId,
+                context,
+                onSuccess = { profileImageUrl ->
+                    ImageUtils.loadProfileImage(context, profileImageUrl, profilePicture)
+                },
+                onFailure = { exception ->
+                })
             profilePicture.visibility = if (showProfilePicture) View.VISIBLE else View.INVISIBLE
 
             profilePicture.setOnClickListener {
                 if (context is AppCompatActivity) {
-                    FragmentUtils.openUserProfile(context as AppCompatActivity, message.senderId)
+                    FragmentUtils.openUserProfile(context, message.senderId)
                 }
             }
         }
     }
 
-    private fun fetchProfileImageUrl(senderId: String, callback: (String) -> Unit) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection("users").document(senderId).get().addOnSuccessListener { document ->
-            val profileImageUrl = document.getString("profileImageUrl") ?: ""
-            callback(profileImageUrl)
-        }.addOnFailureListener {
-            Log.e("MessageAdapter", "Failed to fetch profile image URL", it)
-        }
-    }
 }

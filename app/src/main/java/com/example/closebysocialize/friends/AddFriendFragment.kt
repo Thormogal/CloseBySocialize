@@ -99,11 +99,7 @@ class AddFriendFragment : Fragment() {
             "profileImageUrl" to user.profileImageUrl,
             "name" to user.name
         )
-        val messageData = hashMapOf(
-            "senderId" to currentUser.uid,
-            "recipientId" to user.id,
-            "content" to "Hello!"
-        )
+
         db.collection("users")
             .document(currentUser.uid)
             .collection("friends")
@@ -119,14 +115,6 @@ class AddFriendFragment : Fragment() {
                         .addOnSuccessListener {
                             Toast.makeText(context, "Friend added successfully", Toast.LENGTH_SHORT)
                                 .show()
-                            val conversationRef = db.collection("conversations").document()
-                            conversationRef.collection("messages").add(messageData)
-                                .addOnSuccessListener {
-                                    Log.d("!!!", "Initial message sent successfully")
-                                }
-                                .addOnFailureListener { e ->
-                                    Log.e("!!!", "Error sending initial message", e)
-                                }
                         }
                         .addOnFailureListener {
                             Toast.makeText(context, "Failed to add friend", Toast.LENGTH_SHORT)
@@ -142,6 +130,7 @@ class AddFriendFragment : Fragment() {
                     .show()
             }
     }
+
 
 
 }
