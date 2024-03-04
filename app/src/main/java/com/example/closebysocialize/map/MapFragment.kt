@@ -25,7 +25,6 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
@@ -35,6 +34,8 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import com.example.closebysocialize.EventPlace
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
 
 
 class MapFragment : Fragment(), OnMapReadyCallback {
@@ -48,24 +49,30 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
+        return inflater.inflate(R.layout.fragment_map, container, false)
+    }
 
-        val view = inflater.inflate(R.layout.fragment_map, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
+        mapView = view.findViewById(R.id.mapView).apply {
+            onCreate(savedInstanceState)
+            getMapAsync(this@MapFragment)
+        }
 
+        myPositionImageView = view.findViewById(R.id.myPositionImageView).apply {
+            setOnClickListener {
+                userHasInteracted = false
+                recenterMapOnUserLocation()
+            }
+        }
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        setupSearchView(view)
+    }
 
-        mapView = view.findViewById(R.id.mapView)
-        mapView.onCreate(savedInstanceState)
-        mapView.onResume()
-        mapView.getMapAsync(this)
-
-        myPositionImageView = view.findViewById(R.id.myPositionImageView)
-        fusedLocationClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity())
-
-
+    private fun setupSearchView(view: View) {
         val mapSearchView: SearchView = view.findViewById(R.id.mapSearchView)
-
         mapSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 performSearch(query)
@@ -88,15 +95,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 }
             }
         }
-
-        myPositionImageView.setOnClickListener {
-            userHasInteracted = false
-            recenterMapOnUserLocation()
-
-        }
-
-        return view
     }
+
+
+
 
     private fun performSearch(query: String?) {
         if (!query.isNullOrBlank()) {
@@ -213,6 +215,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
     }
 
+    override fun onStart() {
+        super.onStart()
+    }
     override fun onResume() {
         super.onResume()
         mapView.onResume()
@@ -221,6 +226,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onPause() {
         super.onPause()
         mapView.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mapView.onStop()
     }
 
     override fun onDestroy() {
@@ -232,6 +242,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         super.onLowMemory()
         mapView.onLowMemory()
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mapView.onSaveInstanceState(outState)
+    }
 }
-
-
