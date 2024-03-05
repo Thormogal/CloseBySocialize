@@ -304,7 +304,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="89dp"
                 android:imeOptions="actionNext"
-                android:inputType="textCapWords"
+                android:inputType="textMultiLine"
                 android:textSize="16sp"
                 android:textStyle="normal" />
 
