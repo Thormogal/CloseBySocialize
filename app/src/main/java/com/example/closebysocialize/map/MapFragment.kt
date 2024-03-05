@@ -3,6 +3,7 @@ package com.example.closebysocialize.map
 
 import android.Manifest
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -14,9 +15,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SearchView
+import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import com.example.closebysocialize.ContainerActivity
 import com.example.closebysocialize.R
+import com.example.closebysocialize.dataClass.Event
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -47,8 +50,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_map, container, false)
-        mapView = view.findViewById(R.id.mapView)
-        mapView.onCreate(savedInstanceState)
+
         return view
     }
 
@@ -57,9 +59,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
 
         mapView = view.findViewById(R.id.mapView)
-        onCreate(savedInstanceState)
+        mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
-
 
         myPositionImageView = view.findViewById(R.id.myPositionImageView)
         myPositionImageView.setOnClickListener {
@@ -128,10 +129,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
         addCurrentLocationMarker()
 
-
-        // longlat for sthlm
-        //val initialLocation = LatLng(59.3293, 18.0686)
-        //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 6f))
+        googleMap.setOnMarkerClickListener { marker ->
+            val eventId = marker.tag as? String
+            eventId?.let {
+                fetchEventDetails(it)
+            }
+            true
+        }
 
         googleMap.uiSettings.isZoomControlsEnabled = true
         googleMap.setOnCameraMoveStartedListener { reason ->
@@ -165,12 +169,34 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
     }
 
+    fun fetchEventDetails(eventId: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("events").document(eventId).get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                val event = document.toObject(Event::class.java) // Antag att Event är din dataklass
+                event?.let {
+                    showEventDialog(it)
+                }
+            } else {
+                Log.d("Firestore", "No event found with ID: $eventId")
+            }
+        }.addOnFailureListener { exception ->
+            Log.d("Firestore", "Error getting event details: ", exception)
+        }
+    }
+
     fun addMarkerForPlace(eventId: String, geoPoint: GeoPoint) {
         val markerOptions = MarkerOptions()
             .position(LatLng(geoPoint.latitude, geoPoint.longitude))
             .title("Event ID: $eventId")
+        val marker = googleMap.addMarker(markerOptions)
+        if (marker != null) {
+            marker.tag = eventId
+        }
+
         googleMap.addMarker(markerOptions)
     }
+
 
 
     private fun addCurrentLocationMarker() {
@@ -210,6 +236,16 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(place.latLng))
         }
     }
+
+    fun showEventDialog(event: Event) {
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.item_event)
+        val eventNameTextView = dialog.findViewById<TextView>(R.id.eventNameTextView)
+        eventNameTextView.text = event.id
+
+        dialog.show()
+    }
+
 
     companion object {
         private const val AUTOCOMPLETE_REQUEST_CODE = 1001
