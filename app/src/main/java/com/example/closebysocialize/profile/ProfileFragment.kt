@@ -30,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class ProfileFragment : Fragment() {
     private lateinit var profileImageView: ImageView
     private lateinit var nameTextView: TextView
+    private lateinit var birthYearTextView: TextView
     private lateinit var reportBugs: TextView
     private lateinit var language: TextView
     private lateinit var darkModeSwitch: SwitchCompat
@@ -71,6 +72,7 @@ class ProfileFragment : Fragment() {
         profileImageView = view.findViewById(R.id.profileImageView)
         nameTextView = view.findViewById(R.id.nameTextView)
         aboutMeTextView = view.findViewById(R.id.aboutMeTextView)
+        birthYearTextView = view.findViewById(R.id.birthYearTextView)
 
         return view
     }
@@ -115,6 +117,7 @@ class ProfileFragment : Fragment() {
                     val userName = documentSnapshot.getString("name")
                     val profileImageUrl = documentSnapshot.getString("profileImage")
                     val aboutMe = documentSnapshot.getString("aboutMe")
+                    val birthYear = documentSnapshot.getLong("birthYear")?.toInt()
                     Log.d("ProfileFragment", "About Me: $aboutMe")
 
                     Log.d(
@@ -122,7 +125,7 @@ class ProfileFragment : Fragment() {
                         "Fetched user data: Name: $userName, Image URL: $profileImageUrl, About Me: $aboutMe"
                     )
 
-                    updateProfileUI(aboutMe, userName, profileImageUrl)
+                    updateProfileUI(aboutMe, userName, profileImageUrl, birthYear)
                 } else {
                     Log.d("ProfileFragment", "User ID is null, cannot fetch user info")
                 }
@@ -193,7 +196,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun updateProfileUI(aboutMe: String?, userName: String?, profileImageUrl: String?) {
+    private fun updateProfileUI(aboutMe: String?, userName: String?, profileImageUrl: String?, birthYear: Int?) {
         Log.d(
             "ProfileFragment",
             "Updating UI. Name: $userName, About Me: $aboutMe, Image URL: $profileImageUrl"
@@ -202,6 +205,7 @@ class ProfileFragment : Fragment() {
 
         nameTextView.text = userName ?: "No name available"
         aboutMeTextView.text = aboutMe ?: "No info available"
+        birthYearTextView.text = birthYear?.toString() ?: "No birth year available"
 
         if (!profileImageUrl.isNullOrEmpty()) {
             Glide.with(this)

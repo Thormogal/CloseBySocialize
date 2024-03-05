@@ -25,7 +25,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class EditProfileFragment : Fragment() {
 
-    private lateinit var goBackButtonImageView: ImageView
     private lateinit var editImage: ImageView
     private lateinit var profileSaveButton: Button
     private lateinit var editName: EditText
@@ -60,7 +59,6 @@ class EditProfileFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_profile_edit, container, false)
 
-        goBackButtonImageView = view.findViewById(R.id.goBackButtonImageView)
         editImage = view.findViewById(R.id.editPictureImageView)
         profileSaveButton = view.findViewById(R.id.profileSaveButton)
         editName = view.findViewById(R.id.editNameEditText)
@@ -85,10 +83,6 @@ class EditProfileFragment : Fragment() {
             imageView.setOnClickListener {
                 handleInterestClick(imageView, drawableId)
             }
-        }
-
-        goBackButtonImageView.setOnClickListener {
-            //back to profile fragment
         }
 
         editImage.setOnClickListener {
