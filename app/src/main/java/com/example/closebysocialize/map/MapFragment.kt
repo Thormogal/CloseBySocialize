@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.closebysocialize.ContainerActivity
 import com.example.closebysocialize.R
@@ -71,6 +72,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         setupSearchView(view)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.title_map)
     }
 
     private fun setupSearchView(view: View) {
