@@ -43,7 +43,7 @@
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_columnWeight="1"
-            android:contentDescription="Reading"
+            android:contentDescription="reading"
             app:srcCompat="@drawable/interests_book" />
 
         <ImageView
@@ -51,7 +51,7 @@
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_columnWeight="1"
-            android:contentDescription="Café"
+            android:contentDescription="cafe"
             app:srcCompat="@drawable/interests_coffee_mug" />
 
         <ImageView
@@ -59,7 +59,7 @@
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_columnWeight="1"
-            android:contentDescription="Cooking"
+            android:contentDescription="cooking"
             app:srcCompat="@drawable/interests_cooking" />
 
         <ImageView
@@ -67,7 +67,7 @@
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_columnWeight="1"
-            android:contentDescription="Dog stroll"
+            android:contentDescription="dogStroll"
             app:srcCompat="@drawable/interests_dogwalk" />
 
         <ImageView
@@ -75,7 +75,7 @@
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_columnWeight="1"
-            android:contentDescription="Sports"
+            android:contentDescription="sports"
             app:srcCompat="@drawable/interests_football" />
 
         <ImageView
@@ -83,7 +83,7 @@
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_columnWeight="1"
-            android:contentDescription="Gaming"
+            android:contentDescription="gaming"
             app:srcCompat="@drawable/interests_gaming_controller" />
 
         <ImageView
@@ -91,7 +91,7 @@
             android:layout_width="0dp"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
-            android:contentDescription="Cinema"
+            android:contentDescription="cinema"
             app:srcCompat="@drawable/interests_movie" />
 
         <ImageView
@@ -99,7 +99,7 @@
             android:layout_width="0dp"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
-            android:contentDescription="Lunch"
+            android:contentDescription="lunch"
             app:srcCompat="@drawable/interests_restaurant" />
 
         <ImageView
@@ -107,7 +107,7 @@
             android:layout_width="0dp"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
-            android:contentDescription="Baby stroll"
+            android:contentDescription="babyStroll"
             app:srcCompat="@drawable/interests_stroller" />
 
         <ImageView
@@ -115,7 +115,7 @@
             android:layout_width="0dp"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
-            android:contentDescription="Theatre"
+            android:contentDescription="theatre"
             app:srcCompat="@drawable/interests_theatre_mask" />
 
         <ImageView
@@ -123,7 +123,7 @@
             android:layout_width="0dp"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
-            android:contentDescription="Gardening"
+            android:contentDescription="gardening"
             app:srcCompat="@drawable/interests_garden" />
 
         <ImageView
@@ -131,7 +131,7 @@
             android:layout_width="0dp"
             android:layout_height="33dp"
             android:layout_columnWeight="1"
-            android:contentDescription="Traveling"
+            android:contentDescription="traveling"
             app:srcCompat="@drawable/interests_airplane_takeoff" />
 
     </GridLayout>

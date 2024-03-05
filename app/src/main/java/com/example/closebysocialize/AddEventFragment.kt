@@ -46,7 +46,6 @@ import java.util.Locale
 import java.util.UUID
 
 
-
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
@@ -154,7 +153,6 @@ class AddEventFragment : Fragment() {
             intent.type = "image/*"
             startActivityForResult(intent, PICK_IMAGE_REQUEST)
         }
-
 
 
         val users = listOf<Users>() ?: listOf()
@@ -298,6 +296,23 @@ class AddEventFragment : Fragment() {
         val createEventButton = view.findViewById<MaterialButton>(R.id.materialSubmitButton)
 
         createEventButton.setOnClickListener {
+
+
+            val defaultImageUrlMap = mapOf(
+                "reading" to "gs://closebysocialize.appspot.com/Backgrounds/bookCircle.png",
+                "cafe" to "gs://closebysocialize.appspot.com/Backgrounds/coffee.png",
+                "cooking" to "gs://closebysocialize.appspot.com/Backgrounds/cooking.png",
+                "traveling" to "gs://closebysocialize.appspot.com/Backgrounds/travel.png",
+                "gardening" to "gs://closebysocialize.appspot.com/Backgrounds/gardening.png",
+                "theatre" to "gs://closebysocialize.appspot.com/Backgrounds/culture.png",
+                "babyStroll" to "gs://closebysocialize.appspot.com/Backgrounds/babyStroll.png",
+                "lunch" to "ggs://closebysocialize.appspot.com/Backgrounds/restaurant.png",
+                "cinema" to "gs://closebysocialize.appspot.com/Backgrounds/cinema.png",
+                "gaming" to "gs://closebysocialize.appspot.com/Backgrounds/gaming.png",
+                "sports" to "gs://closebysocialize.appspot.com/Backgrounds/sport.png",
+                "dogstroll" to "gs://closebysocialize.appspot.com/Backgrounds/dog.png",
+            )
+
             val eventNameTextView = view.findViewById<TextInputEditText>(R.id.eventNameTextView)
             val eventPlace = view.findViewById<TextInputEditText>(R.id.eventPlace)
             val eventDate = view.findViewById<TextInputEditText>(R.id.eventDate)
@@ -305,6 +320,7 @@ class AddEventFragment : Fragment() {
             val eventGuests = view.findViewById<TextInputEditText>(R.id.eventGuests)
 
             val guests = eventGuests.text.toString()
+            val currentUserId = AuthUtil.getCurrentUserId()
             val eventDescription = view.findViewById<TextInputEditText>(R.id.eventDescription)
             val spots = numberPicker.value
             val placeGeoPoint = eventPlaceCoordinates?.let { GeoPoint(it.latitude, it.longitude) }
@@ -339,7 +355,8 @@ class AddEventFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val currentUserId = AuthUtil.getCurrentUserId()
+            val defaultImageUrl = defaultImageUrlMap[selectedCategory] ?: ""
+
             UserDetailsFetcher.fetchUserDetails(currentUserId) { userDetails, exception ->
                 if (exception != null) {
                     Log.e("AddEvent", "Error fetching user details", exception)
@@ -349,74 +366,82 @@ class AddEventFragment : Fragment() {
                     Log.e("AddEvent", "User details are null")
                     return@fetchUserDetails
                 }
+
+
                 val attendedPeopleProfilePictureUrls = mutableListOf(userDetails.profileImageUrl)
+                var imageUrl: String? = null
                 if (imageUri != null) {
-                    uploadImage(imageUri!!) { imageUrl: String ->
-                        val event = hashMapOf(
-                            "title" to eventName,
-                            "location" to eventPlace.text.toString(),
-                            "place_coordinates" to placeGeoPoint,
-                            "city" to cityTextView.text.toString(),
-                            "city_coordinates" to cityGeoPoint,
-                            "day" to chosenDay,
-                            "imageUrl" to imageUrl,
-                            "date" to chosenDate,
-                            "taggedUsers" to taggedUsers,
-                            "time" to chosenTime,
-                            "spots" to spots,
-                            "description" to description,
-                            "eventType" to selectedCategory,
-                            "authorId" to currentUserId,
-                            "authorProfileImageUrl" to userDetails.profileImageUrl,
-                            "authorFirstName" to userDetails.firstName,
-                            "authorLastName" to userDetails.lastName,
-                            "attendedPeopleProfilePictureUrls" to attendedPeopleProfilePictureUrls,
-                            "createdAt" to FieldValue.serverTimestamp()
+                    uploadImage(imageUri!!) { uploadedImageUrl: String ->
+                        imageUrl = uploadedImageUrl
+                    }
+                } else {
+                    imageUrl = defaultImageUrl
+                }
+
+                val event = hashMapOf(
+                    "title" to eventName,
+                    "location" to eventPlace.text.toString(),
+                    "place_coordinates" to placeGeoPoint,
+                    "city" to cityTextView.text.toString(),
+                    "city_coordinates" to cityGeoPoint,
+                    "day" to chosenDay,
+                    "imageUrl" to imageUrl,
+                    "date" to chosenDate,
+                    "taggedUsers" to taggedUsers,
+                    "time" to chosenTime,
+                    "spots" to spots,
+                    "description" to description,
+                    "eventType" to selectedCategory,
+                    "authorId" to currentUserId,
+                    "authorProfileImageUrl" to userDetails.profileImageUrl,
+                    "authorFirstName" to userDetails.firstName,
+                    "authorLastName" to userDetails.lastName,
+                    "attendedPeopleProfilePictureUrls" to attendedPeopleProfilePictureUrls,
+                    "createdAt" to FieldValue.serverTimestamp()
+                )
+
+                firestore.collection("events").add(event)
+                    .addOnSuccessListener { documentReference ->
+                        val eventId = documentReference.id!!
+                        if (currentUserId != null) {
+                            addUserToEventAttendees(currentUserId, eventId)
+                        }
+
+                        eventNameTextView.text = null
+                        eventPlace.text = null
+                        eventDate.text = null
+                        cityTextView.text = null
+                        eventPlace.text = null
+                        // eventGuests.text = null
+                        eventDescription.text = null
+                        selectedCategory = null
+                        taggedUsers.clear()
+                        selectedImageView?.setBackgroundColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                android.R.color.transparent
+                            )
                         )
 
-                        firestore.collection("events").add(event)
-                            .addOnSuccessListener { documentReference ->
-                                val eventId = documentReference.id!!
-                                if (currentUserId != null) {
-                                    addUserToEventAttendees(currentUserId, eventId)
-                                }
-
-                                eventNameTextView.text = null
-                                eventPlace.text = null
-                                eventDate.text = null
-                                cityTextView.text = null
-                                eventPlace.text = null
-                                // eventGuests.text = null
-                                eventDescription.text = null
-                                selectedCategory = null
-                                taggedUsers.clear()
-                                selectedImageView?.setBackgroundColor(
-                                    ContextCompat.getColor(
-                                        requireContext(),
-                                        android.R.color.transparent
-                                    )
-                                )
-
-                                selectedImageView = null
-                                Toast.makeText(
-                                    context,
-                                    "Event added successfully",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                                activity?.let {
-                                    FragmentUtils.switchFragment(
-                                        it as AppCompatActivity,
-                                        R.id.fragment_container,
-                                        EventsFragment::class.java
-                                    )
-                                }
-                            }
+                        selectedImageView = null
+                        Toast.makeText(
+                            context,
+                            "Event added successfully",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                        activity?.let {
+                            FragmentUtils.switchFragment(
+                                it as AppCompatActivity,
+                                R.id.fragment_container,
+                                EventsFragment::class.java
+                            )
+                        }
                     }
-                }
             }
         }
     }
+
 
     private fun addUserToEventAttendees(userId: String, eventId: String) {
         val userRef = firestore.collection("users").document(userId)
