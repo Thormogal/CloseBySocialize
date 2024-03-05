@@ -44,6 +44,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userHasInteracted = false
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -99,14 +100,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
 
-    private fun performSearch(query: String?) {
-        if (!query.isNullOrBlank()) {
-            // For demonstration purposes, we'll just log the search query
-            Log.d("PerformSearch", "Search query: $query")
-            controlLocationUpdates(true)
-        }
-    }
-
     fun controlLocationUpdates(enable: Boolean) {
         (activity as? ContainerActivity)?.setLocationUpdatesEnabled(enable)
     }
@@ -129,14 +122,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
         addCurrentLocationMarker()
 
-        googleMap.setOnMarkerClickListener { marker ->
-            val eventId = marker.tag as? String
-            eventId?.let {
-                fetchEventDetails(it)
-            }
-            true
-        }
-
         googleMap.uiSettings.isZoomControlsEnabled = true
         googleMap.setOnCameraMoveStartedListener { reason ->
             if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
@@ -153,14 +138,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             .addOnSuccessListener { eventDocuments ->
                 Log.d("Firestore", "Fetched ${eventDocuments.size()} event documents")
                 for (eventDocument in eventDocuments) {
-                    val placeCoordinates = eventDocument.getGeoPoint("place_coordinates")
-                    if (placeCoordinates != null) {
-                        addMarkerForPlace(eventDocument.id, placeCoordinates)
+                    val title = eventDocument.getString("title") ?: "Unnamed Event"
+                    val geoPoint = eventDocument.getGeoPoint("place_coordinates")
+                    if (geoPoint != null) {
+                        val eventId = eventDocument.id
+                        addMarkerForEvent(title, geoPoint, eventId)
                     } else {
-                        Log.d(
-                            "Firestore",
-                            "No place_coordinates found for event ${eventDocument.id}"
-                        )
+                        Log.d("Firestore", "No place_coordinates found for event ${eventDocument.id}")
                     }
                 }
             }
@@ -169,35 +153,21 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
     }
 
-    fun fetchEventDetails(eventId: String) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection("events").document(eventId).get().addOnSuccessListener { document ->
-            if (document.exists()) {
-                val event = document.toObject(Event::class.java) // Antag att Event är din dataklass
-                event?.let {
-                    showEventDialog(it)
-                }
-            } else {
-                Log.d("Firestore", "No event found with ID: $eventId")
-            }
-        }.addOnFailureListener { exception ->
-            Log.d("Firestore", "Error getting event details: ", exception)
-        }
-    }
-
-    fun addMarkerForPlace(eventId: String, geoPoint: GeoPoint) {
+    fun addMarkerForEvent(title: String, geoPoint: GeoPoint, eventId: String) {
         val markerOptions = MarkerOptions()
             .position(LatLng(geoPoint.latitude, geoPoint.longitude))
-            .title("Event ID: $eventId")
+            .title(title)
         val marker = googleMap.addMarker(markerOptions)
-        if (marker != null) {
-            marker.tag = eventId
-        }
-
-        googleMap.addMarker(markerOptions)
+        marker?.tag = eventId
     }
-
-
+//    fun addMarkerForPlace(eventId: String, geoPoint: GeoPoint) {
+//        val markerOptions = MarkerOptions()
+//            .position(LatLng(geoPoint.latitude, geoPoint.longitude))
+//            .title("Event ID: $eventId")
+//        googleMap.addMarker(markerOptions)
+//
+//
+//    }
 
     private fun addCurrentLocationMarker() {
         if (ActivityCompat.checkSelfPermission(
@@ -235,15 +205,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             userHasInteracted = true
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(place.latLng))
         }
-    }
-
-    fun showEventDialog(event: Event) {
-        val dialog = Dialog(requireContext())
-        dialog.setContentView(R.layout.item_event)
-        val eventNameTextView = dialog.findViewById<TextView>(R.id.eventNameTextView)
-        eventNameTextView.text = event.id
-
-        dialog.show()
     }
 
 

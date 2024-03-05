@@ -42,6 +42,7 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
         }
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -55,6 +56,7 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
         setFilterButtonsListeners()
         return view
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -75,6 +77,7 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
         toggleGroup.check(R.id.allButton)
         filterData("all")
     }
+
 
     private fun openChatForEvent(eventId: String) {
         val args = Bundle().apply {
