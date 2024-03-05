@@ -42,6 +42,7 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
         }
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -55,6 +56,7 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
         setFilterButtonsListeners()
         return view
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -78,25 +80,18 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
         filterData("all")
     }
 
-    private fun openChatForEvent(eventId: String, eventTitle: String) {
-        openChatFragment(eventId, eventTitle)
-    }
 
-    private fun openChatFragment(eventId: String, eventTitle: String) {
-        val fragment = ChatFragment()
+   private fun openChatForEvent(eventId: String) {
         val args = Bundle().apply {
             putString("eventId", eventId)
         }
-        fragment.arguments = args
-
-        FragmentUtils.navigateToFragmentWithActionBarTitle(
+        FragmentUtils.switchFragment(
             activity = requireActivity() as AppCompatActivity,
-            fragment = fragment,
-            title = eventTitle
+            containerId = R.id.fragment_container,
+            fragmentClass = ChatFragment::class.java,
+            args = args
         )
     }
-
-
 
 
     private fun initializeViews(view: View) {
