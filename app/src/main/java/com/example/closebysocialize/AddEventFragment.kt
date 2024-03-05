@@ -1,6 +1,7 @@
 package com.example.closebysocialize
 
 import AuthUtil
+import UserAdapter
 import UserDetailsFetcher
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -33,6 +34,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -118,6 +120,7 @@ class AddEventFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        recyclerViewFindUsers = view.findViewById<RecyclerView>(R.id.recyclerViewFindUsers)
         val gridLayout = view.findViewById<GridLayout>(R.id.gridLayout)
         var selectedImageView: ImageView? = null
         var selectedCategory: String? = null
@@ -152,18 +155,33 @@ class AddEventFragment : Fragment() {
             startActivityForResult(intent, PICK_IMAGE_REQUEST)
         }
 
-        val eventGuests = view.findViewById<TextInputEditText>(R.id.eventGuests)
-        userAdapter = UserAdapter(listOf(), taggedUsers, eventGuests)
-        recyclerViewFindUsers = view.findViewById(R.id.recyclerViewFindUsers)
-        recyclerViewFindUsers.adapter = userAdapter
+
+
+        val users = listOf<Users>() ?: listOf()
+        val taggedUsers = mutableListOf<String>() ?: mutableListOf()
+        val eventGuests = view.findViewById<EditText>(R.id.eventGuests) ?: EditText(context)
+        val chipGroup = view.findViewById<ChipGroup>(R.id.chipGroup) ?: ChipGroup(context)
+
         recyclerViewFindUsers.layoutManager = LinearLayoutManager(context)
+        userAdapter = UserAdapter(listOf(), taggedUsers, eventGuests, chipGroup)
+        recyclerViewFindUsers.adapter = userAdapter
+
+
+
 
         eventGuests.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val parts = s.toString().split(",")
                 val query = parts.last().trim()
-                searchUsers(query)
-                recyclerViewFindUsers.visibility = View.VISIBLE
+                if (query.isEmpty()) {
+                    userAdapter.updateData(emptyList())
+                    recyclerViewFindUsers.visibility = View.GONE
+                } else {
+                    fetchUsers(query) { fetchedUsers ->
+                        userAdapter.updateData(fetchedUsers)
+                        recyclerViewFindUsers.visibility = View.VISIBLE
+                    }
+                }
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -171,7 +189,6 @@ class AddEventFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
-
         })
 
 
@@ -294,8 +311,6 @@ class AddEventFragment : Fragment() {
             val cityGeoPoint = eventCityCoordinates?.let { GeoPoint(it.latitude, it.longitude) }
 
 
-
-
             val eventName = eventNameTextView.text.toString()
             val place = eventPlace.text.toString()
             val date = eventDate.text.toString()
@@ -323,6 +338,7 @@ class AddEventFragment : Fragment() {
                 Toast.makeText(context, "Please select a category", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
             val currentUserId = AuthUtil.getCurrentUserId()
             UserDetailsFetcher.fetchUserDetails(currentUserId) { userDetails, exception ->
                 if (exception != null) {
@@ -439,7 +455,7 @@ class AddEventFragment : Fragment() {
             }
     }
 
-    private fun searchUsers(query: String) {
+    private fun fetchUsers(query: String, onSuccess: (List<Users>) -> Unit) {
         if (query.isEmpty()) return
         val searchQuery = query.split(" ").joinToString(" ") { it.capitalize() }
         val searchQueryStart = searchQuery
@@ -452,7 +468,7 @@ class AddEventFragment : Fragment() {
             .get()
             .addOnSuccessListener { documents ->
                 val userList = documents.mapNotNull { it.toObject(Users::class.java) }
-                userAdapter.updateData(userList)
+                onSuccess(userList)
             }
             .addOnFailureListener {
             }
