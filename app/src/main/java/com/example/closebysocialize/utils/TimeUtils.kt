@@ -49,4 +49,50 @@ object TimeUtils {
             else -> ""
         }
     }
+
+    fun formatTimestampEventChat(context: Context, date: Date?): String {
+        date ?: return context.getString(R.string.date_unknown)
+        val diff = Date().time - date.time
+        val seconds = diff / 1000
+        val minutes = seconds / 60
+        val hours = minutes / 60
+        val days = hours / 24
+        val weeks = days / 7
+        val months = days / 30
+        val years = days / 365
+        return when {
+            years > 0 -> context.resources.getQuantityString(
+                R.plurals.years_ago,
+                years.toInt(),
+                years
+            )
+
+            months > 0 -> context.resources.getQuantityString(
+                R.plurals.months_ago,
+                months.toInt(),
+                months
+            )
+
+            weeks > 0 -> context.resources.getQuantityString(
+                R.plurals.weeks_ago,
+                weeks.toInt(),
+                weeks
+            )
+
+            days > 0 -> context.resources.getQuantityString(R.plurals.days_ago, days.toInt(), days)
+            hours > 0 -> context.resources.getQuantityString(
+                R.plurals.hours_ago,
+                hours.toInt(),
+                hours
+            )
+
+            minutes > 0 -> context.resources.getQuantityString(
+                R.plurals.minutes_ago,
+                minutes.toInt(),
+                minutes
+            )
+
+            else -> context.getString(R.string.just_now)
+        }
+    }
 }

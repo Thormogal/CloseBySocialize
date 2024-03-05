@@ -51,6 +51,18 @@ object FragmentUtils {
         activity.supportActionBar?.title = activity.getString(titleResId)
     }
 
+    fun navigateToFragmentWithActionBarTitle(
+        activity: AppCompatActivity,
+        fragment: Fragment,
+        title: String
+    ) {
+        activity.supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
+        activity.supportActionBar?.title = title
+    }
+
     fun openUserProfile(activity: AppCompatActivity, userId: String) {
         val args = Bundle().apply {
             putString(ProfileFragment.ARG_ID, userId)

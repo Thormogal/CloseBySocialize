@@ -1,12 +1,16 @@
 package com.example.closebysocialize.chat
 
 import android.app.AlertDialog
+import android.app.Dialog
+import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +22,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import androidx.compose.ui.graphics.Color
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 
 class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
@@ -67,112 +74,36 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        commentAdapter = CommentAdapter(mutableListOf(), this, eventId).also {
-            it.listener = this
-        }
+        commentAdapter = CommentAdapter(mutableListOf(), requireContext(), this, eventId)
+            .also {
+                it.listener = this
+            }
 
         recyclerView.adapter = commentAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        if (::commentAdapter.isInitialized) {
-            fetchComments()
-        } else {
-            Log.e("ChatFragment", "CommentAdapter is not initialized")
-        }
+        commentAdapter.setupRealtimeListener()
+        fetchAndOrganizeComments()
     }
 
-
-    override fun onReply(commentId: String) {
-        val inflater = requireActivity().layoutInflater
-        val view = inflater.inflate(R.layout.dialog_reply, null)
-        val editTextReply = view.findViewById<EditText>(R.id.editTextReply)
-
-        AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.reply)) // todo what to say?
-            .setView(view)
-            .setPositiveButton(R.string.post) { dialog, which ->
-                val replyText = editTextReply.text.toString().trim()
-                if (replyText.isNotEmpty()) {
-                    postComment(replyText, commentId)
-                }
-            }
-            .setNegativeButton(R.string.cancel, null) // todo what to say?
-            .create()
-            .show()
-    }
-
-    fun organizeCommentsWithReplies(comments: List<Comment>): List<Comment> {
-        val organizedComments = mutableListOf<Comment>()
-        val commentMap = comments.associateBy { it.id }
-        val topLevelComments = comments.filter { it.parentId == null }
-
-        topLevelComments.forEach { comment ->
-            organizedComments.add(comment)
-            addRepliesRecursively(comment, organizedComments, commentMap)
-        }
-        Log.d(
-            "ChatFragment",
-            "Organized Comments: ${organizedComments.map { "${it.id} - Parent: ${it.parentId}" }}"
-        )
-        return organizedComments
-    }
-
-    private fun addRepliesRecursively(
-        comment: Comment,
-        organizedComments: MutableList<Comment>,
-        commentMap: Map<String, Comment>
-    ) {
-        val replies = commentMap.values.filter { it.parentId == comment.id }
-        for (reply in replies) {
-            addRepliesRecursively(reply, organizedComments, commentMap)
-        }
-        organizedComments.addAll(replies)
-    }
-
-
-    private fun postComment(commentText: String, parentId: String? = null) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val userName = FirebaseAuth.getInstance().currentUser?.displayName ?: "Anonymous"
-        val userPhotoUrl = FirebaseAuth.getInstance().currentUser?.photoUrl.toString()
-        val newComment = hashMapOf(
-            "userId" to userId,
-            "commentText" to commentText,
-            "displayName" to userName,
-            "profileImageUrl" to userPhotoUrl,
-            "timestamp" to FieldValue.serverTimestamp(),
-            "parentId" to parentId
-        )
-        FirebaseFirestore.getInstance().collection("events").document(eventId!!)
-            .collection("comments").add(newComment)
-            .addOnSuccessListener {
-                Log.d("ChatFragment", "Comment added successfully.")
-                editTextComment.setText("")
-                fetchComments()
-            }
-            .addOnFailureListener { e ->
-                Log.e("ChatFragment", "Error adding comment", e)
-            }
-    }
-
-    private fun fetchComments() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+    private fun fetchAndOrganizeComments() {
         FirebaseFirestore.getInstance()
-            .collection("events")
-            .document(eventId!!)
+            .collection("events").document(eventId!!)
             .collection("comments")
-            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .orderBy("timestamp", Query.Direction.ASCENDING)
             .get()
             .addOnSuccessListener { documents ->
-                val fetchedComments = documents.mapNotNull { document ->
-                    val comment = document.toObject(Comment::class.java)
-                    comment.id = document.id
-                    val likes = document.getLong("likes") ?: 0
-                    comment.likes = likes.toInt()
-                    comment.isLiked = document.getBoolean("likes.$userId") ?: false
-                    comment
+                val allComments = documents.mapNotNull { it.toObject(Comment::class.java) }
+
+                val parentComments = allComments.filter { it.parentId == null }
+                val organizedComments = mutableListOf<Comment>()
+
+                parentComments.forEach { parentComment ->
+                    organizedComments.add(parentComment)
+                    val replies = allComments.filter { it.parentId == parentComment.id }
+                    organizedComments.addAll(replies)
                 }
 
-                val organizedComments = organizeCommentsWithReplies(fetchedComments)
                 commentAdapter.updateComments(organizedComments)
             }
             .addOnFailureListener { exception ->
@@ -180,25 +111,63 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
             }
     }
 
-    private fun organizeComments(comments: List<Comment>): List<Comment> {
-        val topLevelComments = mutableListOf<Comment>()
-        val repliesMap = mutableMapOf<String, MutableList<Comment>>()
-        comments.forEach { comment ->
-            if (comment.parentId == null) {
-                topLevelComments.add(comment)
-            } else {
-                repliesMap.getOrPut(comment.parentId) { mutableListOf() }.add(comment)
+
+    override fun onReply(commentId: String) {
+        val inflater = requireActivity().layoutInflater
+        val view = inflater.inflate(R.layout.dialog_reply, null)
+
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(view)
+
+        val postButton = view.findViewById<Button>(R.id.postReplyButton)
+        val cancelButton = view.findViewById<Button>(R.id.cancelReplyButton)
+
+        val replyTextInputLayout = view.findViewById<TextInputLayout>(R.id.inputReplyText)
+        val replyTextInputEditText = replyTextInputLayout.editText
+
+        postButton.setOnClickListener {
+            replyTextInputEditText?.let {
+                val replyText = it.text.toString()
+                postComment(replyText, commentId)
             }
-        }
-        val orderedList = mutableListOf<Comment>()
-        topLevelComments.forEach { comment ->
-            orderedList.add(comment)
-            repliesMap[comment.id]?.let { replies ->
-                orderedList.addAll(replies.sortedBy { it.timestamp })
-            }
+            dialog.dismiss()
         }
 
-        return orderedList
+        cancelButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    private fun postComment(commentText: String, parentId: String? = null) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val userName = FirebaseAuth.getInstance().currentUser?.displayName ?: "Anonymous"
+        val userPhotoUrl = FirebaseAuth.getInstance().currentUser?.photoUrl.toString()
+
+        val commentRef = FirebaseFirestore.getInstance().collection("events").document(eventId!!)
+            .collection("comments").document()
+
+        val newCommentMap = hashMapOf(
+            "id" to commentRef.id,
+            "userId" to userId,
+            "commentText" to commentText,
+            "displayName" to userName,
+            "profileImageUrl" to userPhotoUrl,
+            "timestamp" to FieldValue.serverTimestamp()
+        )
+
+        parentId?.let {
+            newCommentMap["parentId"] = it
+        }
+        commentRef.set(newCommentMap)
+            .addOnSuccessListener {
+                editTextComment.setText("")
+                fetchAndOrganizeComments()
+            }
+            .addOnFailureListener { e ->
+                Log.e("ChatFragment", "Error adding comment", e)
+            }
     }
 
 

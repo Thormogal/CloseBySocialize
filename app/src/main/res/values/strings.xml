@@ -89,6 +89,7 @@
     <string name="author_comment">This is a comment</string>
     <string name="write_a_comment">Write a comment...</string>
     <string name="post">Post</string>
+    <string name="reply_comment">Your reply</string>
 
     <string name="option_1">Option 1</string>
     <string name="option_2">Option 2</string>

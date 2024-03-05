@@ -29,13 +29,14 @@
 
         <ImageView
             android:id="@+id/receivedProfilePicture"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:visibility="invisible"
             android:layout_marginEnd="4dp"
             android:background="@drawable/profile_image_round"
             android:scaleType="centerCrop"
-            android:src="@drawable/profile_top_bar_avatar" />
+            android:src="@drawable/profile_top_bar_avatar"
+            android:layout_gravity="bottom"/>
 
         <com.google.android.material.card.MaterialCardView
             style="?attr/materialCardViewStyle"
