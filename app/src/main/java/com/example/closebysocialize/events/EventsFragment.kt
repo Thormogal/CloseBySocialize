@@ -81,7 +81,7 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
     }
 
 
-   private fun openChatForEvent(eventId: String) {
+    private fun openChatForEvent(eventId: String, eventTitle: String) {
         val args = Bundle().apply {
             putString("eventId", eventId)
         }
@@ -92,6 +92,7 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
             args = args
         )
     }
+
 
 
     private fun initializeViews(view: View) {
