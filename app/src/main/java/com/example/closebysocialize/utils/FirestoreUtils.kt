@@ -72,8 +72,6 @@ object FirestoreUtils {
             }
     }
 
-
-
     fun fetchSavedEventsByUser(
         userId: String,
         onSuccess: (List<Event>) -> Unit,

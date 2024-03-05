@@ -195,11 +195,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     fun updateMapLocation(location: Location) {
-        if (!userHasInteracted) {
+        if (!userHasInteracted && ::googleMap.isInitialized) {
             val newPos = LatLng(location.latitude, location.longitude)
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newPos, 10f))
         }
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -232,8 +233,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onStart() {
         super.onStart()
-        mapView?.onStart()
+        mapView.onStart()
     }
+
 
 
     override fun onStop() {

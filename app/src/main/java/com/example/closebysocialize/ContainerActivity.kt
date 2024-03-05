@@ -41,6 +41,8 @@ import com.google.android.libraries.places.api.Places
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.bumptech.glide.request.transition.Transition
+import com.example.closebysocialize.utils.FirestoreUtils
+import com.example.closebysocialize.utils.MessagingUtils
 
 
 class ContainerActivity : AppCompatActivity() {
@@ -48,6 +50,7 @@ class ContainerActivity : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var placesClient: PlacesClient
     private var profileMenuItem: MenuItem? = null
+    private lateinit var bottomNavigationView: BottomNavigationView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +60,7 @@ class ContainerActivity : AppCompatActivity() {
             Places.initialize(applicationContext, getString(R.string.google_maps_api_key))
         }
         placesClient = Places.createClient(this)
-        
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         placesClient = Places.createClient(this)
@@ -88,8 +91,12 @@ class ContainerActivity : AppCompatActivity() {
         }
 
         navView.selectedItemId = R.id.navigation_events
-        listenForNewMessages()
+        bottomNavigationView = findViewById(R.id.bottom_navigation)
 
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        MessagingUtils.listenForNewMessages(userId) { count ->
+            MessagingUtils.updateBottomNavigationBadge(bottomNavigationView, R.id.navigation_message, count)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -100,54 +107,9 @@ class ContainerActivity : AppCompatActivity() {
         return true
     }
 
-
-    private fun listenForNewMessages() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        Log.d("ContainerActivity", "Current user ID: $userId")
-
-        if (userId != null) {
-            val db = FirebaseFirestore.getInstance()
-            db.collection("conversations")
-                .whereArrayContains("participants", userId)
-                .get()
-                .addOnSuccessListener { conversationDocuments ->
-                    val conversationIds = conversationDocuments.documents.map { it.id }
-                    var totalUnreadMessages = 0
-
-                    conversationIds.forEach { conversationId ->
-                        db.collection("conversations").document(conversationId)
-                            .collection("messages")
-                            .whereEqualTo("isRead", false)
-                            .whereEqualTo("receiverId", userId)
-                            .get()
-                            .addOnSuccessListener { messageDocuments ->
-                                val unreadMessagesCount = messageDocuments.size()
-                                totalUnreadMessages += unreadMessagesCount
-
-                                updateBottomNavigationBadge(totalUnreadMessages)
-                            }
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Log.w("ContainerActivity", "Error fetching conversations", e)
-                }
-        } else {
-            Log.d("ContainerActivity", "User ID is null, cannot listen for messages")
-        }
-    }
-
-
-    private fun updateBottomNavigationBadge(count: Int) {
-        Log.d("ContainerActivity", "Updating badge count: $count")
-        val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
-        val menuItemId = R.id.navigation_message
-        if (count > 0) {
-            val badge = navView.getOrCreateBadge(menuItemId)
-            badge.isVisible = true
-            badge.number = count
-        } else {
-            navView.removeBadge(menuItemId)
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        MessagingUtils.removeListeners()
     }
 
 
@@ -166,14 +128,12 @@ class ContainerActivity : AppCompatActivity() {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
-
     private fun hasLocationPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
     }
-
 
     private fun requestLocationPermission() {
         ActivityCompat.requestPermissions(
@@ -261,7 +221,6 @@ class ContainerActivity : AppCompatActivity() {
                 }
 
                 R.id.menu_profile -> {
-                    Log.d("!!!", "Profile opens")
                     FragmentUtils.switchFragment(
                         this,
                         R.id.fragment_container,
@@ -302,20 +261,15 @@ class ContainerActivity : AppCompatActivity() {
     }
 
     private fun loadUserProfile() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        if (userId != null) {
-            val db = FirebaseFirestore.getInstance()
-            db.collection("users").document(userId).get()
-                .addOnSuccessListener { documentSnapshot ->
-                    val user = documentSnapshot.toObject(Users::class.java)
-                    user?.profileImageUrl?.let {
-                        showProfileImage(it)
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Log.e("ContainerActivity", "Error fetching user profile", e)
-                }
-        }
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirestoreUtils.fetchProfileImageUrl(userId, this,
+            onSuccess = { profileImageUrl ->
+                showProfileImage(profileImageUrl)
+            },
+            onFailure = { exception ->
+                Log.e("ContainerActivity", "Error fetching user profile", exception)
+            }
+        )
     }
 
     private fun showProfileImage(profileImageUrl: String) {
@@ -345,6 +299,5 @@ class ContainerActivity : AppCompatActivity() {
     private fun stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
-
 
 }

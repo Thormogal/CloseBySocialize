@@ -20,10 +20,9 @@
 
     // bottom nav
     <string name="events">Events</string>
-    <string name="message">Message</string>
+    <string name="message">Messages</string>
     <string name="map">Map</string>
     <string name="profile">Profile</string>
-
 
     <string name="events_fragment">Events</string>
     <string name="message_fragment">Message</string>
@@ -149,10 +148,20 @@
 
     // Message
     <string name="write_a_message">Write a message…</string>
+    <string name="date_unknown">Date unknown</string>
+    <string name="yesterday_with_time">Yesterday, %1$s</string>
+    <string name="date_time_format">dd MMMM HH:mm</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+
 
     // chat
     <string name="just_now">Just now</string>
-    <string name="date_unknown">Date unknown</string>
     <string name="like">Like</string>
     <string name="reply">Reply</string>
     <string name="reply_hint">Comment as</string>
