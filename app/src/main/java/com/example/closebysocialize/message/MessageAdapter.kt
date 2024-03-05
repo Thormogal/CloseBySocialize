@@ -13,10 +13,8 @@ import com.example.closebysocialize.R
 import com.example.closebysocialize.utils.FirestoreUtils
 import com.example.closebysocialize.utils.FragmentUtils
 import com.example.closebysocialize.utils.ImageUtils
-import java.text.SimpleDateFormat
-import java.util.Calendar
+import com.example.closebysocialize.utils.TimeUtils
 import java.util.Date
-import java.util.Locale
 
 class MessageAdapter(
     private val context: Context,
@@ -41,6 +39,20 @@ class MessageAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val message = messages[position]
+        val nextMessage = messages.getOrNull(position + 1)
+        val isLastMessageBySender = nextMessage == null || nextMessage.senderId != message.senderId
+
+        val showProfilePicture = when (holder) {
+            is ReceivedMessageViewHolder -> isLastMessageBySender
+            else -> false
+        }
+
+        if (getItemViewType(position) == SENT_MESSAGE) {
+            (holder as SentMessageViewHolder).bind(message, showTimestamp = true)
+        } else {
+            (holder as ReceivedMessageViewHolder).bind(message, showTimestamp = true, showProfilePicture = showProfilePicture)
+        }
+
         val previousMessage = messages.getOrNull(position - 1)
         val showTimestamp = when {
             position == 0 -> true
@@ -49,16 +61,20 @@ class MessageAdapter(
             significantTimeGap(message.timestamp, previousMessage.timestamp) -> true
             else -> false
         }
+
         if (getItemViewType(position) == SENT_MESSAGE) {
             (holder as SentMessageViewHolder).bind(message, showTimestamp)
         } else {
             (holder as ReceivedMessageViewHolder).bind(
                 message,
                 showTimestamp,
-                showProfilePicture = true
+                showProfilePicture
             )
         }
     }
+
+
+
 
     override fun getItemCount() = messages.size
 
@@ -70,30 +86,6 @@ class MessageAdapter(
         }
     }
 
-    private fun formatTimestamp(date: Date?): String {
-        date ?: return "Date unknown"
-        val now = Calendar.getInstance()
-        val messageDate = Calendar.getInstance().apply { time = date }
-        val formatterTime = SimpleDateFormat("HH:mm", Locale.getDefault())
-        if (messageDate.get(Calendar.YEAR) == now.get(Calendar.YEAR) &&
-            messageDate.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR)
-        ) {
-            return formatterTime.format(date)
-        }
-        val yesterday = now.apply { add(Calendar.DAY_OF_YEAR, -1) }
-        if (messageDate.get(Calendar.YEAR) == yesterday.get(Calendar.YEAR) &&
-            messageDate.get(Calendar.DAY_OF_YEAR) == yesterday.get(Calendar.DAY_OF_YEAR)
-        ) {
-            return "Yesterday, ${formatterTime.format(date)}"
-        }
-        val aWeekAgo = now.apply { add(Calendar.DAY_OF_YEAR, -7) }
-        if (messageDate.after(aWeekAgo)) {
-            val formatterDay = SimpleDateFormat("EEEE", Locale.getDefault())
-            return formatterDay.format(date)
-        }
-        val formatterDate = SimpleDateFormat("dd MMMM HH:mm", Locale.getDefault())
-        return formatterDate.format(date)
-    }
 
     private fun significantTimeGap(date1: Date?, date2: Date?): Boolean {
         if (date1 == null || date2 == null) {
@@ -114,7 +106,7 @@ class MessageAdapter(
         private val messageTimestamp: TextView = view.findViewById(R.id.messageSenderTimestamp)
         fun bind(message: Message, showTimestamp: Boolean) {
             messageText.text = message.content
-            messageTimestamp.text = formatTimestamp(message.timestamp)
+            messageTimestamp.text = TimeUtils.formatTimestamp(context, message.timestamp)
             messageTimestamp.visibility = if (showTimestamp) View.VISIBLE else View.GONE
             itemView.setOnClickListener {
                 messageTimestamp.visibility =
@@ -127,9 +119,10 @@ class MessageAdapter(
         private val messageText: TextView = view.findViewById(R.id.receivedText)
         private val messageTimestamp: TextView = view.findViewById(R.id.messageReceivedTimestamp)
         private val profilePicture: ImageView = view.findViewById(R.id.receivedProfilePicture)
+
         fun bind(message: Message, showTimestamp: Boolean, showProfilePicture: Boolean) {
             messageText.text = message.content
-            messageTimestamp.text = formatTimestamp(message.timestamp)
+            messageTimestamp.text = TimeUtils.formatTimestamp(context, message.timestamp)
             messageTimestamp.visibility = if (showTimestamp) View.VISIBLE else View.GONE
 
             FirestoreUtils.fetchProfileImageUrl(
@@ -139,7 +132,9 @@ class MessageAdapter(
                     ImageUtils.loadProfileImage(context, profileImageUrl, profilePicture)
                 },
                 onFailure = { exception ->
-                })
+                }
+            )
+
             profilePicture.visibility = if (showProfilePicture) View.VISIBLE else View.INVISIBLE
 
             profilePicture.setOnClickListener {
@@ -148,6 +143,7 @@ class MessageAdapter(
                 }
             }
         }
+
     }
 
 }

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.R
 import com.example.closebysocialize.dataClass.Friend
 import com.example.closebysocialize.utils.FirestoreUtils
+import com.example.closebysocialize.utils.MessagingUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -53,7 +54,8 @@ class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
     }
 
     override fun onFriendClick(friend: Friend) {
-        checkForExistingConversation(friend.id) { conversationId ->
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        MessagingUtils.checkForExistingConversation(friend.id, userId) { conversationId ->
             val chatFragment = OpenChatFragment.newInstance(conversationId, friend.id)
             navigateToChatFragment(chatFragment, friend.name ?: "Unknown")
         }
@@ -67,24 +69,6 @@ class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
         (requireActivity() as AppCompatActivity).supportActionBar?.title = friendName
     }
 
-    private fun checkForExistingConversation(friendId: String, callback: (String?) -> Unit) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val db = FirebaseFirestore.getInstance()
-        db.collection("conversations")
-            .whereArrayContains("participants", userId)
-            .get()
-            .addOnSuccessListener { documents ->
-                val conversation = documents.documents.firstOrNull { document ->
-                    val participants = document["participants"] as List<*>
-                    participants.contains(friendId)
-                }
-                callback(conversation?.id)
-            }
-            .addOnFailureListener { exception ->
-                Log.e("MessageFragment", "Error checking for existing conversation: ", exception)
-                callback(null)
-            }
-    }
 
     override fun onMessageClick(friend: Friend) {
     }

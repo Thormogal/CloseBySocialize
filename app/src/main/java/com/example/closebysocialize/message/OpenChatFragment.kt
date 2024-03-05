@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.R
 import com.example.closebysocialize.dataClass.Message
+import com.example.closebysocialize.utils.MessagingUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -48,7 +49,6 @@ class OpenChatFragment : Fragment() {
         }
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -82,8 +82,13 @@ class OpenChatFragment : Fragment() {
         recyclerView.adapter = messageAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
         fetchMessages()
-        fetchConversations()
         markMessagesAsRead()
+    }
+
+    private fun markMessagesAsRead() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val conversationId = arguments?.getString(ARG_CONVERSATION_ID) ?: return
+        MessagingUtils.markMessagesAsRead(userId, conversationId)
     }
 
     private fun ensureConversationAndPostComment(friendId: String, commentText: String) {
@@ -104,39 +109,28 @@ class OpenChatFragment : Fragment() {
                     this.conversationId = newConversationId
                     postComment(newConversationId, currentUserId, commentText)
                 }.addOnFailureListener { e ->
-                Log.e("OpenChatFragment", "Failed to create conversation", e)
-                Toast.makeText(context, "Failed to start conversation", Toast.LENGTH_SHORT).show()
-            }
+                    Log.e("OpenChatFragment", "Failed to create conversation", e)
+                    Toast.makeText(context, "Failed to start conversation", Toast.LENGTH_SHORT)
+                        .show()
+                }
         }
     }
 
     private fun postComment(conversationId: String, senderId: String, commentText: String) {
-        val newMessage = hashMapOf(
-            "senderId" to senderId,
-            "receiverId" to getReceiverId(),
-            "content" to commentText,
-            "timestamp" to FieldValue.serverTimestamp(),
-            "type" to "text",
-            "isRead" to false,
-            "messageStatus" to "sent"
-        )
-        FirebaseFirestore.getInstance()
-            .collection("conversations")
-            .document(conversationId)
-            .collection("messages")
-            .add(newMessage)
-            .addOnSuccessListener {
-                Log.d("OpenChatFragment", "Message sent successfully")
+        val receiverId =
+            getReceiverId()
+        MessagingUtils.postComment(
+            conversationId,
+            senderId,
+            receiverId,
+            commentText,
+            onSuccess = {
                 editTextComment.setText("")
             }
-            .addOnFailureListener { e ->
-                Log.e("OpenChatFragment", "Failed to send message", e)
-                Toast.makeText(context, "Failed to send message", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private fun getReceiverId(): String {
-        return arguments?.getString(ARG_FRIEND_ID) ?: ""
+        ) { e ->
+            Toast.makeText(context, "Failed to send message: ${e.message}", Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 
     private fun fetchMessages() {
@@ -144,75 +138,19 @@ class OpenChatFragment : Fragment() {
             Log.e("OpenChatFragment", "Conversation ID is null")
             return
         }
-        FirebaseFirestore.getInstance()
-            .collection("conversations")
-            .document(conversationId)
-            .collection("messages")
-            .orderBy("timestamp")
-            .addSnapshotListener { snapshots, e ->
-                if (e != null) {
-                    Log.e("OpenChatFragment", "Listen failed.", e)
-                    return@addSnapshotListener
-                }
-                val messagesList = snapshots?.mapNotNull { document ->
-                    document.toObject(Message::class.java)
-                }?.toMutableList() ?: mutableListOf()
-                messageAdapter.updateMessages(messagesList)
-                if (messagesList.isNotEmpty()) {
-                    recyclerView.scrollToPosition(messagesList.size - 1)
-                }
+        MessagingUtils.fetchMessages(conversationId, onMessagesFetched = { messages ->
+            messageAdapter.updateMessages(messages.toMutableList())
+            if (messages.isNotEmpty()) {
+                recyclerView.scrollToPosition(messages.size - 1)
             }
+        }, onFailure = { e ->
+            Log.e("OpenChatFragment", "Error fetching messages: ", e)
+        })
     }
 
-    private fun fetchConversations() {
-        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val friendId = arguments?.getString(ARG_FRIEND_ID) ?: run {
-            Log.e("OpenChatFragment", "Friend ID is null")
-            return
-        }
-        FirebaseFirestore.getInstance()
-            .collection("conversations")
-            .whereArrayContains("participants", currentUserId)
-            .get()
-            .addOnSuccessListener { documents ->
-                val filteredConversations = documents.filter { document ->
-                    val participants =
-                        document.get("participants") as? List<String> ?: return@filter false
-                    friendId in participants
-                }
-                // TODO: Use filteredConversations for whatever your logic requires
-            }
-            .addOnFailureListener { exception ->
-                Log.e("OpenChatFragment", "Error fetching conversations", exception)
-            }
+    private fun getReceiverId(): String {
+        return arguments?.getString(ARG_FRIEND_ID) ?: ""
     }
 
-    private fun markMessagesAsRead() {
-        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val conversationId = this.conversationId ?: return
-        FirebaseFirestore.getInstance()
-            .collection("conversations")
-            .document(conversationId)
-            .collection("messages")
-            .whereEqualTo("receiverId", currentUserId)
-            .whereEqualTo("isRead", false)
-            .get()
-            .addOnSuccessListener { documents ->
-                for (document in documents) {
-                    FirebaseFirestore.getInstance()
-                        .collection("conversations")
-                        .document(conversationId)
-                        .collection("messages")
-                        .document(document.id)
-                        .update("isRead", true)
-                        .addOnSuccessListener {
-                            Log.d("OpenChatFragment", "DocumentSnapshot successfully updated!")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.w("OpenChatFragment", "Error updating document", e)
-                        }
-                }
-            }
-    }
 
 }
