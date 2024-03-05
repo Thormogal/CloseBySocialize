@@ -28,7 +28,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import android.Manifest
-import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -39,9 +38,6 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.example.closebysocialize.dataClass.Users
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.bumptech.glide.request.transition.Transition
@@ -54,7 +50,6 @@ class ContainerActivity : AppCompatActivity() {
     private var profileMenuItem: MenuItem? = null
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_container)
@@ -62,7 +57,7 @@ class ContainerActivity : AppCompatActivity() {
             Places.initialize(applicationContext, getString(R.string.google_maps_api_key))
         }
         placesClient = Places.createClient(this)
-        // Initialize FusedLocationProviderClient
+        
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         placesClient = Places.createClient(this)
@@ -75,11 +70,8 @@ class ContainerActivity : AppCompatActivity() {
             requestLocationPermission()
         }
 
-        // Setup toolbar and bottom navigation
         val toolbar: Toolbar = findViewById(R.id.topAppBar)
         setSupportActionBar(toolbar)
-
-
 
         val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
         navView.setOnNavigationItemSelectedListener { item ->
@@ -94,16 +86,9 @@ class ContainerActivity : AppCompatActivity() {
                 true
             } ?: false
         }
-        val menuItemId = R.id.navigation_message
-        val badge = navView.getOrCreateBadge(menuItemId)
-        badge.isVisible = true
-        badge.number = 5 //TODO for test, add dynamic later
-        /* badge.backgroundColor = ContextCompat.getColor(this, R.color.primary_background)
-        badge.badgeTextColor = ContextCompat.getColor(this, R.color.primary_text)
-        TODO change to the colors we want
-         */
-        navView.selectedItemId = R.id.navigation_events
 
+        navView.selectedItemId = R.id.navigation_events
+        listenForNewMessages()
 
     }
 
@@ -116,12 +101,63 @@ class ContainerActivity : AppCompatActivity() {
     }
 
 
+    private fun listenForNewMessages() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        Log.d("ContainerActivity", "Current user ID: $userId")
+
+        if (userId != null) {
+            val db = FirebaseFirestore.getInstance()
+            db.collection("conversations")
+                .whereArrayContains("participants", userId)
+                .get()
+                .addOnSuccessListener { conversationDocuments ->
+                    val conversationIds = conversationDocuments.documents.map { it.id }
+                    var totalUnreadMessages = 0
+
+                    conversationIds.forEach { conversationId ->
+                        db.collection("conversations").document(conversationId)
+                            .collection("messages")
+                            .whereEqualTo("isRead", false)
+                            .whereEqualTo("receiverId", userId)
+                            .get()
+                            .addOnSuccessListener { messageDocuments ->
+                                val unreadMessagesCount = messageDocuments.size()
+                                totalUnreadMessages += unreadMessagesCount
+
+                                updateBottomNavigationBadge(totalUnreadMessages)
+                            }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.w("ContainerActivity", "Error fetching conversations", e)
+                }
+        } else {
+            Log.d("ContainerActivity", "User ID is null, cannot listen for messages")
+        }
+    }
+
+
+    private fun updateBottomNavigationBadge(count: Int) {
+        Log.d("ContainerActivity", "Updating badge count: $count")
+        val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
+        val menuItemId = R.id.navigation_message
+        if (count > 0) {
+            val badge = navView.getOrCreateBadge(menuItemId)
+            badge.isVisible = true
+            badge.number = count
+        } else {
+            navView.removeBadge(menuItemId)
+        }
+    }
+
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.profile_button -> {
                 showProfileMenu()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -139,7 +175,6 @@ class ContainerActivity : AppCompatActivity() {
     }
 
 
-
     private fun requestLocationPermission() {
         ActivityCompat.requestPermissions(
             this,
@@ -147,7 +182,12 @@ class ContainerActivity : AppCompatActivity() {
             LOCATION_PERMISSION_REQUEST_CODE
         )
     }
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -157,6 +197,7 @@ class ContainerActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun startLocationUpdates() {
         val locationRequest = LocationRequest.create().apply {
             interval = 10000 // Update interval in milliseconds
@@ -188,15 +229,18 @@ class ContainerActivity : AppCompatActivity() {
         )
     }
 
+
     private val locationCallback = object : LocationCallback() {
         @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
         override fun onLocationResult(locationResult: LocationResult) {
             for (location in locationResult.locations) {
-                val mapFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as? MapFragment
+                val mapFragment =
+                    supportFragmentManager.findFragmentById(R.id.fragment_container) as? MapFragment
                 mapFragment?.updateMapLocation(location)
             }
         }
     }
+
     private fun showProfileMenu() {
         val view = findViewById<View>(R.id.profile_button) ?: return
         val popup = PopupMenu(this, view)
@@ -207,33 +251,56 @@ class ContainerActivity : AppCompatActivity() {
                     val args = Bundle().apply {
                         putBoolean("showOnlyMyEvents", true)
                     }
-                    FragmentUtils.switchFragment(this, R.id.fragment_container, EventsFragment::class.java, args)
+                    FragmentUtils.switchFragment(
+                        this,
+                        R.id.fragment_container,
+                        EventsFragment::class.java,
+                        args
+                    )
                     true
                 }
+
                 R.id.menu_profile -> {
                     Log.d("!!!", "Profile opens")
-                    FragmentUtils.switchFragment(this, R.id.fragment_container, ProfileFragment::class.java)
+                    FragmentUtils.switchFragment(
+                        this,
+                        R.id.fragment_container,
+                        ProfileFragment::class.java
+                    )
                     true
                 }
+
                 R.id.menu_friends -> {
-                    FragmentUtils.switchFragment(this, R.id.fragment_container, FriendsFragment::class.java)
+                    FragmentUtils.switchFragment(
+                        this,
+                        R.id.fragment_container,
+                        FriendsFragment::class.java
+                    )
                     true
                 }
+
                 R.id.menu_edit_profile -> {
-                    FragmentUtils.switchFragment(this, R.id.fragment_container, EditProfileFragment::class.java)
+                    FragmentUtils.switchFragment(
+                        this,
+                        R.id.fragment_container,
+                        EditProfileFragment::class.java
+                    )
                     true
                 }
+
                 R.id.menu_logout -> {
                     val intent = Intent(this, LoginActivity::class.java)
                     startActivity(intent)
                     finishAffinity()
                     true
                 }
+
                 else -> false
             }
         }
         popup.show()
     }
+
     private fun loadUserProfile() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
@@ -261,6 +328,7 @@ class ContainerActivity : AppCompatActivity() {
                     val drawable = BitmapDrawable(resources, resource)
                     profileMenuItem?.icon = drawable
                 }
+
                 override fun onLoadCleared(placeholder: Drawable?) {
                 }
             })

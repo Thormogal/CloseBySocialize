@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".profile.ProfileFragment">
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".profile.ProfileFragment">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/profileVerticalGuideline1"
@@ -22,32 +27,27 @@
             app:layout_constraintGuide_percent="0.92" />
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/bottomOfToolbarGuide"
+            android:id="@+id/profileTopGuide"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.1" />
+            app:layout_constraintGuide_percent="0.15" />
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/bottomOfGridGuide"
+            android:id="@+id/profileMidGuide"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.35" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/topOfButtonsGuide"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.75" />
-
         <TextView
             android:id="@+id/nameTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:fontFamily="@font/poppins_medium"
+            android:fontFamily="@font/montserrat_semibold"
+            android:gravity="center_horizontal"
+            android:textSize="35sp"
             app:layout_constraintEnd_toEndOf="@id/profileVerticalGuideline2"
             app:layout_constraintStart_toStartOf="@id/profileVerticalGuideline1"
             app:layout_constraintTop_toTopOf="parent" />
@@ -55,67 +55,48 @@
 
         <ImageView
             android:id="@+id/profileImageView"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:layout_constraintBottom_toTopOf="@id/profileInterestTextView"
             app:layout_constraintEnd_toEndOf="@id/profileVerticalGuideline2"
             app:layout_constraintStart_toStartOf="@id/profileVerticalGuideline1"
             app:layout_constraintTop_toBottomOf="@id/nameTextView"
-            app:layout_constraintBottom_toTopOf="@id/profileInterestTextView"
             app:srcCompat="@drawable/profile_top_bar_avatar" />
+
+        <TextView
+            android:id="@+id/birthYearTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat"
+            android:textColor="@color/primary_text"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="@id/profileVerticalGuideline2"
+            app:layout_constraintStart_toStartOf="@id/profileVerticalGuideline1"
+            app:layout_constraintTop_toBottomOf="@id/profileImageView" />
 
         <TextView
             android:id="@+id/profileInterestTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_medium"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/roboto_bold"
             android:text="@string/interests"
             android:textColor="@color/primary_text"
+            app:layout_constraintBottom_toTopOf="@+id/profileGridLayout"
             app:layout_constraintEnd_toEndOf="@id/profileVerticalGuideline2"
             app:layout_constraintStart_toStartOf="@id/profileVerticalGuideline1"
-            app:layout_constraintTop_toBottomOf="@+id/profileImageView" />
+            app:layout_constraintTop_toBottomOf="@id/birthYearTextView" />
 
         <GridLayout
             android:id="@+id/profileGridLayout"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:columnCount="4"
-            app:layout_constraintBottom_toTopOf="@id/bottomOfGridGuide"
+            app:layout_constraintBottom_toTopOf="@id/profileMidGuide"
             app:layout_constraintEnd_toEndOf="@id/profileVerticalGuideline2"
             app:layout_constraintStart_toStartOf="@id/profileVerticalGuideline1"
-            app:layout_constraintTop_toBottomOf="@id/profileInterestTextView">
-
-            <ImageView
-                android:id="@+id/bookImageView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_gravity="fill_horizontal"
-                android:src="@drawable/interests_book" />
-
-            <ImageView
-                android:id="@+id/dogWalkImageView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_gravity="fill_horizontal"
-                android:src="@drawable/interests_dogwalk" />
-
-            <ImageView
-                android:id="@+id/moviesImageView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_gravity="fill_horizontal"
-                android:src="@drawable/interests_movie" />
-
-            <ImageView
-                android:id="@+id/foodImageView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_gravity="fill_horizontal"
-                android:src="@drawable/interests_restaurant" />
+            app:layout_constraintTop_toBottomOf="@id/profileTopGuide">
 
         </GridLayout>
 
@@ -123,33 +104,38 @@
             android:id="@+id/profileAboutTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_medium"
+            android:fontFamily="@font/roboto_bold"
             android:text="@string/about_me"
             android:textColor="@color/primary_text"
+            app:layout_constraintTop_toBottomOf="@id/profileGridLayout"
             app:layout_constraintEnd_toEndOf="@id/profileVerticalGuideline2"
             app:layout_constraintStart_toStartOf="@id/profileVerticalGuideline1"
-            app:layout_constraintTop_toBottomOf="@id/bottomOfGridGuide" />
+            app:layout_constraintBottom_toTopOf="@id/aboutMeTextView"
+            android:layout_marginTop="30dp" />
+
+        <TextView
+            android:id="@+id/aboutMeTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edittext_border"
+            android:fontFamily="@font/poppins_medium"
+            android:gravity="center"
+            android:padding="5dp"
+            android:textColor="@color/primary_text"
+            app:layout_constraintStart_toStartOf="@id/profileVerticalGuideline1"
+            app:layout_constraintEnd_toEndOf="@id/profileVerticalGuideline2"
+            app:layout_constraintTop_toBottomOf="@id/profileAboutTextView"/>
 
         <ImageView
             android:id="@+id/bugImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
             android:minWidth="24dp"
             android:minHeight="24dp"
             android:src="@drawable/profile_bug"
             app:layout_constraintStart_toStartOf="@id/profileVerticalGuideline1"
-            app:layout_constraintTop_toBottomOf="@id/topOfButtonsGuide" />
-
-        <ImageView
-            android:id="@+id/languageImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:minWidth="24dp"
-            android:minHeight="24dp"
-            android:src="@drawable/profile_language"
-            app:layout_constraintStart_toStartOf="@id/profileVerticalGuideline1"
-            app:layout_constraintTop_toBottomOf="@id/bugImageView" />
+            app:layout_constraintTop_toBottomOf="@id/aboutMeTextView" />
 
         <TextView
             android:id="@+id/reportBugTextView"
@@ -163,6 +149,17 @@
             android:text="@string/report_bugs"
             app:layout_constraintStart_toEndOf="@id/bugImageView"
             app:layout_constraintTop_toTopOf="@id/bugImageView" />
+
+        <ImageView
+            android:id="@+id/languageImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:minWidth="24dp"
+            android:minHeight="24dp"
+            android:src="@drawable/profile_language"
+            app:layout_constraintStart_toStartOf="@id/profileVerticalGuideline1"
+            app:layout_constraintTop_toBottomOf="@id/bugImageView" />
 
         <TextView
             android:id="@+id/languageTextView"
@@ -187,6 +184,7 @@
             app:layout_constraintTop_toBottomOf="@id/languageImageView" />
 
         <TextView
+            android:id="@+id/darkModeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_medium"
@@ -195,23 +193,5 @@
             app:layout_constraintStart_toEndOf="@id/darkModeSwitch"
             app:layout_constraintTop_toTopOf="@id/darkModeSwitch" />
 
-        <ScrollView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toTopOf="@id/topOfButtonsGuide"
-            app:layout_constraintEnd_toEndOf="@id/profileVerticalGuideline2"
-            app:layout_constraintStart_toStartOf="@id/profileVerticalGuideline1"
-            app:layout_constraintTop_toBottomOf="@id/profileAboutTextView">
-
-            <TextView
-                android:id="@+id/aboutMeTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_medium"
-                android:gravity="center"
-                android:hint="@string/about_me" />
-
-        </ScrollView>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

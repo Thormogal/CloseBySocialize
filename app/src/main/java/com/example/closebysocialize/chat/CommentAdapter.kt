@@ -27,10 +27,12 @@ class CommentAdapter(
     interface CommentInteractionListener {
         fun onReply(commentId: String)
     }
+
     companion object {
         private const val COMMENT_TYPE = 0
         private const val REPLY_TYPE = 1
     }
+
     var listener: CommentInteractionListener? = null
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -42,13 +44,15 @@ class CommentAdapter(
         val likeText: TextView = view.findViewById(R.id.likeTextView)
         val likeCounter: TextView = view.findViewById(R.id.likedAmountTextView)
         val likeIconImageView: ImageView = view.findViewById(R.id.likedImageView)
-
     }
+
     override fun getItemViewType(position: Int): Int {
         return if (comments[position].parentId == null) COMMENT_TYPE else REPLY_TYPE
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val layout = if (viewType == COMMENT_TYPE) R.layout.item_comment else R.layout.item_comment // TODO change if it should look different
+        val layout =
+            if (viewType == COMMENT_TYPE) R.layout.item_comment else R.layout.item_comment // TODO change if it should look different
         val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
         return ViewHolder(view)
     }
@@ -86,7 +90,8 @@ class CommentAdapter(
         }
         holder.likeCounter.text = comment.likes.toString()
         holder.likeCounter.visibility = if (comment.likes > 0) View.VISIBLE else View.INVISIBLE
-        holder.likeIconImageView.visibility = if (comment.likes > 0) View.VISIBLE else View.INVISIBLE
+        holder.likeIconImageView.visibility =
+            if (comment.likes > 0) View.VISIBLE else View.INVISIBLE
         holder.likeText.setOnClickListener {
             if (comment.isLiked) {
                 comment.likes--
@@ -97,7 +102,8 @@ class CommentAdapter(
             }
             holder.likeCounter.text = comment.likes.toString()
             holder.likeCounter.visibility = if (comment.likes > 0) View.VISIBLE else View.INVISIBLE
-            holder.likeIconImageView.visibility = if (comment.likes > 0) View.VISIBLE else View.INVISIBLE
+            holder.likeIconImageView.visibility =
+                if (comment.likes > 0) View.VISIBLE else View.INVISIBLE
             toggleLikeStatus(comment.id, comment.isLiked)
         }
     }
@@ -133,17 +139,40 @@ class CommentAdapter(
         val months = days / 30
         val years = days / 365
         return when {
-            years > 0 -> fragment.resources.getQuantityString(R.plurals.years_ago, years.toInt(), years)
-            months > 0 -> fragment.resources.getQuantityString(R.plurals.months_ago, months.toInt(), months)
-            weeks > 0 -> fragment.resources.getQuantityString(R.plurals.weeks_ago, weeks.toInt(), weeks)
+            years > 0 -> fragment.resources.getQuantityString(
+                R.plurals.years_ago,
+                years.toInt(),
+                years
+            )
+
+            months > 0 -> fragment.resources.getQuantityString(
+                R.plurals.months_ago,
+                months.toInt(),
+                months
+            )
+
+            weeks > 0 -> fragment.resources.getQuantityString(
+                R.plurals.weeks_ago,
+                weeks.toInt(),
+                weeks
+            )
+
             days > 0 -> fragment.resources.getQuantityString(R.plurals.days_ago, days.toInt(), days)
-            hours > 0 -> fragment.resources.getQuantityString(R.plurals.hours_ago, hours.toInt(), hours)
-            minutes > 0 -> fragment.resources.getQuantityString(R.plurals.minutes_ago, minutes.toInt(), minutes)
+            hours > 0 -> fragment.resources.getQuantityString(
+                R.plurals.hours_ago,
+                hours.toInt(),
+                hours
+            )
+
+            minutes > 0 -> fragment.resources.getQuantityString(
+                R.plurals.minutes_ago,
+                minutes.toInt(),
+                minutes
+            )
+
             else -> fragment.getString(R.string.just_now)
         }
     }
-
-
 
 
     fun updateComments(newComments: List<Comment>) {
@@ -154,6 +183,8 @@ class CommentAdapter(
     }
 
 
-    fun Int.dpToPx(context: Context): Int = (this * context.resources.displayMetrics.density).toInt()
+    fun Int.dpToPx(context: Context): Int =
+        (this * context.resources.displayMetrics.density).toInt()
+
     override fun getItemCount() = comments.size
 }

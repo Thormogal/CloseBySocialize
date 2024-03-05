@@ -21,21 +21,30 @@ import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.NumberPicker
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.dataClass.Users
+import com.example.closebysocialize.events.EventsFragment
+import com.example.closebysocialize.utils.FragmentUtils
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.UUID
+
 
 
 private const val ARG_PARAM1 = "param1"
@@ -71,7 +80,6 @@ class AddEventFragment : Fragment() {
 
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -84,8 +92,9 @@ class AddEventFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 PLACE_SEARCH_REQUEST_CODE, CITY_SEARCH_REQUEST_CODE -> {
-                    val placeName = data?.getStringExtra("place_name")
-                    val placeCoordinates = data?.getParcelableExtra<LatLng>("place_coordinates")
+                    val place = Autocomplete.getPlaceFromIntent(data!!)
+                    val placeName = place.name
+                    val placeCoordinates = place.latLng
                     when (requestCode) {
                         PLACE_SEARCH_REQUEST_CODE -> {
                             eventPlace.setText(placeName)
@@ -108,7 +117,6 @@ class AddEventFragment : Fragment() {
         }
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -119,19 +127,24 @@ class AddEventFragment : Fragment() {
         eventPlace = view.findViewById(R.id.eventPlace)
         cityTextView = view.findViewById(R.id.cityTextView)
 
-
         val numberPicker = view.findViewById<NumberPicker>(R.id.spotPicker)
         numberPicker.maxValue = 20
         numberPicker.minValue = 1
         numberPicker.value = 4
 
         eventPlace.setOnClickListener {
-            val intent = Intent(context, EventMapSearch::class.java)
+            val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                .setCountry("SE")
+                .build(requireContext())
             startActivityForResult(intent, PLACE_SEARCH_REQUEST_CODE)
         }
 
         cityTextView.setOnClickListener {
-            val intent = Intent(context, EventMapSearch::class.java)
+            val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                .setCountry("SE")
+                .build(requireContext())
             startActivityForResult(intent, CITY_SEARCH_REQUEST_CODE)
         }
 
@@ -143,10 +156,12 @@ class AddEventFragment : Fragment() {
         }
 
 
+
         val users = listOf<Users>() ?: listOf()
         val taggedUsers = mutableListOf<String>() ?: mutableListOf()
         val eventGuests = view.findViewById<EditText>(R.id.eventGuests) ?: EditText(context)
         val chipGroup = view.findViewById<ChipGroup>(R.id.chipGroup) ?: ChipGroup(context)
+
         recyclerViewFindUsers.layoutManager = LinearLayoutManager(context)
         userAdapter = UserAdapter(listOf(), taggedUsers, eventGuests, chipGroup)
         recyclerViewFindUsers.adapter = userAdapter
@@ -175,13 +190,6 @@ class AddEventFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
         })
-
-
-
-
-
-
-
 
 
 
@@ -230,13 +238,10 @@ class AddEventFragment : Fragment() {
                         )
                         selectedImageView = it as ImageView
                         selectedCategory = it.tag as String
-
-
                     }
                 }
             }
         }
-
 
         val eventDateEditText = view.findViewById<TextInputEditText>(R.id.eventDate)
         eventDateEditText.isFocusable = false
@@ -290,7 +295,7 @@ class AddEventFragment : Fragment() {
             datePickerDialog.show()
         }
 
-        val createEventButton = view.findViewById<MaterialButton>(R.id.materialButton)
+        val createEventButton = view.findViewById<MaterialButton>(R.id.materialSubmitButton)
 
         createEventButton.setOnClickListener {
             val eventNameTextView = view.findViewById<TextInputEditText>(R.id.eventNameTextView)
@@ -302,6 +307,8 @@ class AddEventFragment : Fragment() {
             val guests = eventGuests.text.toString()
             val eventDescription = view.findViewById<TextInputEditText>(R.id.eventDescription)
             val spots = numberPicker.value
+            val placeGeoPoint = eventPlaceCoordinates?.let { GeoPoint(it.latitude, it.longitude) }
+            val cityGeoPoint = eventCityCoordinates?.let { GeoPoint(it.latitude, it.longitude) }
 
 
             val eventName = eventNameTextView.text.toString()
@@ -348,9 +355,9 @@ class AddEventFragment : Fragment() {
                         val event = hashMapOf(
                             "title" to eventName,
                             "location" to eventPlace.text.toString(),
-                            "place_coordinates" to eventPlaceCoordinates,
+                            "place_coordinates" to placeGeoPoint,
                             "city" to cityTextView.text.toString(),
-                            "city_coordinates" to eventCityCoordinates,
+                            "city_coordinates" to cityGeoPoint,
                             "day" to chosenDay,
                             "imageUrl" to imageUrl,
                             "date" to chosenDate,
@@ -363,11 +370,17 @@ class AddEventFragment : Fragment() {
                             "authorProfileImageUrl" to userDetails.profileImageUrl,
                             "authorFirstName" to userDetails.firstName,
                             "authorLastName" to userDetails.lastName,
-                            "attendedPeopleProfilePictureUrls" to attendedPeopleProfilePictureUrls
+                            "attendedPeopleProfilePictureUrls" to attendedPeopleProfilePictureUrls,
+                            "createdAt" to FieldValue.serverTimestamp()
                         )
 
                         firestore.collection("events").add(event)
-                            .addOnSuccessListener {
+                            .addOnSuccessListener { documentReference ->
+                                val eventId = documentReference.id!!
+                                if (currentUserId != null) {
+                                    addUserToEventAttendees(currentUserId, eventId)
+                                }
+
                                 eventNameTextView.text = null
                                 eventPlace.text = null
                                 eventDate.text = null
@@ -384,7 +397,6 @@ class AddEventFragment : Fragment() {
                                     )
                                 )
 
-
                                 selectedImageView = null
                                 Toast.makeText(
                                     context,
@@ -392,23 +404,34 @@ class AddEventFragment : Fragment() {
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
-                            }
-
-                            .addOnFailureListener { e ->
-                                Toast.makeText(
-                                    context,
-                                    "Error adding event: ${e.message}",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
+                                activity?.let {
+                                    FragmentUtils.switchFragment(
+                                        it as AppCompatActivity,
+                                        R.id.fragment_container,
+                                        EventsFragment::class.java
+                                    )
+                                }
                             }
                     }
                 }
-
             }
         }
     }
 
+    private fun addUserToEventAttendees(userId: String, eventId: String) {
+        val userRef = firestore.collection("users").document(userId)
+        firestore.runTransaction { transaction ->
+            val snapshot = transaction.get(userRef)
+            val currentAttendingEvents =
+                snapshot.get("attendingEvents") as? MutableList<String> ?: mutableListOf()
+            currentAttendingEvents.add(eventId)
+            transaction.update(userRef, "attendingEvents", currentAttendingEvents)
+        }.addOnSuccessListener {
+            Log.d("AddEvent", "User attending events updated successfully.")
+        }.addOnFailureListener { e ->
+            Log.e("AddEvent", "Error updating user attending events", e)
+        }
+    }
 
     private fun uploadImage(imageUri: Uri, onSuccess: ((imageUrl: String) -> Unit)? = null) {
         val storageRef = FirebaseStorage.getInstance().reference
@@ -461,7 +484,6 @@ class AddEventFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
-
     }
 
 }

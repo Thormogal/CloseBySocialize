@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FFFFFF"/> <!-- Bakgrundsfärg, kan ändras -->
+    <stroke android:width="2dp" android:color="#000000"/> <!-- Ramens färg och bredd -->
+    <corners android:radius="4dp"/> <!-- Rundade hörn, kan justeras -->
+</shape>
