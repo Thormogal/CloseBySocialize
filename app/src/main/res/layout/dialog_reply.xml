@@ -1,14 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="3dp">
 
-    <EditText
-        android:id="@+id/editTextReply"
-        android:layout_width="match_parent"
+    <com.google.android.material.card.MaterialCardView
+        style="?attr/materialCardViewStyle"
+        android:layout_width="348dp"
         android:layout_height="wrap_content"
-        android:hint="@string/reply_hint" />
+        app:cardBackgroundColor="@color/primary_background"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="?attr/textInputFilledStyle"
+                android:id="@+id/inputReplyText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/reply_comment"
+                android:elevation="16dp"
+                app:boxBackgroundColor="@color/primary_background">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <Button
+                    android:id="@+id/cancelReplyButton"
+                    style="@style/Widget.Material3.Button.ElevatedButton"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_font_family"
+                    android:text="@string/cancel"
+                    android:textColor="@color/primary_text"
+                    app:backgroundTint="@color/primary_blue"
+                    app:backgroundTintMode="src_in" />
+
+                <Button
+                    android:id="@+id/postReplyButton"
+                    style="@style/Widget.Material3.Button.ElevatedButton"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/poppins_font_family"
+                    android:text="@string/post"
+                    android:textColor="@color/primary_text"
+                    app:backgroundTint="@color/primary_blue"
+                    app:backgroundTintMode="src_in" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>

@@ -72,14 +72,16 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
         )
         recyclerView.adapter = eventsAdapter
         eventsAdapter.chatImageViewClickListener = { eventId ->
-            openChatForEvent(eventId)
+            val eventTitle = allEventsList.find { it.id == eventId }?.title ?: ""
+            openChatForEvent(eventId, eventTitle)
         }
+
         toggleGroup.check(R.id.allButton)
         filterData("all")
     }
 
 
-    private fun openChatForEvent(eventId: String) {
+   private fun openChatForEvent(eventId: String) {
         val args = Bundle().apply {
             putString("eventId", eventId)
         }
@@ -90,6 +92,7 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
             args = args
         )
     }
+
 
     private fun initializeViews(view: View) {
         filterImageView = view.findViewById(R.id.filterImageView)
