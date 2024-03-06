@@ -1,6 +1,5 @@
 package com.example.closebysocialize.profile
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -22,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.closebysocialize.ReportBugDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -35,6 +35,7 @@ class ProfileFragment : Fragment() {
     private lateinit var language: TextView
     private lateinit var darkModeSwitch: SwitchCompat
     private lateinit var aboutMeTextView: TextView
+    private var currentProfileImageUrl: String? = null
     private var id: String? = null
     private val shouldShowCurrentUserProfile: Boolean
         get() = id == null
@@ -77,7 +78,6 @@ class ProfileFragment : Fragment() {
         return view
     }
 
-    @SuppressLint("SuspiciousIndentation")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -91,6 +91,9 @@ class ProfileFragment : Fragment() {
         }
         language.setOnClickListener {
             showLanguagePicker()
+        }
+        profileImageView.setOnClickListener {
+
         }
 
         val currentNightMode = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)
@@ -108,22 +111,16 @@ class ProfileFragment : Fragment() {
 
     private fun fetchUserInfo() {
         val idToUse = id ?: if (shouldShowCurrentUserProfile) FirebaseAuth.getInstance().currentUser?.uid else null
-        Log.d("ProfileFragment", "fetchUserInfo called with idToUse: $idToUse")
         if (idToUse != null) {
             val userRef =
                 FirebaseFirestore.getInstance().collection("users").document(idToUse)
             userRef.get().addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
                     val userName = documentSnapshot.getString("name")
-                    val profileImageUrl = documentSnapshot.getString("profileImage")
+                    val profileImageUrl = documentSnapshot.getString("profileImageUrl")
                     val aboutMe = documentSnapshot.getString("aboutMe")
                     val birthYear = documentSnapshot.getLong("birthYear")?.toInt()
-                    Log.d("ProfileFragment", "About Me: $aboutMe")
-
-                    Log.d(
-                        "ProfileFragment",
-                        "Fetched user data: Name: $userName, Image URL: $profileImageUrl, About Me: $aboutMe"
-                    )
+                    currentProfileImageUrl = profileImageUrl
 
                     updateProfileUI(aboutMe, userName, profileImageUrl, birthYear)
                 } else {
@@ -197,12 +194,6 @@ class ProfileFragment : Fragment() {
     }
 
     private fun updateProfileUI(aboutMe: String?, userName: String?, profileImageUrl: String?, birthYear: Int?) {
-        Log.d(
-            "ProfileFragment",
-            "Updating UI. Name: $userName, About Me: $aboutMe, Image URL: $profileImageUrl"
-        )
-
-
         nameTextView.text = userName ?: "No name available"
         aboutMeTextView.text = aboutMe ?: "No info available"
         birthYearTextView.text = birthYear?.toString() ?: "No birth year available"
@@ -210,12 +201,13 @@ class ProfileFragment : Fragment() {
         if (!profileImageUrl.isNullOrEmpty()) {
             Glide.with(this)
                 .load(profileImageUrl)
+                .circleCrop()
                 .error(R.drawable.avatar_dark)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
                         model: Any?,
-                        target: com.bumptech.glide.request.target.Target<Drawable>?,
+                        target: Target<Drawable>,
                         isFirstResource: Boolean
                     ): Boolean {
                         Log.e("ProfileFragment", "Failed to load image", e)
@@ -225,7 +217,7 @@ class ProfileFragment : Fragment() {
                     override fun onResourceReady(
                         resource: Drawable?,
                         model: Any?,
-                        target: com.bumptech.glide.request.target.Target<Drawable>?,
+                        target: Target<Drawable>,
                         dataSource: DataSource?,
                         isFirstResource: Boolean
                     ): Boolean {
@@ -236,7 +228,19 @@ class ProfileFragment : Fragment() {
         } else {
             profileImageView.setImageResource(R.drawable.avatar_dark)
         }
+
+        profileImageView.setOnClickListener {
+            Log.d("ProfileFragment", "Profile image clicked.")
+            currentProfileImageUrl?.let { imageUrl ->
+                Log.d("ProfileFragment", "Current image URL: $imageUrl")
+                val dialogFragment = EnlargeProfilePicFragment.newInstance(imageUrl)
+                dialogFragment.show(parentFragmentManager, "imageDialog")
+            } ?: run {
+                Log.d("ProfileFragment", "No image URL found.")
+            }
+        }
     }
+
 
 
     private fun showLanguagePicker() {

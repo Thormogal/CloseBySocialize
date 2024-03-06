@@ -57,7 +57,6 @@
             android:id="@+id/profileImageView"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            app:layout_constraintBottom_toTopOf="@id/profileInterestTextView"
             app:layout_constraintEnd_toEndOf="@id/profileVerticalGuideline2"
             app:layout_constraintStart_toStartOf="@id/profileVerticalGuideline1"
             app:layout_constraintTop_toBottomOf="@id/nameTextView"

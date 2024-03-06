@@ -21,6 +21,8 @@ import com.bumptech.glide.Glide
 import com.example.closebysocialize.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import java.util.UUID
 
 
 class EditProfileFragment : Fragment() {
@@ -121,17 +123,13 @@ class EditProfileFragment : Fragment() {
         val aboutMeText = aboutMeEditText.text.toString()
         val name = editName.text.toString()
         val birthYear = birthYearPicker.value
-        val profileImageURI = selectedImageUri?.toString() ?: ""
 
         val selectedInterestsAsString = selectedInterests.map { it.toString() }
-
         val userRef = db.collection("users").document(id)
-
         val updates = hashMapOf<String, Any>(
             "aboutMe" to aboutMeText,
             "name" to name,
-            "birthYear" to birthYear,
-            "profileImage" to profileImageURI
+            "birthYear" to birthYear
         )
 
         if (selectedInterestsAsString.isNotEmpty()) {
@@ -156,32 +154,51 @@ class EditProfileFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             selectedImageUri = data?.data
-            setProfileImage(selectedImageUri)
+            selectedImageUri?.let {
+                uploadImageToFirebaseStorage(it)
+                setProfileImage(it.toString())
+            }
         }
     }
 
-    private fun setProfileImage(imageUri: Uri?) {
-        try {
-            imageUri?.let {
-                if (it.toString().startsWith("content://")) {
-                    // local URI
-                    Glide.with(this)
-                        .load(it)
-                        .into(editImage)
-                } else {
-                    // URL from the internet
-                    Glide.with(this)
-                        .load(it.toString())
-                        .into(editImage)
-                }
-            } ?: run {
-                Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_SHORT).show()
-            }
-        } catch (e: Exception) {
-            Log.e("EditProfileFragment", "Exception: ", e)
-            Toast.makeText(requireContext(), "Error setting image", Toast.LENGTH_SHORT).show()
+    private fun setProfileImage(imageUrl: String?) {
+        imageUrl?.let {
+            Glide.with(this)
+                .load(it)
+                .circleCrop()
+                .into(editImage)
         }
     }
+
+    private fun uploadImageToFirebaseStorage(imageUri: Uri) {
+        val fileName = "ProfilePictures/${UUID.randomUUID()}.jpg"
+        val storageRef = FirebaseStorage.getInstance().getReference(fileName)
+
+        storageRef.putFile(imageUri)
+            .addOnSuccessListener {
+                storageRef.downloadUrl.addOnSuccessListener { uri ->
+                    saveProfileImageUrlToFirestore(uri.toString())
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(
+                    context,
+                    "Error when trying to upload picture",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+    }
+
+    private fun saveProfileImageUrlToFirestore(imageUrl: String) {
+        val userRef = db.collection("users").document(id)
+        userRef.update("profileImageUrl", imageUrl)
+            .addOnSuccessListener {
+                setProfileImage(imageUrl)
+            }
+            .addOnFailureListener {
+            }
+    }
+
 
     private fun fetchUserData() {
         val userRef = db.collection("users").document(id)
@@ -190,16 +207,15 @@ class EditProfileFragment : Fragment() {
                 val name = document.getString("name")
                 val aboutMe = document.getString("aboutMe")
                 val birthYear = document.getLong("birthYear")?.toInt()
-                val profileImageUri = document.getString("profileImage")
+                val profileImageUrl = document.getString("profileImageUrl")
 
                 editName.setText(name)
                 aboutMeEditText.setText(aboutMe)
                 birthYear?.let {
                     birthYearPicker.value = it
                 }
-                profileImageUri?.let {
-                    selectedImageUri = Uri.parse(it)
-                    setProfileImage(selectedImageUri)
+                profileImageUrl?.let {
+                    setProfileImage(it)
                 }
                 val selectedInterestsData = document.get("selectedInterests") as? List<String>
                 selectedInterestsData?.let {
