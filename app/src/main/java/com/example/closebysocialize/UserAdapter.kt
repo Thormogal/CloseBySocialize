@@ -1,12 +1,11 @@
-import android.graphics.Color
-import android.util.Log
+package com.example.closebysocialize
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.example.closebysocialize.R
 import com.example.closebysocialize.dataClass.Users
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -14,7 +13,6 @@ import com.google.android.material.chip.ChipGroup
 class UserAdapter(
     private var users: List<Users>,
     private val taggedUsers: MutableList<String>,
-    private val eventGuests: EditText,
     private val chipGroup: ChipGroup,
     var callback: UserAdapterCallback? = null
 
@@ -73,12 +71,9 @@ class UserAdapter(
 
 
                 chip.setOnCloseIconClickListener {
-                    Log.d("UserAdapter", "Försöker ta bort användare: ${user.name} med ID: ${user.id}")
                     taggedUsers.remove(user.id)
                     chipGroup.removeView(chip)
-                    Log.d("UserAdapter", "Användare borttagen: ${user.name}, återstående användare i taggedUsers: $taggedUsers")
                     callback?.onUserRemoved()
-                    Log.d("UserAdapter", "Callback för onUserRemoved anropad")
                 }
 
                 chipGroup.addView(chip)

@@ -1,7 +1,6 @@
 package com.example.closebysocialize
 
 import AuthUtil
-import UserAdapter
 import UserDetailsFetcher
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -163,7 +162,7 @@ class AddEventFragment : Fragment() {
             val chipGroup = view.findViewById(R.id.chipGroup) ?: ChipGroup(context)
 
             recyclerViewFindUsers.layoutManager = LinearLayoutManager(context)
-            userAdapter = UserAdapter(listOf(), taggedUsers, eventGuests, chipGroup)
+            userAdapter = UserAdapter(listOf(), taggedUsers, chipGroup)
             userAdapter.setSearchText("")
             recyclerViewFindUsers.adapter = userAdapter
 
