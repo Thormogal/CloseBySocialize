@@ -26,7 +26,6 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
     private lateinit var recyclerView: RecyclerView
     private lateinit var eventsAdapter: EventsAdapter
     private lateinit var toggleGroup: MaterialButtonToggleGroup
-    private lateinit var filterImageView: ImageView
     private lateinit var progressBar: ProgressBar
     private var savedEventsIds: MutableSet<String> = mutableSetOf()
     private var attendingEventsIds: MutableSet<String> = mutableSetOf()
@@ -91,7 +90,6 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
     }
 
     private fun initializeViews(view: View) {
-        filterImageView = view.findViewById(R.id.filterImageView)
         toggleGroup = view.findViewById(R.id.toggleButtonGroup)
         recyclerView = view.findViewById(R.id.eventsRecyclerView)
         FirebaseApp.initializeApp(requireContext())
