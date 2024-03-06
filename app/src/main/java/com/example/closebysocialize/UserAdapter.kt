@@ -2,7 +2,6 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +13,6 @@ import com.google.android.material.chip.ChipGroup
 class UserAdapter(
     private var users: List<Users>,
     private val taggedUsers: MutableList<String>,
-    private val eventGuests: EditText,
     private val chipGroup: ChipGroup
 ) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 

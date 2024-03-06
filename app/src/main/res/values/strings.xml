@@ -83,7 +83,10 @@
     <string name="event_happening_time">Event time</string>
     <string name="time_created">Time created</string>
     <string name="distance">Distance</string>
-
+    <string name="more_attendees_count">%d more</string>
+    <string name="available_spots">%1\$s spots open</string>
+    <string name="current_spots">spots</string>
+    <string name="available_spots_format">%d %s</string>
 
     // chat
     <string name="author_comment">This is a comment</string>

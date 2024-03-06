@@ -13,10 +13,9 @@ import com.example.closebysocialize.R
 import com.example.closebysocialize.dataClass.Comment
 import com.example.closebysocialize.message.FireBaseMessagingService.Companion.TAG
 import com.example.closebysocialize.utils.CommentDiffCallback
+import com.example.closebysocialize.utils.CommentsUtils
 import com.example.closebysocialize.utils.ImageUtils
-import com.example.closebysocialize.utils.MessagingUtils
 import com.example.closebysocialize.utils.TimeUtils
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 
@@ -68,7 +67,7 @@ class CommentAdapter(
                     if (comment.likes > 0) comment.likes -= 1
                 }
                 updateLikeUI(comment)
-                MessagingUtils.toggleLikeStatus(eventId ?: return@setOnClickListener,
+                CommentsUtils.toggleLikeStatus(eventId ?: return@setOnClickListener,
                     comment.id,
                     newLikedStatus,
                     onSuccess = {

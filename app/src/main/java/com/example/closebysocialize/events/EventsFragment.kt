@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -28,7 +27,6 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
     private lateinit var toggleGroup: MaterialButtonToggleGroup
     private lateinit var progressBar: ProgressBar
     private var savedEventsIds: MutableSet<String> = mutableSetOf()
-    private var attendingEventsIds: MutableSet<String> = mutableSetOf()
     private var allEventsList: List<Event> = emptyList()
     private var attendingEventsList: List<Event> = emptyList()
     private var savedEventsList: List<Event> = emptyList()
@@ -57,19 +55,17 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val userId = FirebaseAuth.getInstance().currentUser?.uid.orEmpty()
+        FirebaseAuth.getInstance().currentUser?.uid.orEmpty()
         eventsAdapter = EventsAdapter(
-            attendingEventsList,
-            allEventsList,
-            savedEventsList,
-            userId,
-            savedEventsIds,
-            attendingEventsIds,
-            this
+            attendingEventsList.toMutableList(),
+            allEventsList.toMutableList(),
+            savedEventsList.toMutableList(),
+            savedEventsIds
         )
+
         recyclerView.adapter = eventsAdapter
         eventsAdapter.chatImageViewClickListener = { eventId ->
-            val eventTitle = allEventsList.find { it.id == eventId }?.title ?: ""
+            val eventTitle = allEventsList.find { it.id == eventId }?.title ?: "Chat"
             openChatForEvent(eventId, eventTitle)
         }
 
@@ -81,13 +77,18 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
         val args = Bundle().apply {
             putString("eventId", eventId)
         }
-        FragmentUtils.switchFragment(
+        val chatFragment = ChatFragment().apply {
+            arguments = args
+        }
+        FragmentUtils.navigateToFragmentWithActionBarTitle(
             activity = requireActivity() as AppCompatActivity,
-            containerId = R.id.fragment_container,
-            fragmentClass = ChatFragment::class.java,
-            args = args
+            fragment = chatFragment,
+            title = eventTitle
         )
     }
+
+
+
 
     private fun initializeViews(view: View) {
         toggleGroup = view.findViewById(R.id.toggleButtonGroup)
