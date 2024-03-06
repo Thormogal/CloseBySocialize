@@ -73,44 +73,18 @@
             app:layout_constraintStart_toStartOf="@id/profileVerticalGuideline1"
             app:layout_constraintTop_toBottomOf="@id/profileImageView" />
 
-        <TextView
-            android:id="@+id/profileInterestTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:fontFamily="@font/roboto_bold"
-            android:text="@string/interests"
-            android:textColor="@color/primary_text"
-            app:layout_constraintBottom_toTopOf="@+id/profileGridLayout"
-            app:layout_constraintEnd_toEndOf="@id/profileVerticalGuideline2"
-            app:layout_constraintStart_toStartOf="@id/profileVerticalGuideline1"
-            app:layout_constraintTop_toBottomOf="@id/birthYearTextView" />
-
         <GridLayout
             android:id="@+id/profileGridLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="30dp"
             android:columnCount="4"
             app:layout_constraintBottom_toTopOf="@id/profileMidGuide"
             app:layout_constraintEnd_toEndOf="@id/profileVerticalGuideline2"
             app:layout_constraintStart_toStartOf="@id/profileVerticalGuideline1"
-            app:layout_constraintTop_toBottomOf="@id/profileTopGuide">
+            app:layout_constraintTop_toBottomOf="@id/birthYearTextView">
 
         </GridLayout>
-
-        <TextView
-            android:id="@+id/profileAboutTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_bold"
-            android:text="@string/about_me"
-            android:textColor="@color/primary_text"
-            app:layout_constraintTop_toBottomOf="@id/profileGridLayout"
-            app:layout_constraintEnd_toEndOf="@id/profileVerticalGuideline2"
-            app:layout_constraintStart_toStartOf="@id/profileVerticalGuideline1"
-            app:layout_constraintBottom_toTopOf="@id/aboutMeTextView"
-            android:layout_marginTop="30dp" />
 
         <TextView
             android:id="@+id/aboutMeTextView"
@@ -123,7 +97,8 @@
             android:textColor="@color/primary_text"
             app:layout_constraintStart_toStartOf="@id/profileVerticalGuideline1"
             app:layout_constraintEnd_toEndOf="@id/profileVerticalGuideline2"
-            app:layout_constraintTop_toBottomOf="@id/profileAboutTextView"/>
+            app:layout_constraintTop_toBottomOf="@id/profileGridLayout"
+            android:layout_marginTop="30dp"/>
 
         <ImageView
             android:id="@+id/bugImageView"
