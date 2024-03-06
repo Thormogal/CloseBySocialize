@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.R
 import com.example.closebysocialize.dataClass.Friend
 import com.example.closebysocialize.friends.AddFriendFragment
+import com.example.closebysocialize.friends.FriendsAdapter
 import com.example.closebysocialize.profile.ProfileFragment
 import com.example.closebysocialize.utils.FirestoreUtils
 import com.example.closebysocialize.utils.FragmentUtils
@@ -29,8 +30,7 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_friends, container, false)
     }
@@ -55,7 +55,7 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
         }
 
         friendsRecyclerView = view.findViewById(R.id.friendsRecyclerView)
-        friendsAdapter = FriendsAdapter(requireContext(), listOf())
+        friendsAdapter = FriendsAdapter(listOf())
         friendsAdapter.listener = this
         friendsRecyclerView.adapter = friendsAdapter
         friendsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -63,12 +63,10 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
         loadFriends()
     }
 
-
     override fun onResume() {
         super.onResume()
         loadFriends()
     }
-
 
     private fun openUserProfile(userId: String) {
         val profileFragment = ProfileFragment.newInstance(userId)
@@ -79,19 +77,13 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
 
     private fun loadFriends() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        FirestoreUtils.loadFriends(
-            userId = userId,
-            onSuccess = { friendsList ->
-                friendsAdapter.updateData(friendsList)
-            },
-            onFailure = { exception ->
-                Log.e("FriendsFragment", "Error loading friends: ", exception)
-            }
-        )
+        FirestoreUtils.loadFriends(userId = userId, onSuccess = { friendsList ->
+            friendsAdapter.updateData(friendsList)
+        }, onFailure = { exception ->
+            Log.e("FriendsFragment", "Error loading friends: ", exception)
+        })
     }
 
-    override fun onMessageClick(friend: Friend) {
-    }
 
     override fun onFriendClick(friend: Friend) {
         openUserProfile(friend.id)
@@ -100,12 +92,10 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
     override fun onBinClick(friend: Friend) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val friendDocumentPath = "users/$userId/friends/${friend.id}"
-        FirebaseFirestore.getInstance().document(friendDocumentPath).delete()
-            .addOnSuccessListener {
+        FirebaseFirestore.getInstance().document(friendDocumentPath).delete().addOnSuccessListener {
                 Log.d("FriendsFragment", "Friend successfully deleted: ${friend.id}")
                 loadFriends()
-            }
-            .addOnFailureListener { e ->
+            }.addOnFailureListener { e ->
                 Log.e("FriendsFragment", "Error deleting friend: ", e)
             }
     }

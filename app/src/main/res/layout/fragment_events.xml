@@ -61,17 +61,6 @@
             app:strokeWidth="0dp" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
-    <ImageView
-        android:id="@+id/filterImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="6dp"
-        android:layout_marginBottom="3dp"
-        android:src="@drawable/icon_filter"
-        app:layout_constraintBottom_toTopOf="@+id/eventsRecyclerView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressBar"

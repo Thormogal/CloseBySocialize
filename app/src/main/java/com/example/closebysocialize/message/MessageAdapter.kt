@@ -22,8 +22,10 @@ class MessageAdapter(
     private val currentUserId: String
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val SENT_MESSAGE = 1
-    private val RECEIVED_MESSAGE = 2
+    companion object {
+        private const val SENT_MESSAGE = 1
+        private const val RECEIVED_MESSAGE = 2
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == SENT_MESSAGE) {
@@ -50,7 +52,9 @@ class MessageAdapter(
         if (getItemViewType(position) == SENT_MESSAGE) {
             (holder as SentMessageViewHolder).bind(message, showTimestamp = true)
         } else {
-            (holder as ReceivedMessageViewHolder).bind(message, showTimestamp = true, showProfilePicture = showProfilePicture)
+            (holder as ReceivedMessageViewHolder).bind(
+                message, showTimestamp = true, showProfilePicture = showProfilePicture
+            )
         }
 
         val previousMessage = messages.getOrNull(position - 1)
@@ -66,14 +70,10 @@ class MessageAdapter(
             (holder as SentMessageViewHolder).bind(message, showTimestamp)
         } else {
             (holder as ReceivedMessageViewHolder).bind(
-                message,
-                showTimestamp,
-                showProfilePicture
+                message, showTimestamp, showProfilePicture
             )
         }
     }
-
-
 
 
     override fun getItemCount() = messages.size
@@ -125,15 +125,13 @@ class MessageAdapter(
             messageTimestamp.text = TimeUtils.formatTimestamp(context, message.timestamp)
             messageTimestamp.visibility = if (showTimestamp) View.VISIBLE else View.GONE
 
-            FirestoreUtils.fetchProfileImageUrl(
-                message.senderId,
+            FirestoreUtils.fetchProfileImageUrl(message.senderId,
                 context,
                 onSuccess = { profileImageUrl ->
                     ImageUtils.loadProfileImage(context, profileImageUrl, profilePicture)
                 },
-                onFailure = { exception ->
-                }
-            )
+                onFailure = {
+                })
 
             profilePicture.visibility = if (showProfilePicture) View.VISIBLE else View.INVISIBLE
 

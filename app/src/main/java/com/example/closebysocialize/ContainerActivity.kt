@@ -66,7 +66,6 @@ class ContainerActivity : AppCompatActivity() {
         placesClient = Places.createClient(this)
         Places.initialize(applicationContext, getString(R.string.google_maps_api_key))
 
-        // Check and request location permissions if needed
         if (hasLocationPermission()) {
             startLocationUpdates()
         } else {
@@ -95,7 +94,9 @@ class ContainerActivity : AppCompatActivity() {
 
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         MessagingUtils.listenForNewMessages(userId) { count ->
-            MessagingUtils.updateBottomNavigationBadge(bottomNavigationView, R.id.navigation_message, count)
+            MessagingUtils.updateBottomNavigationBadge(
+                bottomNavigationView, R.id.navigation_message, count
+            )
         }
     }
 
@@ -130,8 +131,7 @@ class ContainerActivity : AppCompatActivity() {
 
     private fun hasLocationPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_FINE_LOCATION
+            this, Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
     }
 
@@ -144,9 +144,7 @@ class ContainerActivity : AppCompatActivity() {
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
@@ -165,30 +163,17 @@ class ContainerActivity : AppCompatActivity() {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
         if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                this, Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                this, Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return
         }
         fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
+            locationRequest, locationCallback, Looper.getMainLooper()
         )
     }
-
 
     private val locationCallback = object : LocationCallback() {
         @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
@@ -212,37 +197,28 @@ class ContainerActivity : AppCompatActivity() {
                         putBoolean("showOnlyMyEvents", true)
                     }
                     FragmentUtils.switchFragment(
-                        this,
-                        R.id.fragment_container,
-                        EventsFragment::class.java,
-                        args
+                        this, R.id.fragment_container, EventsFragment::class.java, args
                     )
                     true
                 }
 
                 R.id.menu_profile -> {
                     FragmentUtils.switchFragment(
-                        this,
-                        R.id.fragment_container,
-                        ProfileFragment::class.java
+                        this, R.id.fragment_container, ProfileFragment::class.java
                     )
                     true
                 }
 
                 R.id.menu_friends -> {
                     FragmentUtils.switchFragment(
-                        this,
-                        R.id.fragment_container,
-                        FriendsFragment::class.java
+                        this, R.id.fragment_container, FriendsFragment::class.java
                     )
                     true
                 }
 
                 R.id.menu_edit_profile -> {
                     FragmentUtils.switchFragment(
-                        this,
-                        R.id.fragment_container,
-                        EditProfileFragment::class.java
+                        this, R.id.fragment_container, EditProfileFragment::class.java
                     )
                     true
                 }
@@ -262,21 +238,15 @@ class ContainerActivity : AppCompatActivity() {
 
     private fun loadUserProfile() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        FirestoreUtils.fetchProfileImageUrl(userId, this,
-            onSuccess = { profileImageUrl ->
-                showProfileImage(profileImageUrl)
-            },
-            onFailure = { exception ->
-                Log.e("ContainerActivity", "Error fetching user profile", exception)
-            }
-        )
+        FirestoreUtils.fetchProfileImageUrl(userId, this, onSuccess = { profileImageUrl ->
+            showProfileImage(profileImageUrl)
+        }, onFailure = { exception ->
+            Log.e("ContainerActivity", "Error fetching user profile", exception)
+        })
     }
 
     private fun showProfileImage(profileImageUrl: String) {
-        Glide.with(this)
-            .asBitmap()
-            .load(profileImageUrl)
-            .circleCrop()
+        Glide.with(this).asBitmap().load(profileImageUrl).circleCrop()
             .into(object : CustomTarget<Bitmap>() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     val drawable = BitmapDrawable(resources, resource)
@@ -299,5 +269,4 @@ class ContainerActivity : AppCompatActivity() {
     private fun stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
-
 }

@@ -12,7 +12,6 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.R
-import com.example.closebysocialize.dataClass.Message
 import com.example.closebysocialize.utils.MessagingUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue

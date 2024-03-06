@@ -1,6 +1,6 @@
 package com.example.closebysocialize.message
 
-import FriendsAdapter
+import com.example.closebysocialize.friends.FriendsAdapter
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -15,16 +15,13 @@ import com.example.closebysocialize.dataClass.Friend
 import com.example.closebysocialize.utils.FirestoreUtils
 import com.example.closebysocialize.utils.MessagingUtils
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
     private lateinit var messageRecyclerView: RecyclerView
     private lateinit var displayFriendsAdapter: FriendsAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_message, container, false)
     }
@@ -33,7 +30,7 @@ class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         messageRecyclerView = view.findViewById(R.id.messageRecyclerView)
-        displayFriendsAdapter = FriendsAdapter(requireContext(), listOf(), showActions = false)
+        displayFriendsAdapter = FriendsAdapter(listOf(), showActions = false)
         messageRecyclerView.adapter = displayFriendsAdapter
         messageRecyclerView.layoutManager = LinearLayoutManager(context)
         loadFriends()
@@ -42,15 +39,11 @@ class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
 
     private fun loadFriends() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        FirestoreUtils.loadFriends(
-            userId = userId,
-            onSuccess = { friendsList ->
-                displayFriendsAdapter.updateData(friendsList)
-            },
-            onFailure = { exception ->
-                Log.e("MessageFragment", "Error loading friends: ", exception)
-            }
-        )
+        FirestoreUtils.loadFriends(userId = userId, onSuccess = { friendsList ->
+            displayFriendsAdapter.updateData(friendsList)
+        }, onFailure = { exception ->
+            Log.e("MessageFragment", "Error loading friends: ", exception)
+        })
     }
 
     override fun onFriendClick(friend: Friend) {
@@ -63,14 +56,8 @@ class MessageFragment : Fragment(), FriendsAdapter.FriendClickListener {
 
     private fun navigateToChatFragment(fragment: Fragment, friendName: String) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .addToBackStack(null)
-            .commit()
+            .replace(R.id.fragment_container, fragment).addToBackStack(null).commit()
         (requireActivity() as AppCompatActivity).supportActionBar?.title = friendName
-    }
-
-
-    override fun onMessageClick(friend: Friend) {
     }
 
     override fun onBinClick(friend: Friend) {

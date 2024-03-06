@@ -11,6 +11,7 @@ object MessagingUtils {
 
     private var unreadMessageListenerRegistration: ListenerRegistration? = null
 
+
     fun listenForNewMessages(userId: String, updateBadge: (count: Int) -> Unit) {
         val db = FirebaseFirestore.getInstance()
         unreadMessageListenerRegistration?.remove()
@@ -107,7 +108,12 @@ object MessagingUtils {
                 onFailure(e)
             }
     }
-    fun fetchMessages(conversationId: String, onMessagesFetched: (List<Message>) -> Unit, onFailure: (Exception) -> Unit) {
+
+    fun fetchMessages(
+        conversationId: String,
+        onMessagesFetched: (List<Message>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
         FirebaseFirestore.getInstance()
             .collection("conversations")
             .document(conversationId)
@@ -126,7 +132,12 @@ object MessagingUtils {
                 onMessagesFetched(messages)
             }
     }
-    fun checkForExistingConversation(friendId: String, userId: String, callback: (String?) -> Unit) {
+
+    fun checkForExistingConversation(
+        friendId: String,
+        userId: String,
+        callback: (String?) -> Unit
+    ) {
         val db = FirebaseFirestore.getInstance()
         db.collection("conversations")
             .whereArrayContains("participants", userId)
@@ -143,4 +154,12 @@ object MessagingUtils {
                 callback(null)
             }
     }
+
+
+
+
+
+
+
 }
+

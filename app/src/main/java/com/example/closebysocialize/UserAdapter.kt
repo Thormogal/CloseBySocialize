@@ -3,7 +3,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +17,7 @@ class UserAdapter(
     private val eventGuests: EditText,
     private val chipGroup: ChipGroup,
     var callback: UserAdapterCallback? = null
+
 ) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
     private var searchText: String = ""
