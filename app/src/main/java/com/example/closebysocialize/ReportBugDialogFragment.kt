@@ -16,7 +16,6 @@ class ReportBugDialogFragment : DialogFragment() {
             val view = inflater.inflate(R.layout.dialog_report_bug, null)
             val editText = view.findViewById<EditText>(R.id.bugReportText)
 
-
             builder.setView(view)
                 .setPositiveButton("Submit") { dialog, id ->
                     val bugReport = editText.text.toString()
@@ -28,5 +27,4 @@ class ReportBugDialogFragment : DialogFragment() {
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }
-
 }
