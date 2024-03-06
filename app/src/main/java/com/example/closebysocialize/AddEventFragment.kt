@@ -50,22 +50,23 @@ private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
 class AddEventFragment : Fragment() {
+    private val placeSearchRequestCode = 1
+    private val citySearchRequestCode = 2
+    private val pickImageRequestCode = 3
     private var param1: String? = null
     private var param2: String? = null
     private var chosenDay: String? = null
     private var chosenDate: String? = null
     private var chosenTime: String? = null
-    private val PLACE_SEARCH_REQUEST_CODE = 1
-    private val CITY_SEARCH_REQUEST_CODE = 2
+    private var imageUri: Uri? = null
     private var eventPlaceCoordinates: LatLng? = null
     private var eventCityCoordinates: LatLng? = null
+    private var taggedUsers = mutableListOf<String>()
     private lateinit var eventPlace: EditText
+    private lateinit var eventGuests: EditText
     private lateinit var cityTextView: EditText
-    private val PICK_IMAGE_REQUEST = 3
-    private var imageUri: Uri? = null
     private lateinit var userAdapter: UserAdapter
     private lateinit var firestore: FirebaseFirestore
-    private var taggedUsers = mutableListOf<String>()
     private lateinit var recyclerViewFindUsers: RecyclerView
 
 
@@ -84,30 +85,31 @@ class AddEventFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_add_event, container, false)
+        eventGuests = EditText(context)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-                PLACE_SEARCH_REQUEST_CODE, CITY_SEARCH_REQUEST_CODE -> {
+                placeSearchRequestCode, citySearchRequestCode -> {
                     val place = Autocomplete.getPlaceFromIntent(data!!)
                     val placeName = place.name
                     val placeCoordinates = place.latLng
                     when (requestCode) {
-                        PLACE_SEARCH_REQUEST_CODE -> {
+                        placeSearchRequestCode -> {
                             eventPlace.setText(placeName)
                             eventPlaceCoordinates = placeCoordinates
                         }
 
-                        CITY_SEARCH_REQUEST_CODE -> {
+                        citySearchRequestCode -> {
                             cityTextView.setText(placeName)
                             eventCityCoordinates = placeCoordinates
                         }
                     }
                 }
 
-                PICK_IMAGE_REQUEST -> {
+                pickImageRequestCode -> {
                     Log.d("AddEvent", "onActivityResult: data: $data")
                     imageUri = data?.data
                     Log.d("AddEvent", "onActivityResult: imageUri: $imageUri")
@@ -117,67 +119,77 @@ class AddEventFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+            super.onViewCreated(view, savedInstanceState)
 
-        recyclerViewFindUsers = view.findViewById<RecyclerView>(R.id.recyclerViewFindUsers)
-        val gridLayout = view.findViewById<GridLayout>(R.id.gridLayout)
-        var selectedImageView: ImageView? = null
-        var selectedCategory: String? = null
-        eventPlace = view.findViewById(R.id.eventPlace)
-        cityTextView = view.findViewById(R.id.cityTextView)
+            recyclerViewFindUsers = view.findViewById(R.id.recyclerViewFindUsers)
+            val gridLayout = view.findViewById<GridLayout>(R.id.addEventGridLayout)
+            var selectedImageView: ImageView? = null
+            var selectedCategory: String? = null
+            eventPlace = view.findViewById(R.id.eventPlace)
+            cityTextView = view.findViewById(R.id.cityTextView)
 
-        val numberPicker = view.findViewById<NumberPicker>(R.id.spotPicker)
-        numberPicker.maxValue = 20
-        numberPicker.minValue = 1
-        numberPicker.value = 4
+            val numberPicker = view.findViewById<NumberPicker>(R.id.spotPicker)
+            numberPicker.maxValue = 20
+            numberPicker.minValue = 1
+            numberPicker.value = 4
 
-        eventPlace.setOnClickListener {
-            val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
-            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
-                .setCountry("SE")
-                .build(requireContext())
-            startActivityForResult(intent, PLACE_SEARCH_REQUEST_CODE)
-        }
+            eventPlace.setOnClickListener {
+                val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+                val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                    .setCountry("SE")
+                    .build(requireContext())
+                startActivityForResult(intent, placeSearchRequestCode)
+            }
 
-        cityTextView.setOnClickListener {
-            val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
-            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
-                .setCountry("SE")
-                .build(requireContext())
-            startActivityForResult(intent, CITY_SEARCH_REQUEST_CODE)
-        }
+            cityTextView.setOnClickListener {
+                val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+                val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                    .setCountry("SE")
+                    .build(requireContext())
+                startActivityForResult(intent, citySearchRequestCode)
+            }
 
-        val imageAdd = view.findViewById<ImageView>(R.id.imageAdd)
-        imageAdd.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(intent, PICK_IMAGE_REQUEST)
-        }
+            val imageAdd = view.findViewById<ImageView>(R.id.imageAdd)
+            imageAdd.setOnClickListener {
+                val intent = Intent(Intent.ACTION_PICK)
+                intent.type = "image/*"
+                startActivityForResult(intent, pickImageRequestCode)
+            }
 
 
-        val users = listOf<Users>() ?: listOf()
-        val taggedUsers = mutableListOf<String>() ?: mutableListOf()
-        val eventGuests = view.findViewById<EditText>(R.id.eventGuests) ?: EditText(context)
-        val chipGroup = view.findViewById<ChipGroup>(R.id.chipGroup) ?: ChipGroup(context)
+            val users = listOf<Users>()
+            val taggedUsers = mutableListOf<String>()
+            val eventGuests = view.findViewById(R.id.eventGuests) ?: EditText(context)
+            val chipGroup = view.findViewById(R.id.chipGroup) ?: ChipGroup(context)
 
-        recyclerViewFindUsers.layoutManager = LinearLayoutManager(context)
-        userAdapter = UserAdapter(listOf(), taggedUsers, eventGuests, chipGroup)
-        recyclerViewFindUsers.adapter = userAdapter
+            recyclerViewFindUsers.layoutManager = LinearLayoutManager(context)
+            userAdapter = UserAdapter(listOf(), taggedUsers, eventGuests, chipGroup)
+            userAdapter.setSearchText("")
+            recyclerViewFindUsers.adapter = userAdapter
+
+            userAdapter.callback = object : UserAdapter.UserAdapterCallback {
+                override fun onUserRemoved() {
+                    fetchAndUpdateUsers()
+                }
+            }
 
 
 
 
         eventGuests.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                val parts = s.toString().split(",")
-                val query = parts.last().trim()
+                val query = s.toString().split(",").last().trim()
+
                 if (query.isEmpty()) {
                     userAdapter.updateData(emptyList())
                     recyclerViewFindUsers.visibility = View.GONE
                 } else {
                     fetchUsers(query) { fetchedUsers ->
-                        userAdapter.updateData(fetchedUsers)
-                        recyclerViewFindUsers.visibility = View.VISIBLE
+                        val filteredUsers = fetchedUsers.filterNot { user ->
+                            taggedUsers.contains(user.id)
+                        }
+                        userAdapter.updateData(filteredUsers)
+                        recyclerViewFindUsers.visibility = if (filteredUsers.isEmpty()) View.GONE else View.VISIBLE
                     }
                 }
             }
@@ -188,7 +200,6 @@ class AddEventFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
         })
-
 
 
 
@@ -439,6 +450,21 @@ class AddEventFragment : Fragment() {
                         }
                     }
             }
+        }
+    }
+
+    private fun fetchAndUpdateUsers() {
+        if(this::eventGuests.isInitialized) {
+            val query = eventGuests.text.toString().split(",").last().trim()
+            fetchUsers(query) { fetchedUsers ->
+                val filteredUsers = fetchedUsers.filterNot { user ->
+                    taggedUsers.contains(user.id)
+                }
+                userAdapter.updateData(filteredUsers)
+                recyclerViewFindUsers.visibility = if (filteredUsers.isEmpty()) View.GONE else View.VISIBLE
+            }
+        } else {
+            Log.d("AddEventFragment", "eventGuests have not been initialized yet.")
         }
     }
 
