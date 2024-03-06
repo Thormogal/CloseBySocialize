@@ -27,13 +27,13 @@ import java.util.UUID
 
 class EditProfileFragment : Fragment() {
 
-    var profileImageUpdatedListener: OnProfileImageUpdatedListener? = null
     private lateinit var editImage: ImageView
     private lateinit var profileSaveButton: Button
     private lateinit var editName: EditText
     private lateinit var birthYearPicker: NumberPicker
     private lateinit var aboutMeEditText: EditText
     private lateinit var imagePickerLauncher: ActivityResultLauncher<String>
+    private var profileImageUpdatedListener: OnProfileImageUpdatedListener? = null
     private val selectedInterests = mutableSetOf<Int>()
     private var selectedImageUri: Uri? = null
     private val db = FirebaseFirestore.getInstance()
