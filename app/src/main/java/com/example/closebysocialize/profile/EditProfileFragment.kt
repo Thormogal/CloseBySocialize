@@ -56,7 +56,11 @@ class EditProfileFragment : Fragment() {
         setupImagePickerLauncher()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_profile_edit, container, false)
         initializeUI(view)
         return view
@@ -82,15 +86,16 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun setupImagePickerLauncher() {
-        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let {
-                selectedImageUri = it
-                uploadImageToFirebaseStorage(it)
-                setProfileImage(it.toString())
-            } ?: run {
-                Toast.makeText(context, "Error in selecting image", Toast.LENGTH_SHORT).show()
+        imagePickerLauncher =
+            registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+                uri?.let {
+                    selectedImageUri = it
+                    uploadImageToFirebaseStorage(it)
+                    setProfileImage(it.toString())
+                } ?: run {
+                    Toast.makeText(context, "Error in selecting image", Toast.LENGTH_SHORT).show()
+                }
             }
-        }
     }
 
     private fun setupUserInteractions(view: View) {
@@ -110,6 +115,7 @@ class EditProfileFragment : Fragment() {
         birthYearPicker.setOnValueChangedListener { _, _, _ ->
         }
     }
+
     private fun setupProfileSaveButton() {
         profileSaveButton.setOnClickListener {
             saveProfileDataToDatabase()
@@ -219,6 +225,7 @@ class EditProfileFragment : Fragment() {
                 ).show()
             }
     }
+
     private fun fetchUserData() {
         val userRef = db.collection("users").document(id)
         userRef.get().addOnSuccessListener { document ->
