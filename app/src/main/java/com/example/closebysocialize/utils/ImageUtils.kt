@@ -16,4 +16,17 @@ object ImageUtils {
             imageView.setImageResource(R.drawable.avatar_dark)
         }
     }
+
+    fun loadImage(context: Context, imageUrl: String?, imageView: ImageView) {
+        if (!imageUrl.isNullOrEmpty()) {
+            Glide.with(context)
+                .load(imageUrl)
+                .centerCrop()
+                .placeholder(R.drawable.default_background_coffee)
+                .into(imageView)
+        } else {
+            imageView.setImageResource(R.drawable.default_background_coffee)
+        }
+    }
+
 }

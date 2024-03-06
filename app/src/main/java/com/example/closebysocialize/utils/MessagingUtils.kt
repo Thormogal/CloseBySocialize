@@ -6,6 +6,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.atomic.AtomicInteger
 
 object MessagingUtils {
 
@@ -16,29 +18,60 @@ object MessagingUtils {
         val db = FirebaseFirestore.getInstance()
         unreadMessageListenerRegistration?.remove()
 
-        unreadMessageListenerRegistration = db.collection("conversations")
-            .whereArrayContains("participants", userId)
-            .addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    Log.e("MessagingUtils", "Error listening for new messages", e)
-                    return@addSnapshotListener
-                }
+        unreadMessageListenerRegistration =
+            db.collection("conversations").whereArrayContains("participants", userId)
+                .addSnapshotListener { conversationsSnapshot, conversationsError ->
+                    if (conversationsError != null) {
+                        Log.e(
+                            "MessagingUtils",
+                            "Error listening for new messages",
+                            conversationsError
+                        )
+                        return@addSnapshotListener
+                    }
 
-                val conversationIds = snapshot?.documents?.mapNotNull { it.id } ?: listOf()
-                var totalUnreadMessages = 0
+                    val conversationIds =
+                        conversationsSnapshot?.documents?.mapNotNull { it.id } ?: listOf()
+                    if (conversationIds.isEmpty()) {
+                        updateBadge(0)
+                        return@addSnapshotListener
+                    }
 
-                conversationIds.forEach { conversationId ->
-                    db.collection("conversations").document(conversationId)
-                        .collection("messages")
-                        .whereEqualTo("isRead", false)
-                        .whereEqualTo("receiverId", userId)
-                        .addSnapshotListener { messagesSnapshot, _ ->
-                            totalUnreadMessages += messagesSnapshot?.size() ?: 0
-                            updateBadge(totalUnreadMessages)
-                        }
+                    var totalUnreadMessages = AtomicInteger(0)
+                    val countdownLatch = CountDownLatch(conversationIds.size)
+
+                    conversationIds.forEach { conversationId ->
+                        db.collection("conversations").document(conversationId)
+                            .collection("messages").whereEqualTo("isRead", false)
+                            .whereEqualTo("receiverId", userId)
+                            .addSnapshotListener { messagesSnapshot, messagesError ->
+                                if (messagesError != null) {
+                                    Log.e(
+                                        "MessagingUtils",
+                                        "Error listening for message updates",
+                                        messagesError
+                                    )
+                                    countdownLatch.countDown()
+                                    return@addSnapshotListener
+                                }
+                                synchronized(this) {
+                                    if (messagesSnapshot != null) {
+                                        if (countdownLatch.count == conversationIds.size.toLong()) {
+                                            totalUnreadMessages.set(0)
+                                        }
+                                        totalUnreadMessages.addAndGet(messagesSnapshot.size())
+                                    }
+                                    countdownLatch.countDown()
+
+                                    if (countdownLatch.count == 0L) {
+                                        updateBadge(totalUnreadMessages.get())
+                                    }
+                                }
+                            }
+                    }
                 }
-            }
     }
+
 
     fun updateBottomNavigationBadge(navView: BottomNavigationView, menuItemId: Int, count: Int) {
         if (count > 0) {
@@ -52,19 +85,13 @@ object MessagingUtils {
 
     fun markMessagesAsRead(userId: String, conversationId: String) {
         val db = FirebaseFirestore.getInstance()
-        db.collection("conversations")
-            .document(conversationId)
-            .collection("messages")
-            .whereEqualTo("receiverId", userId)
-            .whereEqualTo("isRead", false)
-            .get()
+        db.collection("conversations").document(conversationId).collection("messages")
+            .whereEqualTo("receiverId", userId).whereEqualTo("isRead", false).get()
             .addOnSuccessListener { documents ->
                 val batch = db.batch()
                 for (document in documents) {
-                    val docRef = db.collection("conversations")
-                        .document(conversationId)
-                        .collection("messages")
-                        .document(document.id)
+                    val docRef = db.collection("conversations").document(conversationId)
+                        .collection("messages").document(document.id)
                     batch.update(docRef, "isRead", true)
                 }
                 batch.commit().addOnSuccessListener {
@@ -96,15 +123,10 @@ object MessagingUtils {
             "isRead" to false,
             "messageStatus" to "sent"
         )
-        FirebaseFirestore.getInstance()
-            .collection("conversations")
-            .document(conversationId)
-            .collection("messages")
-            .add(newMessage)
-            .addOnSuccessListener {
+        FirebaseFirestore.getInstance().collection("conversations").document(conversationId)
+            .collection("messages").add(newMessage).addOnSuccessListener {
                 onSuccess()
-            }
-            .addOnFailureListener { e ->
+            }.addOnFailureListener { e ->
                 onFailure(e)
             }
     }
@@ -114,12 +136,8 @@ object MessagingUtils {
         onMessagesFetched: (List<Message>) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        FirebaseFirestore.getInstance()
-            .collection("conversations")
-            .document(conversationId)
-            .collection("messages")
-            .orderBy("timestamp")
-            .addSnapshotListener { snapshots, e ->
+        FirebaseFirestore.getInstance().collection("conversations").document(conversationId)
+            .collection("messages").orderBy("timestamp").addSnapshotListener { snapshots, e ->
                 if (e != null) {
                     onFailure(e)
                     return@addSnapshotListener
@@ -134,31 +152,21 @@ object MessagingUtils {
     }
 
     fun checkForExistingConversation(
-        friendId: String,
-        userId: String,
-        callback: (String?) -> Unit
+        friendId: String, userId: String, callback: (String?) -> Unit
     ) {
         val db = FirebaseFirestore.getInstance()
-        db.collection("conversations")
-            .whereArrayContains("participants", userId)
-            .get()
+        db.collection("conversations").whereArrayContains("participants", userId).get()
             .addOnSuccessListener { documents ->
                 val conversation = documents.documents.firstOrNull { document ->
                     val participants = document["participants"] as List<*>
                     participants.contains(friendId)
                 }
                 callback(conversation?.id)
-            }
-            .addOnFailureListener { exception ->
+            }.addOnFailureListener { exception ->
                 Log.e("MessagingUtils", "Error checking for existing conversation: ", exception)
                 callback(null)
             }
     }
-
-
-
-
-
 
 
 }

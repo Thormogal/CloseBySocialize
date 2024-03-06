@@ -309,18 +309,18 @@ class AddEventFragment : Fragment() {
 
 
             val defaultImageUrlMap = mapOf(
-                "reading" to "gs://closebysocialize.appspot.com/Backgrounds/bookCircle.png",
-                "cafe" to "gs://closebysocialize.appspot.com/Backgrounds/coffee.png",
-                "cooking" to "gs://closebysocialize.appspot.com/Backgrounds/cooking.png",
-                "traveling" to "gs://closebysocialize.appspot.com/Backgrounds/travel.png",
-                "gardening" to "gs://closebysocialize.appspot.com/Backgrounds/gardening.png",
-                "theatre" to "gs://closebysocialize.appspot.com/Backgrounds/culture.png",
-                "babyStroll" to "gs://closebysocialize.appspot.com/Backgrounds/babyStroll.png",
-                "lunch" to "ggs://closebysocialize.appspot.com/Backgrounds/restaurant.png",
-                "cinema" to "gs://closebysocialize.appspot.com/Backgrounds/cinema.png",
-                "gaming" to "gs://closebysocialize.appspot.com/Backgrounds/gaming.png",
-                "sports" to "gs://closebysocialize.appspot.com/Backgrounds/sport.png",
-                "dogstroll" to "gs://closebysocialize.appspot.com/Backgrounds/dog.png",
+                "reading" to "https://firebasestorage.googleapis.com/v0/b/closebysocialize.appspot.com/o/Backgrounds%2FbookCircle.png?alt=media&token=53824fa6-0de1-4914-a5fe-a11e252db1f2",
+                "cafe" to "https://firebasestorage.googleapis.com/v0/b/closebysocialize.appspot.com/o/Backgrounds%2Fcoffee.png?alt=media&token=7f5d8886-ff9b-4a6c-aa04-4cc35b868c65",
+                "cooking" to "https://firebasestorage.googleapis.com/v0/b/closebysocialize.appspot.com/o/Backgrounds%2Fcooking_background.png?alt=media&token=f343511e-70b2-4c67-9ad3-f417e82f22a9",
+                "traveling" to "https://firebasestorage.googleapis.com/v0/b/closebysocialize.appspot.com/o/Backgrounds%2Ftravel.png?alt=media&token=0818e63e-f220-4f31-9d33-387762891f3c",
+                "gardening" to "https://firebasestorage.googleapis.com/v0/b/closebysocialize.appspot.com/o/Backgrounds%2Fgardening.png?alt=media&token=e7a73244-ce8c-4f76-9d0e-dfe10955087c",
+                "theatre" to "https://firebasestorage.googleapis.com/v0/b/closebysocialize.appspot.com/o/Backgrounds%2Fculture.png?alt=media&token=cb7f3737-c865-44f3-a9c9-7e69ca7ca57d",
+                "babyStroll" to "https://firebasestorage.googleapis.com/v0/b/closebysocialize.appspot.com/o/Backgrounds%2FbabyStroll.png?alt=media&token=fd1e0d87-d800-4972-a7e6-0a04814ca033",
+                "lunch" to "https://firebasestorage.googleapis.com/v0/b/closebysocialize.appspot.com/o/Backgrounds%2Frestaurant.png?alt=media&token=8ad033da-1fb6-43e4-8f4e-7df9e518e438",
+                "cinema" to "https://firebasestorage.googleapis.com/v0/b/closebysocialize.appspot.com/o/Backgrounds%2Fcinema.png?alt=media&token=3ce88d26-fd61-4d99-9f88-4e9c8a95ca29",
+                "gaming" to "https://firebasestorage.googleapis.com/v0/b/closebysocialize.appspot.com/o/Backgrounds%2Fgaming.png?alt=media&token=313abf91-abdf-4141-8c8a-d2cddf5af7b8",
+                "sports" to "https://firebasestorage.googleapis.com/v0/b/closebysocialize.appspot.com/o/Backgrounds%2Fsport.png?alt=media&token=3e303f47-9a51-4667-a8f4-1d192504b9a3",
+                "dogstroll" to "https://firebasestorage.googleapis.com/v0/b/closebysocialize.appspot.com/o/Backgrounds%2Fdog.png?alt=media&token=c1ba8ac4-e368-440a-bf81-e4c64d161350",
             )
 
             val eventNameTextView = view.findViewById<TextInputEditText>(R.id.eventNameTextView)
@@ -449,7 +449,26 @@ class AddEventFragment : Fragment() {
                         }
                     }
             }
+
+            var imageUrl: String? = null
+            if (imageUri != null) {
+                uploadImage(imageUri!!) { uploadedImageUrl: String ->
+                    imageUrl = uploadedImageUrl
+                    saveEventToFirestore(imageUrl)
+                }
+            } else {
+                imageUrl = defaultImageUrl
+                saveEventToFirestore(imageUrl)
+            }
+
         }
+    }
+
+    private fun saveEventToFirestore(imageUrl: String?) {
+        val event = hashMapOf(
+            "imageUrl" to imageUrl
+        )
+        firestore.collection("events").add(event)
     }
 
     private fun fetchAndUpdateUsers() {

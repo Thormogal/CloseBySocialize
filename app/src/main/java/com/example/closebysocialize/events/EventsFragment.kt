@@ -87,9 +87,6 @@ class EventsFragment : Fragment(), EventsAdapter.EventInteractionListener {
         )
     }
 
-
-
-
     private fun initializeViews(view: View) {
         toggleGroup = view.findViewById(R.id.toggleButtonGroup)
         recyclerView = view.findViewById(R.id.eventsRecyclerView)
