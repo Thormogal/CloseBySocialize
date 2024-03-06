@@ -24,14 +24,9 @@ class ReceiveNotificationMessage : FireBaseMessagingService() {
                 handleNow()
             }
         }
-
-        // Check if message contains a notification payload.
         remoteMessage.notification?.let {
             Log.d(TAG, "Message Notification Body: ${it.body}")
         }
-
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
     }
 
     private fun handleNow() {

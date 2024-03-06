@@ -66,7 +66,6 @@ class ContainerActivity : AppCompatActivity() {
         placesClient = Places.createClient(this)
         Places.initialize(applicationContext, getString(R.string.google_maps_api_key))
 
-        // Check and request location permissions if needed
         if (hasLocationPermission()) {
             startLocationUpdates()
         } else {
@@ -172,14 +171,6 @@ class ContainerActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return
         }
         fusedLocationClient.requestLocationUpdates(
@@ -188,7 +179,6 @@ class ContainerActivity : AppCompatActivity() {
             Looper.getMainLooper()
         )
     }
-
 
     private val locationCallback = object : LocationCallback() {
         @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
@@ -271,7 +261,6 @@ class ContainerActivity : AppCompatActivity() {
             }
         )
     }
-
     private fun showProfileImage(profileImageUrl: String) {
         Glide.with(this)
             .asBitmap()
@@ -299,5 +288,4 @@ class ContainerActivity : AppCompatActivity() {
     private fun stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
-
 }

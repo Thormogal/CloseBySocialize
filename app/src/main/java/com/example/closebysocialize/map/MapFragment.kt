@@ -3,7 +3,6 @@ package com.example.closebysocialize.map
 
 import android.Manifest
 import android.app.Activity
-import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -15,12 +14,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SearchView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.closebysocialize.ContainerActivity
 import com.example.closebysocialize.R
-import com.example.closebysocialize.dataClass.Event
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -45,7 +42,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userHasInteracted = false
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -55,8 +51,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         return view
     }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -69,13 +63,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             userHasInteracted = false
             recenterMapOnUserLocation()
         }
-
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         setupSearchView(view)
         (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.title_map)
     }
-
     private fun setupSearchView(view: View) {
         val mapSearchView: SearchView = view.findViewById(R.id.mapSearchView)
         mapSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -100,16 +91,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
         }
     }
-
-
-    fun controlLocationUpdates(enable: Boolean) {
-        (activity as? ContainerActivity)?.setLocationUpdatesEnabled(enable)
-    }
-
-    fun recenterMapOnUserLocation() {
-        controlLocationUpdates(true)
-    }
-
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         controlLocationUpdates(true)
@@ -131,6 +112,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
         }
         fetchPlacesAndDisplayOnMap()
+    }
+
+    fun controlLocationUpdates(enable: Boolean) {
+        (activity as? ContainerActivity)?.setLocationUpdatesEnabled(enable)
+    }
+    fun recenterMapOnUserLocation() {
+        controlLocationUpdates(true)
     }
 
     fun fetchPlacesAndDisplayOnMap() {
@@ -162,14 +150,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val marker = googleMap.addMarker(markerOptions)
         marker?.tag = eventId
     }
-//    fun addMarkerForPlace(eventId: String, geoPoint: GeoPoint) {
-//        val markerOptions = MarkerOptions()
-//            .position(LatLng(geoPoint.latitude, geoPoint.longitude))
-//            .title("Event ID: $eventId")
-//        googleMap.addMarker(markerOptions)
-//
-//
-//    }
 
     private fun addCurrentLocationMarker() {
         if (ActivityCompat.checkSelfPermission(
@@ -198,8 +178,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newPos, 10f))
         }
     }
-
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
@@ -208,12 +186,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(place.latLng))
         }
     }
-
-
     companion object {
         private const val AUTOCOMPLETE_REQUEST_CODE = 1001
     }
-
     private fun startPlaceAutocomplete() {
         val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
 
@@ -223,43 +198,32 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
     }
-
     override fun onResume() {
         super.onResume()
         mapView.onResume()
         controlLocationUpdates(true)
     }
-
     override fun onStart() {
         super.onStart()
         mapView.onStart()
     }
-
-
-
     override fun onStop() {
         super.onStop()
         mapView.onStop()
     }
-
     override fun onPause() {
         super.onPause()
         mapView.onPause()
         controlLocationUpdates(true)
     }
-
     override fun onDestroy() {
         super.onDestroy()
         mapView.onDestroy()
-
     }
-
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
     }
-
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         mapView.onSaveInstanceState(outState)

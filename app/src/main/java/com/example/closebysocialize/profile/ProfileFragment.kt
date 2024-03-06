@@ -255,7 +255,6 @@ class ProfileFragment : Fragment() {
         }
     }
 
-
     private fun showLanguagePicker() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Select Language")
