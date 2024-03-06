@@ -110,7 +110,8 @@ class ProfileFragment : Fragment() {
 
 
     private fun fetchUserInfo() {
-        val idToUse = id ?: if (shouldShowCurrentUserProfile) FirebaseAuth.getInstance().currentUser?.uid else null
+        val idToUse = id
+            ?: if (shouldShowCurrentUserProfile) FirebaseAuth.getInstance().currentUser?.uid else null
         if (idToUse != null) {
             val userRef =
                 FirebaseFirestore.getInstance().collection("users").document(idToUse)
@@ -136,20 +137,26 @@ class ProfileFragment : Fragment() {
 
 
     private fun showSelectedInterests() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-
+        val userId = id ?: FirebaseAuth.getInstance().currentUser?.uid ?: return
         val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
-        userRef.get()
-            .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot.exists()) {
-                    val selectedInterests =
-                        documentSnapshot.get("selectedInterests") as? List<String>
+
+        userRef.get().addOnSuccessListener { documentSnapshot ->
+            if (documentSnapshot.exists()) {
+                val selectedInterestsRaw = documentSnapshot.get("selectedInterests")
+                val selectedInterests = if (selectedInterestsRaw is List<*>) {
+                    selectedInterestsRaw.filterIsInstance<String>()
+                } else {
+                    null
+                }
+                if (selectedInterests != null) {
                     updateInterestsUI(selectedInterests)
                 }
             }
-            .addOnFailureListener {
-            }
+        }.addOnFailureListener {
+            Log.e("showSelectedInterests", "Error fetching user data", it)
+        }
     }
+
 
     private fun updateInterestsUI(interests: List<String>?) {
         val gridLayout = view?.findViewById<GridLayout>(R.id.profileGridLayout)
@@ -174,7 +181,7 @@ class ProfileFragment : Fragment() {
         layoutParams.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
         layoutParams.rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
 
-        val marginInPixels = convertDpToPixel(4f, context)
+        val marginInPixels = convertDpToPixel(context)
         layoutParams.setMargins(marginInPixels, marginInPixels, marginInPixels, marginInPixels)
 
         imageView.layoutParams = layoutParams
@@ -184,7 +191,8 @@ class ProfileFragment : Fragment() {
         return imageView
     }
 
-    private fun convertDpToPixel(dp: Float, context: Context?): Int {
+    private fun convertDpToPixel(context: Context?): Int {
+        val dp = 4f
         return if (context != null) {
             val metrics = context.resources.displayMetrics
             (dp * metrics.density).toInt()
@@ -193,7 +201,13 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun updateProfileUI(aboutMe: String?, userName: String?, profileImageUrl: String?, birthYear: Int?) {
+
+    private fun updateProfileUI(
+        aboutMe: String?,
+        userName: String?,
+        profileImageUrl: String?,
+        birthYear: Int?
+    ) {
         nameTextView.text = userName ?: "No name available"
         aboutMeTextView.text = aboutMe ?: "No info available"
         birthYearTextView.text = birthYear?.toString() ?: "No birth year available"
@@ -240,7 +254,6 @@ class ProfileFragment : Fragment() {
             }
         }
     }
-
 
 
     private fun showLanguagePicker() {
