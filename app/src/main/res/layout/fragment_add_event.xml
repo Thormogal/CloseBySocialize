@@ -4,157 +4,163 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    >
+    android:fillViewport="true">
 
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_container"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@android:color/white"
-    android:outlineProvider="none"
-    android:visibility="visible">
-
-    <GridLayout
-        android:id="@+id/gridLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:columnCount="6"
-        android:padding="5dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="@android:color/white"
+        android:outlineProvider="none"
+        android:visibility="visible">
 
-        <TextView
-            android:id="@+id/textView2"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/addEventVerticalGuideline1"
             android:layout_width="wrap_content"
-            android:layout_height="37dp"
-            android:layout_columnSpan="6"
-            android:layout_gravity="center_horizontal"
-            android:text="Event Category"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.08" />
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/addEventVerticalGuideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.92" />
 
-        <ImageView
-            android:id="@+id/bookImageView"
+        <GridLayout
+            android:id="@+id/addEventGridLayout"
             android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_columnWeight="1"
-            android:contentDescription="reading"
-            app:srcCompat="@drawable/interests_book" />
+            android:layout_height="wrap_content"
+            android:columnCount="6"
+            android:padding="5dp"
+            app:layout_constraintEnd_toEndOf="@id/addEventVerticalGuideline2"
+            app:layout_constraintStart_toStartOf="@id/addEventVerticalGuideline1"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp">
 
-        <ImageView
-            android:id="@+id/coffeeImageView"
-            android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_columnWeight="1"
-            android:contentDescription="cafe"
-            app:srcCompat="@drawable/interests_coffee_mug" />
-
-        <ImageView
-            android:id="@+id/cookingImageView"
-            android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_columnWeight="1"
-            android:contentDescription="cooking"
-            app:srcCompat="@drawable/interests_cooking" />
-
-        <ImageView
-            android:id="@+id/dogImageView"
-            android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_columnWeight="1"
-            android:contentDescription="dogStroll"
-            app:srcCompat="@drawable/interests_dogwalk" />
-
-        <ImageView
-            android:id="@+id/sportImageView"
-            android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_columnWeight="1"
-            android:contentDescription="sports"
-            app:srcCompat="@drawable/interests_football" />
-
-        <ImageView
-            android:id="@+id/gameImageView"
-            android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_columnWeight="1"
-            android:contentDescription="gaming"
-            app:srcCompat="@drawable/interests_gaming_controller" />
-
-        <ImageView
-            android:id="@+id/cinemaImageView"
-            android:layout_width="0dp"
-            android:layout_height="33dp"
-            android:layout_columnWeight="1"
-            android:contentDescription="cinema"
-            app:srcCompat="@drawable/interests_movie" />
-
-        <ImageView
-            android:id="@+id/restaurantImageView"
-            android:layout_width="0dp"
-            android:layout_height="33dp"
-            android:layout_columnWeight="1"
-            android:contentDescription="lunch"
-            app:srcCompat="@drawable/interests_restaurant" />
-
-        <ImageView
-            android:id="@+id/strollerImageView"
-            android:layout_width="0dp"
-            android:layout_height="33dp"
-            android:layout_columnWeight="1"
-            android:contentDescription="babyStroll"
-            app:srcCompat="@drawable/interests_stroller" />
-
-        <ImageView
-            android:id="@+id/theatreImageView"
-            android:layout_width="0dp"
-            android:layout_height="33dp"
-            android:layout_columnWeight="1"
-            android:contentDescription="theatre"
-            app:srcCompat="@drawable/interests_theatre_mask" />
-
-        <ImageView
-            android:id="@+id/gardenImageView"
-            android:layout_width="0dp"
-            android:layout_height="33dp"
-            android:layout_columnWeight="1"
-            android:contentDescription="gardening"
-            app:srcCompat="@drawable/interests_garden" />
-
-        <ImageView
-            android:id="@+id/airPlaneImageView"
-            android:layout_width="0dp"
-            android:layout_height="33dp"
-            android:layout_columnWeight="1"
-            android:contentDescription="traveling"
-            app:srcCompat="@drawable/interests_airplane_takeoff" />
-
-    </GridLayout>
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="37dp"
+                android:layout_columnSpan="6"
+                android:layout_gravity="center_horizontal"
+                android:text="Event Category"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
 
-    <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@id/gridLayout"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="-16dp"
-        tools:layout_editor_absoluteY="191dp">
+            <ImageView
+                android:id="@+id/bookImageView"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_columnWeight="1"
+                android:contentDescription="reading"
+                app:srcCompat="@drawable/interests_book" />
+
+            <ImageView
+                android:id="@+id/coffeeImageView"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_columnWeight="1"
+                android:contentDescription="cafe"
+                app:srcCompat="@drawable/interests_coffee_mug" />
+
+            <ImageView
+                android:id="@+id/cookingImageView"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_columnWeight="1"
+                android:contentDescription="cooking"
+                app:srcCompat="@drawable/interests_cooking" />
+
+            <ImageView
+                android:id="@+id/dogImageView"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_columnWeight="1"
+                android:contentDescription="dogStroll"
+                app:srcCompat="@drawable/interests_dogwalk" />
+
+            <ImageView
+                android:id="@+id/sportImageView"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_columnWeight="1"
+                android:contentDescription="sports"
+                app:srcCompat="@drawable/interests_football" />
+
+            <ImageView
+                android:id="@+id/gameImageView"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_columnWeight="1"
+                android:contentDescription="gaming"
+                app:srcCompat="@drawable/interests_gaming_controller" />
+
+            <ImageView
+                android:id="@+id/cinemaImageView"
+                android:layout_width="0dp"
+                android:layout_height="33dp"
+                android:layout_columnWeight="1"
+                android:contentDescription="cinema"
+                app:srcCompat="@drawable/interests_movie" />
+
+            <ImageView
+                android:id="@+id/restaurantImageView"
+                android:layout_width="0dp"
+                android:layout_height="33dp"
+                android:layout_columnWeight="1"
+                android:contentDescription="lunch"
+                app:srcCompat="@drawable/interests_restaurant" />
+
+            <ImageView
+                android:id="@+id/strollerImageView"
+                android:layout_width="0dp"
+                android:layout_height="33dp"
+                android:layout_columnWeight="1"
+                android:contentDescription="babyStroll"
+                app:srcCompat="@drawable/interests_stroller" />
+
+            <ImageView
+                android:id="@+id/theatreImageView"
+                android:layout_width="0dp"
+                android:layout_height="33dp"
+                android:layout_columnWeight="1"
+                android:contentDescription="theatre"
+                app:srcCompat="@drawable/interests_theatre_mask" />
+
+            <ImageView
+                android:id="@+id/gardenImageView"
+                android:layout_width="0dp"
+                android:layout_height="33dp"
+                android:layout_columnWeight="1"
+                android:contentDescription="gardening"
+                app:srcCompat="@drawable/interests_garden" />
+
+            <ImageView
+                android:id="@+id/airPlaneImageView"
+                android:layout_width="0dp"
+                android:layout_height="33dp"
+                android:layout_columnWeight="1"
+                android:contentDescription="traveling"
+                app:srcCompat="@drawable/interests_airplane_takeoff" />
+
+        </GridLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
+            android:id="@+id/AddEventEventNameBox"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/shadow"
-            android:hint="Event name"
+            android:hint="Event name:"
             android:textColorHint="@color/primary_text"
+            app:layout_constraintStart_toStartOf="@id/addEventVerticalGuideline1"
+            app:layout_constraintEnd_toEndOf="@id/addEventVerticalGuideline2"
+            app:layout_constraintTop_toBottomOf="@id/addEventGridLayout"
+            android:layout_marginTop="10dp"
             app:boxStrokeColor="@color/primary_text"
             app:boxStrokeWidth="0dp">
 
@@ -163,24 +169,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
-                android:inputType="textCapWords"
+                android:inputType="text|textCapSentences"
                 android:textSize="16sp"
-                android:textStyle="normal" />
+                android:textStyle="normal"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="8dp" />
-
-
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
+            android:id="@+id/addEventEventPlaceBox"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/shadow"
-            android:hint="Event place"
+            android:hint="Event place:"
             android:textColorHint="@color/primary_text"
+            app:layout_constraintStart_toStartOf="@id/addEventVerticalGuideline1"
+            app:layout_constraintEnd_toEndOf="@id/addEventVerticalGuideline2"
+            app:layout_constraintTop_toBottomOf="@id/AddEventEventNameBox"
+            android:layout_marginTop="10dp"
             app:boxStrokeColor="@color/primary_text"
             app:boxStrokeWidth="0dp">
 
@@ -189,23 +195,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
-                android:inputType="textCapWords"
+                android:inputType="text|textCapSentences"
                 android:textSize="16sp"
                 android:textStyle="normal" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="8dp" />
-
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
+            android:id="@+id/addEventEventCityBox"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/shadow"
-            android:hint="Event City"
+            android:hint="Event city:"
             android:textColorHint="@color/primary_text"
+            app:layout_constraintStart_toStartOf="@+id/addEventVerticalGuideline1"
+            app:layout_constraintEnd_toEndOf="@id/addEventVerticalGuideline2"
+            app:layout_constraintTop_toBottomOf="@+id/addEventEventPlaceBox"
+            android:layout_marginTop="10dp"
             app:boxStrokeColor="@color/primary_text"
             app:boxStrokeWidth="0dp">
 
@@ -214,23 +221,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
-                android:inputType="textCapWords"
+                android:inputType="text|textCapSentences"
                 android:textSize="16sp"
                 android:textStyle="normal" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="8dp" />
-
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
+            android:id="@+id/addEventEventDateBox"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/shadow"
-            android:hint="Event date"
+            android:hint="Event date:"
             android:textColorHint="@color/primary_text"
+            app:layout_constraintStart_toStartOf="@id/addEventVerticalGuideline1"
+            app:layout_constraintEnd_toEndOf="@id/addEventVerticalGuideline2"
+            app:layout_constraintTop_toBottomOf="@id/addEventEventCityBox"
+            android:layout_marginTop="10dp"
             app:boxStrokeColor="@color/primary_text"
             app:boxStrokeWidth="0dp">
 
@@ -239,63 +247,68 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
-                android:inputType="textCapWords"
+                android:inputType="text|textCapSentences"
                 android:textSize="16sp"
                 android:textStyle="normal" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="8dp" />
-
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/addEventTagFriendsBox"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:background="@drawable/shadow"
-            android:hint="Tag Friends: @username"
+            android:hint="Tag Friends: &quot;Username&quot;"
+            android:orientation="horizontal"
             android:textColorHint="@color/primary_text"
             app:boxStrokeColor="@color/primary_text"
-            app:boxStrokeWidth="0dp">
+            app:boxStrokeWidth="0dp"
+            app:layout_constraintEnd_toEndOf="@id/addEventVerticalGuideline2"
+            app:layout_constraintStart_toStartOf="@id/addEventVerticalGuideline1"
+            app:layout_constraintTop_toBottomOf="@id/addEventEventDateBox">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/eventGuests"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:imeOptions="actionNext"
-                android:inputType="textCapWords"
+                android:inputType="text|textCapSentences"
                 android:textSize="16sp"
                 android:textStyle="normal" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewFindUsers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:scrollbars="vertical"
+                app:layout_constraintTop_toBottomOf="@+id/eventGuests" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="10dp"
+                app:chipSpacingVertical="0dp" />
 
         </com.google.android.material.textfield.TextInputLayout>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewFindUsers"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="vertical"
-            app:layout_constraintTop_toBottomOf="@+id/eventGuests" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="8dp" />
-
-
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
+            android:id="@+id/addEventDescriptionBox"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/shadow"
-            android:hint="Description:(0-150):"
+            android:hint="Description: (0-150)"
             android:textColorHint="@color/primary_text"
+            app:layout_constraintStart_toStartOf="@id/addEventVerticalGuideline1"
+            app:layout_constraintEnd_toEndOf="@id/addEventVerticalGuideline2"
+            app:layout_constraintTop_toBottomOf="@id/addEventTagFriendsBox"
+            android:layout_marginTop="10dp"
             app:boxStrokeColor="@color/primary_text"
             app:boxStrokeWidth="0dp">
 
@@ -309,65 +322,58 @@
                 android:textStyle="normal" />
 
         </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
+
+        <TextView
+            android:id="@+id/spotsTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Spots:"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/spotPicker"
+            app:layout_constraintStart_toStartOf="@id/addEventVerticalGuideline1"
+            app:layout_constraintTop_toBottomOf="@+id/addEventDescriptionBox"
+            tools:ignore="MissingConstraints" />
+
+        <NumberPicker
+            android:id="@+id/spotPicker"
+            android:layout_width="40dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="30dp"
+            android:text="Select spots"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/spotsTextView"
+            app:layout_constraintStart_toStartOf="@id/spotsTextView"
+            app:layout_constraintTop_toBottomOf="@+id/spotsTextView" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/materialSubmitButton"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:stateListAnimator="@anim/scale_button_animation"
+            android:text="Create Event"
+            android:textColor="#000000"
+            app:backgroundTint="@color/primary_blue"
+            app:cornerRadius="8dp"
+            app:layout_constraintBottom_toBottomOf="@id/spotPicker"
+            app:layout_constraintEnd_toStartOf="@id/imageAdd"
+            app:layout_constraintStart_toEndOf="@id/spotsTextView"
+            app:layout_constraintTop_toTopOf="@id/spotsTextView" />
+
+        <ImageView
+            android:id="@+id/imageAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_selector"
+            android:elevation="4dp"
+            app:layout_constraintBottom_toBottomOf="@id/materialSubmitButton"
+            app:layout_constraintEnd_toEndOf="@id/addEventVerticalGuideline2"
+            app:layout_constraintTop_toTopOf="@+id/materialSubmitButton"
+            app:srcCompat="@drawable/add_picture" />
 
 
-    <ImageView
-        android:id="@+id/imageAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="36dp"
-        android:stateListAnimator="@anim/scale_button_animation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout1"
-        app:srcCompat="@drawable/add_picture"
-        tools:ignore="MissingConstraints" />
-
-    <TextView
-        android:id="@+id/spotsTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="1dp"
-        android:text="Spots"
-        android:textSize="18dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/spotPicker"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="MissingConstraints" />
-
-    <NumberPicker
-        android:id="@+id/spotPicker"
-        android:layout_width="59dp"
-        android:layout_height="89dp"
-        android:layout_marginTop="24dp"
-        android:text="Select spots"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.045"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout1" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/materialSubmitButton"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:stateListAnimator="@anim/scale_button_animation"
-        android:text="Create Event"
-        android:textColor="#000000"
-        app:backgroundTint="@color/primary_blue"
-        app:cornerRadius="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
-
-
-
-
-
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>
