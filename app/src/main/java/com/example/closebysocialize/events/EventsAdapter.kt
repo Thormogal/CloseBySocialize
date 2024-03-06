@@ -72,7 +72,8 @@ class EventsAdapter(
         val isEventCreator = event.authorId == currentUserId
         val isSaved = savedEventsIds.contains(event.id)
         val availableSpots = event.spots - event.currentAttendeesCount
-        val availableSpotsText = "$availableSpots ${holder.itemView.context.getString(R.string.spots)}"
+        val availableSpotsText =
+            "$availableSpots ${holder.itemView.context.getString(R.string.spots)}"
         val isCurrentlyAttending =
             event.attendedPeopleProfilePictureUrls.contains(userProfileUrl) || isEventCreator
 
@@ -101,42 +102,35 @@ class EventsAdapter(
     }
 
     private fun toggleEventAttendance(holder: ViewHolder, event: Event) {
-        val isAttending =
+        val isCurrentlyAttending =
             holder.attendButtonTextView.text.toString() == holder.itemView.context.getString(R.string.event_withdraw)
         val eventId = event.id
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        val userId = currentUser?.uid ?: return
-        val userProfileUrl = currentUser.photoUrl.toString()
-
-        toggleAttendingEvent(userId, eventId, isAttending,
-            onSuccess = {
-                val updatedCount =
-                    if (isAttending) event.currentAttendeesCount - 1 else event.currentAttendeesCount + 1
-                event.currentAttendeesCount = updatedCount
-                event.attendedPeopleProfilePictureUrls = if (isAttending) {
-                    event.attendedPeopleProfilePictureUrls.filter { it != userProfileUrl }
-                        .toMutableList()
-                } else {
-                    event.attendedPeopleProfilePictureUrls.toMutableList()
-                        .apply { add(userProfileUrl) }
-                }
-                val spotsString = holder.itemView.context.getString(R.string.spots)
-                val availableSpotsText = holder.itemView.context.getString(
-                    R.string.available_spots_format,
-                    event.spots - updatedCount,
-                    spotsString
-                )
-                holder.openSpotsTextView.text = availableSpotsText
-                val attendButtonText = holder.itemView.context.getString(
-                    if (isAttending) R.string.event_attend else R.string.event_withdraw
-                )
-                holder.attendButtonTextView.text = attendButtonText
-                updateAttendButtonAndSpotsUI(holder, event)
-            },
-            onFailure = { exception ->
-                Log.e("EventsAdapter", "Error toggling attendance", exception)
+        val currentUser = FirebaseAuth.getInstance().currentUser ?: return
+        val userId = currentUser.uid
+        val userProfileUrl = currentUser.photoUrl?.toString() ?: ""
+        toggleAttendingEvent(userId, eventId, userProfileUrl, isCurrentlyAttending, onSuccess = {
+            val updatedCount =
+                if (isCurrentlyAttending) event.currentAttendeesCount - 1 else event.currentAttendeesCount + 1
+            event.currentAttendeesCount = updatedCount
+            event.attendedPeopleProfilePictureUrls = if (isCurrentlyAttending) {
+                event.attendedPeopleProfilePictureUrls.filter { it != userProfileUrl }
+                    .toMutableList()
+            } else {
+                event.attendedPeopleProfilePictureUrls.toMutableList().apply { add(userProfileUrl) }
             }
-        )
+            val spotsString = holder.itemView.context.getString(R.string.spots)
+            val availableSpotsText = holder.itemView.context.getString(
+                R.string.available_spots_format, event.spots - updatedCount, spotsString
+            )
+            holder.openSpotsTextView.text = availableSpotsText
+            holder.attendButtonTextView.text =
+                holder.itemView.context.getString(if (isCurrentlyAttending) R.string.event_attend else R.string.event_withdraw)
+            updateAttendButtonAndSpotsUI(holder, event)
+            populateAttendedPeopleViews(holder, event)
+
+        }, onFailure = { exception ->
+            Log.e("EventsAdapter", "Error toggling attendance", exception)
+        })
     }
 
 
@@ -154,7 +148,8 @@ class EventsAdapter(
 
             if (index == maxProfilesToShow - 1 && profilePictureUrls.size > maxProfilesToShow) {
                 val remainingAttendeesCount = profilePictureUrls.size - maxProfilesToShow
-                val moreAttendeesTextView = createMoreAttendeesTextView(holder.itemView.context, remainingAttendeesCount)
+                val moreAttendeesTextView =
+                    createMoreAttendeesTextView(holder.itemView.context, remainingAttendeesCount)
                 attendedPeopleLinearLayout.addView(moreAttendeesTextView)
             }
         }
@@ -174,11 +169,12 @@ class EventsAdapter(
     }
 
 
-    private fun createMoreAttendeesTextView(context: Context, remainingAttendeesCount: Int): TextView {
+    private fun createMoreAttendeesTextView(
+        context: Context, remainingAttendeesCount: Int
+    ): TextView {
         return TextView(context).apply {
             layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
             )
             text = context.getString(R.string.more_attendees_count, remainingAttendeesCount)
             textSize = 16f
@@ -192,14 +188,14 @@ class EventsAdapter(
         if (availableSpots <= 0) {
             holder.openSpotsTextView.text = holder.itemView.context.getString(R.string.event_full)
             val currentUserProfileUrl = FirebaseAuth.getInstance().currentUser?.photoUrl.toString()
-            val isCurrentUserAttending = event.attendedPeopleProfilePictureUrls.contains(currentUserProfileUrl)
-            holder.attendButtonTextView.visibility = if (isCurrentUserAttending) View.VISIBLE else View.GONE
+            val isCurrentUserAttending =
+                event.attendedPeopleProfilePictureUrls.contains(currentUserProfileUrl)
+            holder.attendButtonTextView.visibility =
+                if (isCurrentUserAttending) View.VISIBLE else View.GONE
         } else {
             val spotsString = holder.itemView.context.getString(R.string.spots)
             val availableSpotsText = holder.itemView.context.getString(
-                R.string.available_spots_format,
-                availableSpots,
-                spotsString
+                R.string.available_spots_format, availableSpots, spotsString
             )
             holder.openSpotsTextView.text = availableSpotsText
             holder.attendButtonTextView.visibility = View.VISIBLE
@@ -250,14 +246,12 @@ class EventsAdapter(
     }
 
     private fun deleteEvent(eventId: String, position: Int) {
-        FirebaseFirestore.getInstance().collection("events").document(eventId)
-            .delete()
+        FirebaseFirestore.getInstance().collection("events").document(eventId).delete()
             .addOnSuccessListener {
                 eventsList = eventsList.toMutableList().also { it.removeAt(position) }
                 notifyItemRemoved(position)
                 Log.d("EventsAdapter", "Event successfully deleted")
-            }
-            .addOnFailureListener { e ->
+            }.addOnFailureListener { e ->
                 Log.w("EventsAdapter", "Error deleting event", e)
             }
     }
@@ -275,7 +269,6 @@ class EventsAdapter(
             Log.e("EventsFragment", "Failed to toggle event save state", e)
         })
     }
-
 
 
 }
