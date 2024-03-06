@@ -1,12 +1,9 @@
 package com.example.closebysocialize.profile
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Intent
+
 import android.icu.util.Calendar
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +13,8 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.NumberPicker
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.closebysocialize.R
@@ -32,14 +31,11 @@ class EditProfileFragment : Fragment() {
     private lateinit var editName: EditText
     private lateinit var birthYearPicker: NumberPicker
     private lateinit var aboutMeEditText: EditText
-
+    private lateinit var imagePickerLauncher: ActivityResultLauncher<String>
     private val selectedInterests = mutableSetOf<Int>()
-    private val GALLERY_REQUEST_CODE = 100
     private var selectedImageUri: Uri? = null
-
     private val db = FirebaseFirestore.getInstance()
     private val id = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-
     private val interestToDrawableMap = mapOf(
         R.id.dogImageView to R.drawable.interests_dogwalk,
         R.id.airPlaneImageView to R.drawable.interests_airplane_takeoff,
@@ -55,12 +51,24 @@ class EditProfileFragment : Fragment() {
         R.id.strollerImageView to R.drawable.interests_stroller
     )
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_profile_edit, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setupImagePickerLauncher()
+    }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_profile_edit, container, false)
+        initializeUI(view)
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupUserInteractions(view)
+        fetchUserData()
+    }
+
+    private fun initializeUI(view: View) {
         editImage = view.findViewById(R.id.editPictureImageView)
         profileSaveButton = view.findViewById(R.id.profileSaveButton)
         editName = view.findViewById(R.id.editNameEditText)
@@ -71,92 +79,48 @@ class EditProfileFragment : Fragment() {
         birthYearPicker.minValue = 1900
         birthYearPicker.maxValue = currentYear
         birthYearPicker.value = currentYear
-
-        return view
     }
 
-    @SuppressLint("ResourceType")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private fun setupImagePickerLauncher() {
+        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                selectedImageUri = it
+                uploadImageToFirebaseStorage(it)
+                setProfileImage(it.toString())
+            } ?: run {
+                Toast.makeText(context, "Error in selecting image", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
+    private fun setupUserInteractions(view: View) {
+        setupInterestClickListeners(view)
+        setupProfileImageViewButton()
+        setupBirthYearButton()
+        setupProfileSaveButton()
+    }
 
+    private fun setupProfileImageViewButton() {
+        editImage.setOnClickListener {
+            imagePickerLauncher.launch("image/*")
+        }
+    }
+
+    private fun setupBirthYearButton() {
+        birthYearPicker.setOnValueChangedListener { _, _, _ ->
+        }
+    }
+    private fun setupProfileSaveButton() {
+        profileSaveButton.setOnClickListener {
+            saveProfileDataToDatabase()
+        }
+    }
+
+    private fun setupInterestClickListeners(view: View) {
         interestToDrawableMap.forEach { (imageViewId, drawableId) ->
             val imageView = view.findViewById<ImageView>(imageViewId)
             imageView.setOnClickListener {
                 handleInterestClick(imageView, drawableId)
-            }
-        }
-
-        editImage.setOnClickListener {
-            val galleryIntent =
-                Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE)
-        }
-
-        birthYearPicker.setOnValueChangedListener { _, _, newVal ->
-            val selectedYear = newVal
-        }
-
-        profileSaveButton.setOnClickListener {
-            saveProfileDataToDatabase()
-        }
-
-        fetchUserData()
-    }
-
-    private fun handleInterestClick(imageView: ImageView, drawableId: Int) {
-        if (selectedInterests.contains(drawableId)) {
-            selectedInterests.remove(drawableId)
-            imageView.isSelected = false
-        } else {
-            if (selectedInterests.size >= 4) {
-                Toast.makeText(context, "You can select up to 4 interests", Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                selectedInterests.add(drawableId)
-                imageView.isSelected = true
-            }
-        }
-    }
-
-    private fun saveProfileDataToDatabase() {
-        val aboutMeText = aboutMeEditText.text.toString()
-        val name = editName.text.toString()
-        val birthYear = birthYearPicker.value
-
-        val selectedInterestsAsString = selectedInterests.map { it.toString() }
-        val userRef = db.collection("users").document(id)
-        val updates = hashMapOf<String, Any>(
-            "aboutMe" to aboutMeText,
-            "name" to name,
-            "birthYear" to birthYear
-        )
-
-        if (selectedInterestsAsString.isNotEmpty()) {
-            updates["selectedInterests"] = selectedInterestsAsString
-        }
-
-        userRef.update(updates)
-            .addOnSuccessListener {
-                Toast.makeText(context, "Profile updated successfully", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(
-                    context,
-                    "Failed to update profile: ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            selectedImageUri = data?.data
-            selectedImageUri?.let {
-                uploadImageToFirebaseStorage(it)
-                setProfileImage(it.toString())
             }
         }
     }
@@ -199,7 +163,62 @@ class EditProfileFragment : Fragment() {
             }
     }
 
+    private fun handleInterestClick(imageView: ImageView, drawableId: Int) {
+        if (selectedInterests.contains(drawableId)) {
+            selectedInterests.remove(drawableId)
+            imageView.isSelected = false
+        } else {
+            if (selectedInterests.size >= 4) {
+                Toast.makeText(context, "You can select up to 4 interests", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                selectedInterests.add(drawableId)
+                imageView.isSelected = true
+            }
+        }
+    }
 
+    private fun updateSelectedInterestsUI(selectedInterestsData: List<String>) {
+        interestToDrawableMap.forEach { (imageViewId, drawableId) ->
+            val imageView = view?.findViewById<ImageView>(imageViewId)
+            if (selectedInterestsData.contains(drawableId.toString())) {
+                selectedInterests.add(drawableId)
+                imageView?.isSelected = true
+            } else {
+                imageView?.isSelected = false
+            }
+        }
+    }
+
+    private fun saveProfileDataToDatabase() {
+        val aboutMeText = aboutMeEditText.text.toString()
+        val name = editName.text.toString()
+        val birthYear = birthYearPicker.value
+
+        val selectedInterestsAsString = selectedInterests.map { it.toString() }
+        val userRef = db.collection("users").document(id)
+        val updates = hashMapOf<String, Any>(
+            "aboutMe" to aboutMeText,
+            "name" to name,
+            "birthYear" to birthYear
+        )
+
+        if (selectedInterestsAsString.isNotEmpty()) {
+            updates["selectedInterests"] = selectedInterestsAsString
+        }
+
+        userRef.update(updates)
+            .addOnSuccessListener {
+                Toast.makeText(context, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(
+                    context,
+                    "Failed to update profile: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+    }
     private fun fetchUserData() {
         val userRef = db.collection("users").document(id)
         userRef.get().addOnSuccessListener { document ->
@@ -217,25 +236,13 @@ class EditProfileFragment : Fragment() {
                 profileImageUrl?.let {
                     setProfileImage(it)
                 }
-                val selectedInterestsData = document.get("selectedInterests") as? List<String>
-                selectedInterestsData?.let {
-                    updateSelectedInterestsUI(it)
+                val selectedInterestsData = document.get("selectedInterests")
+                if (selectedInterestsData is List<*>) {
+                    updateSelectedInterestsUI(selectedInterestsData.filterIsInstance<String>())
                 }
             }
         }.addOnFailureListener {
             Log.e("EditProfileFragment", "Error fetching user data", it)
-        }
-    }
-
-    private fun updateSelectedInterestsUI(selectedInterestsData: List<String>) {
-        interestToDrawableMap.forEach { (imageViewId, drawableId) ->
-            val imageView = view?.findViewById<ImageView>(imageViewId)
-            if (selectedInterestsData.contains(drawableId.toString())) {
-                selectedInterests.add(drawableId)
-                imageView?.isSelected = true
-            } else {
-                imageView?.isSelected = false
-            }
         }
     }
 }
