@@ -254,7 +254,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="17dp"
                 android:fontFamily="@font/poppins_font_family"
                 android:text="@string/event_attend_spots"
                 android:textColor="@color/primary_text"

@@ -57,6 +57,8 @@ class EventsAdapter(
         val chatImageView: ImageView = view.findViewById(R.id.chatImageView)
         val deleteImageView: ImageView = view.findViewById(R.id.deleteImageView)
         val savedImageView: ImageView = view.findViewById(R.id.savedImageView)
+        val eventBackgroundImageView: ImageView = view.findViewById(R.id.backgroundImageView)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -98,6 +100,8 @@ class EventsAdapter(
             toggleEventAttendance(holder, event)
         }
         populateAttendedPeopleViews(holder, event)
+
+        ImageUtils.loadImage(holder.itemView.context, event.imageUrl, holder.eventBackgroundImageView)
 
     }
 
