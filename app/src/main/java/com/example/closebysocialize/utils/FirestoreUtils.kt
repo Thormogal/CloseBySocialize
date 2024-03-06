@@ -30,9 +30,7 @@ object FirestoreUtils {
 
                 userRef.set(userInfo).addOnSuccessListener {
                     Toast.makeText(
-                        context,
-                        "Your information has been saved to Firestore.",
-                        Toast.LENGTH_SHORT
+                        context, "Your information has been saved to Firestore.", Toast.LENGTH_SHORT
                     ).show()
                 }.addOnFailureListener { e ->
                     Toast.makeText(
@@ -68,9 +66,7 @@ object FirestoreUtils {
             onSuccess(profileImageUrl)
         }.addOnFailureListener { exception ->
             Toast.makeText(
-                context,
-                "Error fetching profile image: ${exception.message}",
-                Toast.LENGTH_SHORT
+                context, "Error fetching profile image: ${exception.message}", Toast.LENGTH_SHORT
             ).show()
             onFailure(exception)
         }
@@ -164,8 +160,7 @@ object FirestoreUtils {
     ) {
         val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
         userRef.get().addOnSuccessListener { documentSnapshot ->
-            val savedEvents =
-                documentSnapshot.toObject(Users::class.java)?.savedEvents ?: listOf()
+            val savedEvents = documentSnapshot.toObject(Users::class.java)?.savedEvents ?: listOf()
 
             if (isCurrentlySaved && savedEvents.contains(eventId)) {
                 userRef.update("savedEvents", FieldValue.arrayRemove(eventId))
@@ -184,27 +179,45 @@ object FirestoreUtils {
     fun toggleAttendingEvent(
         userId: String,
         eventId: String,
+        userProfileUrl: String,
         isCurrentlyAttending: Boolean,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection("users").document(userId)
+        val eventRef = db.collection("events").document(eventId)
+
         userRef.get().addOnSuccessListener { documentSnapshot ->
             val attendingEvents =
                 documentSnapshot.toObject(Users::class.java)?.attendingEvents ?: listOf()
+
             if (isCurrentlyAttending && attendingEvents.contains(eventId)) {
                 userRef.update("attendingEvents", FieldValue.arrayRemove(eventId))
-                    .addOnSuccessListener { onSuccess() }
-                    .addOnFailureListener { exception -> onFailure(exception) }
             } else if (!isCurrentlyAttending && !attendingEvents.contains(eventId)) {
                 userRef.update("attendingEvents", FieldValue.arrayUnion(eventId))
-                    .addOnSuccessListener { onSuccess() }
-                    .addOnFailureListener { exception -> onFailure(exception) }
-            } else {
-                onSuccess()
             }
-        }.addOnFailureListener { exception -> onFailure(exception) }
+        }.continueWithTask { task ->
+            if (!task.isSuccessful) {
+                throw task.exception ?: Exception("Unknown error during attendingEvents update")
+            }
+
+            if (isCurrentlyAttending) {
+                eventRef.update(
+                    "attendedPeopleProfilePictureUrls", FieldValue.arrayRemove(userProfileUrl)
+                )
+            } else {
+                eventRef.update(
+                    "attendedPeopleProfilePictureUrls", FieldValue.arrayUnion(userProfileUrl)
+                )
+            }
+        }.addOnSuccessListener {
+            onSuccess()
+        }.addOnFailureListener { exception ->
+            onFailure(exception)
+        }
     }
+
 
     fun addUserAsFriend(
         currentUserUid: String, user: Users, onSuccess: () -> Unit, onFailure: (Exception) -> Unit
