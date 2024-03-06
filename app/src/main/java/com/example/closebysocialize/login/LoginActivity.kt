@@ -1,11 +1,12 @@
 package com.example.closebysocialize.login
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import com.example.closebysocialize.ContainerActivity
 import com.example.closebysocialize.R
@@ -27,37 +28,9 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        emailEditText = findViewById(R.id.loginEmailEditText)
-        passwordEditText = findViewById(R.id.loginPasswordEditText)
-        loginButton = findViewById(R.id.loginButton)
-        loginFirebaseGoogle = LoginFirebaseGoogle(this)
-        loginFirebaseGithub = LoginFirebaseGithub(this)
-        loginFirebaseFacebook = LoginFirebaseFacebook(this)
-
-        findViewById<TextView>(R.id.forgotPasswordTextView).setOnClickListener {
-            navigateToResetPage()
-        }
-
-        loginButton.setOnClickListener {
-            validateLoginInformation()
-        }
-
-        findViewById<Button>(R.id.signInEmailButton).setOnClickListener {
-            navigateToSignupPage()
-        }
-
-        findViewById<Button>(R.id.signInGoogleButton).setOnClickListener {
-            loginFirebaseGoogle.startSigninIntent()
-        }
-
-        findViewById<Button>(R.id.signInFacebookButton).setOnClickListener {
-            loginFirebaseFacebook.startFacebookLogin()
-        }
-
-        findViewById<Button>(R.id.signInGithubButton).setOnClickListener {
-            loginFirebaseGithub.signInWithGitHub()
-        }
-
+        initializeUI()
+        initializeFirebaseServices()
+        setupEventListeners()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -70,20 +43,37 @@ class LoginActivity : AppCompatActivity() {
         loginFirebaseFacebook.handleActivityResult(requestCode, resultCode, data)
     }
 
-    private fun navigateToResetPage() {
-        val intent = Intent(this, ResetPasswordActivity::class.java)
-        startActivity(intent)
+    private fun initializeUI() {
+        emailEditText = findViewById(R.id.loginEmailEditText)
+        passwordEditText = findViewById(R.id.loginPasswordEditText)
+        loginButton = findViewById(R.id.loginButton)
     }
 
-    private fun navigateToMainPage() {
-        val intent = Intent(this, ContainerActivity::class.java)
-        startActivity(intent)
-        finish()
+    private fun initializeFirebaseServices() {
+        loginFirebaseGoogle = LoginFirebaseGoogle(this)
+        loginFirebaseGithub = LoginFirebaseGithub(this)
+        loginFirebaseFacebook = LoginFirebaseFacebook(this)
     }
 
-    private fun navigateToSignupPage() {
-        val intent = Intent(this, SignupActivity::class.java)
+    private fun setupEventListeners() {
+        setOnClickListener(R.id.forgotPasswordTextView) { navigateTo(ResetPasswordActivity::class.java) }
+        setOnClickListener(R.id.signInEmailButton) { navigateTo(SignupActivity::class.java) }
+        setOnClickListener(R.id.signInGoogleButton) { loginFirebaseGoogle.startSigninIntent() }
+        setOnClickListener(R.id.signInFacebookButton) { loginFirebaseFacebook.startFacebookLogin() }
+        setOnClickListener(R.id.signInGithubButton) { loginFirebaseGithub.signInWithGitHub() }
+        loginButton.setOnClickListener { validateLoginInformation() }
+    }
+
+    private fun <T : Activity> navigateTo(activityClass: Class<T>) {
+        val intent = Intent(this, activityClass)
         startActivity(intent)
+        if (activityClass == ContainerActivity::class.java) {
+            finish()
+        }
+    }
+
+    private fun setOnClickListener(viewId: Int, action: () -> Unit) {
+        findViewById<View>(viewId).setOnClickListener { action() }
     }
 
     private fun validateForm(email: String, password: String): Boolean {
@@ -103,7 +93,7 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(baseContext, "Logged in successfully", Toast.LENGTH_SHORT).show()
-                    navigateToMainPage()
+                    navigateTo(ContainerActivity::class.java)
                 } else {
                     Toast.makeText(
                         baseContext,

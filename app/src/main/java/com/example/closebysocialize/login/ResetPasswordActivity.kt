@@ -20,13 +20,28 @@ class ResetPasswordActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reset_password)
 
+        initializeUI()
+        setupEventListeners()
+    }
+
+    private fun initializeUI() {
         emailEditText = findViewById(R.id.registeredEmailEditText)
         resetPasswordButton = findViewById(R.id.resetPasswordButton)
+    }
 
+    private fun setupEventListeners() {
         resetPasswordButton.setOnClickListener {
             val email = emailEditText.text.toString()
-            resetPassword(email)
+            if (isValidEmail(email)) {
+                resetPassword(email)
+            } else {
+                Toast.makeText(this, "Enter a valid e-mail address", Toast.LENGTH_SHORT).show()
+            }
         }
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
     private fun resetPassword(email: String) {
@@ -34,17 +49,19 @@ class ResetPasswordActivity : AppCompatActivity() {
             Toast.makeText(this, "Check your email to reset your password.", Toast.LENGTH_LONG)
                 .show()
             navigateToLoginPage()
-        }, //email will succeed even if no user is registered with that mail due to anti-fraud.
-            //harder for hackers to know which mails that are truly registered or not.
-            //Firebase makes sure that un-registered mail addresses will not receive a mail.
+        },
             onError = { exception ->
-                if (exception is FirebaseAuthInvalidUserException) {
-                    Toast.makeText(this, "No user found with this email address", Toast.LENGTH_LONG)
-                        .show()
-                } else {
-                    Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_LONG).show()
-                }
+                handlePasswordResetError(exception)
             })
+    }
+
+    private fun handlePasswordResetError(exception: Exception) {
+        val message = if (exception is FirebaseAuthInvalidUserException) {
+            "No user found with this email address"
+        } else {
+            "Error: ${exception.message}"
+        }
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
     private fun navigateToLoginPage() {

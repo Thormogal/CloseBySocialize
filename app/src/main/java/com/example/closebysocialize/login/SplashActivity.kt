@@ -16,23 +16,26 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        initializeFacebookSdk()
+        setupSplashTextAnimation()
+    }
+
+    private fun initializeFacebookSdk() {
         FacebookSdk.setApplicationId("3196808700613916")
         FacebookSdk.sdkInitialize(applicationContext)
+    }
 
+    private fun setupSplashTextAnimation() {
         val splashText = findViewById<TextView>(R.id.splash_text)
         val fadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.splash_screen_animation)
         splashText.startAnimation(fadeInAnimation)
-
         fadeInAnimation.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation) {
-            }
-
+            override fun onAnimationStart(animation: Animation) {}
             override fun onAnimationEnd(animation: Animation) {
                 checkLoginAndNavigate()
             }
 
-            override fun onAnimationRepeat(animation: Animation) {
-            }
+            override fun onAnimationRepeat(animation: Animation) {}
         })
     }
 
@@ -45,14 +48,12 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun navigateToMainPage() {
-        val intent = Intent(this, ContainerActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, ContainerActivity::class.java))
         finish()
     }
 
     private fun navigateToLogin() {
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }
 }

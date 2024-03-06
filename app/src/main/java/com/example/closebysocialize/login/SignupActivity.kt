@@ -32,18 +32,53 @@ class SignupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
+        initializeUI()
+        setupEventListeners()
+    }
+
+    private fun initializeUI() {
         emailEditText = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
         repeatPasswordEditText = findViewById(R.id.repeatPasswordEditText)
         signupButton = findViewById(R.id.signupButton)
         progressSpinner = findViewById(R.id.signUpProgressSpinner)
         frameLayout = findViewById(R.id.signUpFrameLayout)
+    }
 
+    private fun setupEventListeners() {
         signupButton.setOnClickListener {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
-            registerUser(email, password)
+            attemptRegisterUser(email, password)
         }
+    }
+
+    private fun attemptRegisterUser(email: String, password: String) {
+        if (!isEmailAndPasswordValid(email, password)) return
+
+        showProgressSpinner(true)
+        registerUser(email, password)
+    }
+
+    private fun isEmailAndPasswordValid(email: String, password: String): Boolean {
+        val repeatPassword = repeatPasswordEditText.text.toString()
+        if (password != repeatPassword) {
+            Toast.makeText(this, "The passwords doesn't match", Toast.LENGTH_LONG).show()
+            return false
+        }
+        if (!isEmailValid(email)) {
+            Toast.makeText(this, "Enter a valid e-mail address.", Toast.LENGTH_LONG).show()
+            return false
+        }
+        if (!isPasswordValid(password)) {
+            Toast.makeText(
+                this,
+                "The password must be at least 6 characters long",
+                Toast.LENGTH_LONG
+            ).show()
+            return false
+        }
+        return true
     }
 
     private fun isEmailValid(email: String): Boolean {
@@ -61,31 +96,10 @@ class SignupActivity : AppCompatActivity() {
 
     private fun showProgressSpinner(show: Boolean) {
         frameLayout.visibility = if (show) View.VISIBLE else View.GONE
-
         signupButton.alpha = if (show) 0.3f else 1.0f
     }
 
     private fun registerUser(email: String, password: String) {
-        val repeatPassword = repeatPasswordEditText.text.toString()
-
-        if (password != repeatPassword) {
-            Toast.makeText(this, "The passwords doesn't match", Toast.LENGTH_LONG).show()
-            return
-        }
-        if (!isEmailValid(email)) {
-            Toast.makeText(this, "Enter a valid e-mail address.", Toast.LENGTH_LONG).show()
-            return
-        }
-
-        if (!isPasswordValid(password)) {
-            Toast.makeText(
-                this,
-                "The password must be at least 6 characters long",
-                Toast.LENGTH_LONG
-            ).show()
-            return
-        }
-
         loginFirebaseEmail.registerUser(email, password, onSuccess = { firebaseUser ->
             firebaseUser?.let {
                 FirestoreUtils.saveUserToFirestore(it, this)
@@ -95,7 +109,6 @@ class SignupActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
                 startEmailVerificationCheck()
-                showProgressSpinner(true)
             } ?: run {
                 Toast.makeText(
                     this,
@@ -103,14 +116,11 @@ class SignupActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
             }
-        },
-            onError = { exception ->
-                Toast.makeText(
-                    this,
-                    "Error with registration: ${exception.message}",
-                    Toast.LENGTH_LONG
-                ).show()
-            })
+        }, onError = { exception ->
+            Toast.makeText(this, "Error with registration: ${exception.message}", Toast.LENGTH_LONG)
+                .show()
+            showProgressSpinner(false)
+        })
     }
 
     private fun startEmailVerificationCheck() {
@@ -119,9 +129,7 @@ class SignupActivity : AppCompatActivity() {
                 val user = FirebaseAuth.getInstance().currentUser
                 user?.reload()?.addOnCompleteListener { task ->
                     if (task.isSuccessful && user.isEmailVerified) {
-                        val intent = Intent(this@SignupActivity, ContainerActivity::class.java)
-                        startActivity(intent)
-                        finish()
+                        navigateToContainerActivity()
                     } else {
                         handler.postDelayed(this, 2000)
                     }
@@ -129,5 +137,11 @@ class SignupActivity : AppCompatActivity() {
             }
         }
         handler.post(checkEmailVerificationRunnable)
+    }
+
+    private fun navigateToContainerActivity() {
+        val intent = Intent(this, ContainerActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }

@@ -1,6 +1,7 @@
 package com.example.closebysocialize.profile
 
 
+import android.content.Context
 import android.icu.util.Calendar
 import android.net.Uri
 import android.os.Bundle
@@ -26,6 +27,7 @@ import java.util.UUID
 
 class EditProfileFragment : Fragment() {
 
+    var profileImageUpdatedListener: OnProfileImageUpdatedListener? = null
     private lateinit var editImage: ImageView
     private lateinit var profileSaveButton: Button
     private lateinit var editName: EditText
@@ -132,9 +134,14 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun setProfileImage(imageUrl: String?) {
-        imageUrl?.let {
+        if (imageUrl.isNullOrEmpty() || imageUrl == "defaultUrl") {
             Glide.with(this)
-                .load(it)
+                .load(R.drawable.avatar_dark)
+                .circleCrop()
+                .into(editImage)
+        } else {
+            Glide.with(this)
+                .load(imageUrl)
                 .circleCrop()
                 .into(editImage)
         }
@@ -148,6 +155,7 @@ class EditProfileFragment : Fragment() {
             .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { uri ->
                     saveProfileImageUrlToFirestore(uri.toString())
+                    profileImageUpdatedListener?.onProfileImageUpdated(uri.toString())
                 }
             }
             .addOnFailureListener {
@@ -167,6 +175,20 @@ class EditProfileFragment : Fragment() {
             }
             .addOnFailureListener {
             }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        profileImageUpdatedListener = context as? OnProfileImageUpdatedListener
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        profileImageUpdatedListener = null
+    }
+
+    interface OnProfileImageUpdatedListener {
+        fun onProfileImageUpdated(newImageUrl: String)
     }
 
     private fun handleInterestClick(imageView: ImageView, drawableId: Int) {
