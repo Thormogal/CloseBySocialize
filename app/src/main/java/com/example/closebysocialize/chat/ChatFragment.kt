@@ -68,7 +68,6 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
                 postComment(commentText, null)
             }
         }
-
         return view
     }
 
@@ -90,7 +89,7 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
         FirebaseFirestore.getInstance()
             .collection("events").document(eventId!!)
             .collection("comments")
-            .orderBy("timestamp", Query.Direction.ASCENDING)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { documents ->
                 val allComments = documents.mapNotNull { it.toObject(Comment::class.java) }
