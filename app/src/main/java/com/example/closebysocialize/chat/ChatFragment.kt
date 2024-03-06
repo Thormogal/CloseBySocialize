@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.R
 import com.example.closebysocialize.message.FireBaseMessagingService.Companion.TAG
+import com.example.closebysocialize.utils.CommentsUtils
 import com.google.firebase.auth.FirebaseAuth
-import com.example.closebysocialize.utils.MessagingUtils
 import com.google.android.material.textfield.TextInputLayout
 
 
@@ -71,16 +71,17 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
     }
 
     private fun fetchAndOrganizeComments() {
-        MessagingUtils.fetchAndOrganizeComments(
-            eventId = eventId!!,
+        CommentsUtils.fetchAndOrganizeComments(
+            eventId = eventId,
             onSuccess = { organizedComments ->
                 commentAdapter.updateComments(organizedComments)
             },
             onFailure = { exception ->
-                Log.e(TAG, "Error fetching comments", exception)
+                Log.e(CommentsUtils.TAG, "Error fetching comments", exception)
             }
         )
     }
+
 
 
     override fun onReply(commentId: String) {
@@ -113,7 +114,7 @@ class ChatFragment : Fragment(), CommentAdapter.CommentInteractionListener {
         val userName = FirebaseAuth.getInstance().currentUser?.displayName ?: "Anonymous"
         val userPhotoUrl = FirebaseAuth.getInstance().currentUser?.photoUrl.toString()
 
-        MessagingUtils.postComment(
+        CommentsUtils.postComment(
             eventId = eventId!!,
             commentText = commentText,
             parentId = parentId,

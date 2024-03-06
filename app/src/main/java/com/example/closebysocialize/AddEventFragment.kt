@@ -65,7 +65,6 @@ class AddEventFragment : Fragment() {
     private var imageUri: Uri? = null
     private lateinit var userAdapter: UserAdapter
     private lateinit var firestore: FirebaseFirestore
-    private var taggedUsers = mutableListOf<String>()
     private lateinit var recyclerViewFindUsers: RecyclerView
 
 
@@ -161,7 +160,7 @@ class AddEventFragment : Fragment() {
         val chipGroup = view.findViewById<ChipGroup>(R.id.chipGroup) ?: ChipGroup(context)
 
         recyclerViewFindUsers.layoutManager = LinearLayoutManager(context)
-        userAdapter = UserAdapter(listOf(), taggedUsers, eventGuests, chipGroup)
+        userAdapter = UserAdapter(listOf(), taggedUsers, chipGroup)
         recyclerViewFindUsers.adapter = userAdapter
 
 

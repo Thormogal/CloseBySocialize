@@ -1,4 +1,5 @@
-import android.content.Context
+package com.example.closebysocialize.friends
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,13 +11,11 @@ import com.example.closebysocialize.dataClass.Friend
 import com.example.closebysocialize.utils.ImageUtils
 
 class FriendsAdapter(
-    private val context: Context,
     private var friends: List<Friend>,
     private val showActions: Boolean = true
 ) : RecyclerView.Adapter<FriendsAdapter.FriendViewHolder>() {
 
     interface FriendClickListener {
-        fun onMessageClick(friend: Friend)
         fun onBinClick(friend: Friend)
         fun onFriendClick(friend: Friend)
     }

@@ -1,11 +1,8 @@
 package com.example.closebysocialize.friends
 
-import FriendsAdapter
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,10 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.closebysocialize.R
 import com.example.closebysocialize.dataClass.Users
-import com.example.closebysocialize.message.FireBaseMessagingService.Companion.TAG
+import com.example.closebysocialize.utils.FirestoreUtils
 import com.example.closebysocialize.utils.UserAdapter
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 class AddFriendFragment : Fragment() {
     private lateinit var searchEditText: EditText
@@ -27,14 +23,11 @@ class AddFriendFragment : Fragment() {
     private lateinit var userAdapter: UserAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-        }
+        arguments?.let {}
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_add_friend, container, false)
     }
@@ -49,7 +42,6 @@ class AddFriendFragment : Fragment() {
         recyclerViewFindFriends.layoutManager = LinearLayoutManager(context)
 
         userAdapter.onItemClick = { user ->
-            //addUserAsFriend(user)
             addUserAsFriend(user)
 
         }
@@ -66,71 +58,30 @@ class AddFriendFragment : Fragment() {
         })
     }
 
-
     private fun searchUsers(query: String) {
-        if (query.isEmpty()) return
-        val searchQuery = query.split(" ").joinToString(" ") { it.capitalize() }
-        val searchQueryStart = searchQuery
-        val searchQueryEnd = searchQuery + '\uf8ff'
-        val db = FirebaseFirestore.getInstance()
-        db.collection("users")
-            .orderBy("name")
-            .startAt(searchQueryStart)
-            .endAt(searchQueryEnd)
-            .get()
-            .addOnSuccessListener { documents ->
-                val userList = documents.mapNotNull { it.toObject(Users::class.java) }
-                userAdapter.updateData(userList)
-            }
-            .addOnFailureListener {
-            }
+        FirestoreUtils.searchUsers(query, onSuccess = { userList ->
+            userAdapter.updateData(userList)
+        }, onFailure = { exception ->
+            Toast.makeText(
+                context, "Failed to search for users: ${exception.message}", Toast.LENGTH_SHORT
+            ).show()
+        })
     }
 
     private fun addUserAsFriend(user: Users) {
-        val currentUser = FirebaseAuth.getInstance().currentUser ?: return
-        if (user.id.isNullOrEmpty()) {
-            Toast.makeText(context, "Invalid user ID", Toast.LENGTH_SHORT).show()
+        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserUid == null) {
+            Toast.makeText(context, "You need to be logged in to add friends", Toast.LENGTH_SHORT)
+                .show()
             return
         }
-        val db = FirebaseFirestore.getInstance()
-        val friendData = hashMapOf(
-            "id" to user.id,
-            "email" to user.email,
-            "profileImageUrl" to user.profileImageUrl,
-            "name" to user.name
-        )
-
-        db.collection("users")
-            .document(currentUser.uid)
-            .collection("friends")
-            .document(user.id)
-            .get()
-            .addOnSuccessListener { documentSnapshot ->
-                if (!documentSnapshot.exists()) {
-                    db.collection("users")
-                        .document(currentUser.uid)
-                        .collection("friends")
-                        .document(user.id)
-                        .set(friendData)
-                        .addOnSuccessListener {
-                            Toast.makeText(context, "Friend added successfully", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(context, "Failed to add friend", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                } else {
-                    Toast.makeText(context, "User is already your friend", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
-            .addOnFailureListener {
-                Toast.makeText(context, "Error checking existing friends", Toast.LENGTH_SHORT)
-                    .show()
-            }
+        FirestoreUtils.addUserAsFriend(currentUserUid, user, onSuccess = {
+            Toast.makeText(context, "Friend added successfully", Toast.LENGTH_SHORT).show()
+        }, onFailure = { exception ->
+            Toast.makeText(context, exception.message ?: "Failed to add friend", Toast.LENGTH_SHORT)
+                .show()
+        })
     }
-
 
 
 }
