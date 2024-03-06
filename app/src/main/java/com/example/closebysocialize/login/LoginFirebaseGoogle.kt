@@ -34,34 +34,51 @@ class LoginFirebaseGoogle(private val activity: Activity) {
 
     fun handleSigninResult(task: Task<*>) {
         try {
-            val account = task.getResult(ApiException::class.java) as GoogleSignInAccount
-            if (account.idToken == null) {
-                Toast.makeText(activity, "Error: Google idToken is null", Toast.LENGTH_SHORT).show()
-                return
-            }
-            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-            FirebaseAuth.getInstance().signInWithCredential(credential)
-                .addOnCompleteListener(activity) { firebaseTask ->
-                    if (firebaseTask.isSuccessful) {
-                        val firebaseUser = FirebaseAuth.getInstance().currentUser
-                        firebaseUser?.let {
-                            FirestoreUtils.saveUserToFirestore(it, activity)
-                        }
-                        val intent = Intent(activity, ContainerActivity::class.java)
-                        activity.startActivity(intent)
-                        activity.finish()
-                    } else {
-                        Toast.makeText(
-                            activity,
-                            "Log in to Firebase failed: ${firebaseTask.exception?.message}",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
+            val account = getGoogleSignInAccountFromTask(task)
+            authenticateWithFirebase(account)
         } catch (e: ApiException) {
             Toast.makeText(activity, "Log in with Google failed: ${e.message}", Toast.LENGTH_LONG)
                 .show()
         }
+    }
+
+    private fun getGoogleSignInAccountFromTask(task: Task<*>): GoogleSignInAccount {
+        val account = task.getResult(ApiException::class.java) as GoogleSignInAccount
+        if (account.idToken == null) {
+            throw Exception("Google idToken is null")
+        }
+        return account
+    }
+
+
+    private fun authenticateWithFirebase(account: GoogleSignInAccount) {
+        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+        FirebaseAuth.getInstance().signInWithCredential(credential)
+            .addOnCompleteListener(activity) { firebaseTask ->
+                if (firebaseTask.isSuccessful) {
+                    handleFirebaseAuthSuccess()
+                } else {
+                    Toast.makeText(
+                        activity,
+                        "Log in to Firebase failed: ${firebaseTask.exception?.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+    }
+
+    private fun handleFirebaseAuthSuccess() {
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        firebaseUser?.let {
+            FirestoreUtils.saveUserToFirestore(it, activity)
+        }
+        navigateToContainerActivity()
+    }
+
+    private fun navigateToContainerActivity() {
+        val intent = Intent(activity, ContainerActivity::class.java)
+        activity.startActivity(intent)
+        activity.finish()
     }
 
 }

@@ -45,7 +45,7 @@ import com.example.closebysocialize.utils.FirestoreUtils
 import com.example.closebysocialize.utils.MessagingUtils
 
 
-class ContainerActivity : AppCompatActivity() {
+class ContainerActivity : AppCompatActivity(), EditProfileFragment.OnProfileImageUpdatedListener {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var placesClient: PlacesClient
@@ -243,6 +243,10 @@ class ContainerActivity : AppCompatActivity() {
         }, onFailure = { exception ->
             Log.e("ContainerActivity", "Error fetching user profile", exception)
         })
+    }
+
+    override fun onProfileImageUpdated(newImageUrl: String) {
+        showProfileImage(newImageUrl)
     }
 
     private fun showProfileImage(profileImageUrl: String) {

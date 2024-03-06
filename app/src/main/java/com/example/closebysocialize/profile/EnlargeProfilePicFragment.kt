@@ -20,47 +20,51 @@ import com.example.closebysocialize.R
 class EnlargeProfilePicFragment : DialogFragment() {
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_profile_enlarge_profile_pic, container, false)
-        val imageView = view.findViewById<ImageView>(R.id.dialogImageView)
-        val imageUrl = arguments?.getString("imageUrl")
 
+        initializeImageView(view)
+        setupViewClickToDismiss(view)
+        return view
+    }
+
+    private fun initializeImageView(view: View) {
+        val imageView = view.findViewById<ImageView>(R.id.dialogImageView)
+        loadImageIntoView(imageView)
+    }
+
+    private fun loadImageIntoView(imageView: ImageView) {
+        val imageUrl = arguments?.getString("imageUrl")
         Glide.with(this)
             .load(imageUrl)
-            .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    Log.e("EnlargeProfilePicFragment", "Failed to load image", e)
-                    return false
-                }
-
-                override fun onResourceReady(
-                    resource: Drawable?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    Log.d("EnlargeProfilePicFragment", "Image loaded successfully")
-                    return false
-                }
-            })
             .error(R.drawable.error_placeholder)
+            .listener(glideRequestListener)
             .into(imageView)
+    }
 
+    private val glideRequestListener = object : RequestListener<Drawable> {
+        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+            Log.e("EnlargeProfilePicFragment", "Failed to load image", e)
+            return false
+        }
+
+        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+            Log.d("EnlargeProfilePicFragment", "Image loaded successfully")
+            return false
+        }
+    }
+
+    private fun setupViewClickToDismiss(view: View) {
         view.setOnClickListener { dismiss() }
-        return view
     }
 
     override fun onStart() {
         super.onStart()
+        configureDialogWindow()
+    }
+
+    private fun configureDialogWindow() {
         dialog?.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.parseColor("#99000000")))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
@@ -70,8 +74,7 @@ class EnlargeProfilePicFragment : DialogFragment() {
     companion object {
         fun newInstance(imageUrl: String): EnlargeProfilePicFragment {
             val fragment = EnlargeProfilePicFragment()
-            val args = Bundle()
-            args.putString("imageUrl", imageUrl)
+            val args = Bundle().apply { putString("imageUrl", imageUrl) }
             fragment.arguments = args
             return fragment
         }
