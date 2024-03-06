@@ -40,19 +40,23 @@
 
         <EditText
             android:id="@+id/editNameEditText"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:autoSizeMaxTextSize="35sp"
+            android:autoSizeMinTextSize="12sp"
+            android:autoSizeStepGranularity="2sp"
+            android:autoSizeTextType="uniform"
             android:autofillHints=""
             android:background="@android:color/transparent"
+            android:fontFamily="@font/montserrat_semibold"
             android:gravity="center_horizontal"
             android:hint="@string/name"
-            android:inputType="text"
+            android:inputType="textMultiLine"
             android:textAlignment="center"
             android:textSize="35sp"
-            android:fontFamily="@font/montserrat_semibold"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/editProfileVerticalGuideline2"
-            app:layout_constraintStart_toStartOf="@id/editProfileVerticalGuideline1" />
+            app:layout_constraintStart_toStartOf="@id/editProfileVerticalGuideline1"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <ImageView
@@ -60,10 +64,10 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:contentDescription="@string/profile_pic_explain"
-            app:layout_constraintTop_toBottomOf="@id/editNameEditText"
+            app:layout_constraintBottom_toTopOf="@id/editProfileGridLayout"
             app:layout_constraintEnd_toEndOf="@id/editProfileVerticalGuideline2"
             app:layout_constraintStart_toStartOf="@id/editProfileVerticalGuideline1"
-            app:layout_constraintBottom_toTopOf="@id/editProfileGridLayout"
+            app:layout_constraintTop_toBottomOf="@id/editNameEditText"
             app:srcCompat="@drawable/profile_top_bar_avatar" />
 
 
